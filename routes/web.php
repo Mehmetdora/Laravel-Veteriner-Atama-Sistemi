@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\EvrakController;
+use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\VeterinerController;
 
     // HER MİGRATE:FRESH YAPINCA SEEDER ile  BERABER ÇALIŞTIR
 
@@ -21,6 +23,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/dashboard','dashboard')->name('admin_dashboard');
 
 
+
     });
 
     Route::controller(EvrakController::class)->group(function(){
@@ -32,6 +35,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/evrak/ekle','create')->name('admin.evrak.create');
         Route::post('/admin/evrak/eklendi','created')->name('admin.evrak.created');
+    });
+
+    Route::controller(VeterinerController::class)->group(function(){
+        Route::get('/admin/veteriner/liste','index')->name('admin.veteriner.index');
+        
     });
 
 });

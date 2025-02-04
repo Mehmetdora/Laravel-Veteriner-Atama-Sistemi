@@ -35,6 +35,9 @@
 
                             </div>
                             <!-- /.card-header -->
+
+                            @include('layouts.messages')
+
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover table-head-fixed ">
                                     <thead>
@@ -80,17 +83,14 @@
                                                     <td>{{ $evrak->cıkısGumruk }}</td>
                                                     <td>{{ $evrak->veterinerId }}</td>
 
-                                                    <td><a href="{{ route('admin.evrak.edit',$evrak->id) }}"><button type="button"
+                                                    <td><a href="{{ route('admin.evrak.edit', $evrak->id) }}"><button
+                                                                type="button"
                                                                 class="btn btn-warning">Düzenle</button></a><br><a
                                                             href="{{ route('admin.evrak.detail', $evrak->id) }}"><button
                                                                 type="button" class="btn btn-info">Detay</button></a></td>
                                                 </tr>
                                             @endforeach
                                         @endif
-
-
-
-
                                     </tbody>
                                 </table>
                             </div>

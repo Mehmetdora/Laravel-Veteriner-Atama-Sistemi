@@ -1,0 +1,116 @@
+@extends('layouts.app')
+@section('customCSS')
+@endsection
+
+@section('content')
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Veterinerler</h1>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            <!-- Default box -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Tüm Veterinerler</h3>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped projects">
+                        <thead>
+                            <tr>
+                                <th style="width: 1%">
+                                    id
+                                </th>
+                                <th style="width: 20%">
+                                    Adı Soyadı
+                                </th>
+                                <th style="width: 41%">
+                                    Evrakların Durumları
+                                </th>
+
+                                <th style="width: 8%" class="text-center">
+                                    Nöbetçi Mi?
+                                </th>
+                                <th style="width: 20%" class="text-center">
+                                    İşlemler
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (isset($veterinerler))
+                                @foreach ($veterinerler as $veteriner)
+                                    <tr>
+                                        <td>
+                                            #
+                                        </td>
+                                        <td>
+                                            <a>
+                                                {{$veteriner->name}}
+                                            </a>
+                                            <br />
+                                            <small>
+                                                Eklendi {{$veteriner->created_at->format('d-m-y')}}
+                                            </small>
+                                        </td>
+
+                                        <td class="project_progress">
+                                            <div class="progress progress-sm">
+                                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
+                                                    aria-valuemin="0" aria-valuemax="100" style="width: 57%">
+                                                </div>
+                                            </div>
+                                            <small>
+                                                Evrakların %34 Tamamlandı
+                                            </small>
+                                        </td>
+                                        <td class="project-state">
+                                            <span class="badge badge-success">Nöbetçi</span>
+                                        </td>
+                                        <td class="project-actions text-right">
+                                            <a class="btn btn-primary btn-sm" href="#">
+                                                <i class="fas fa-folder">
+                                                </i>
+                                                Evraklar
+                                            </a>
+                                            <a class="btn btn-info btn-sm" href="#">
+                                                <i class="fas fa-pencil-alt">
+                                                </i>
+                                                Düzenle
+                                            </a>
+                                            <a class="btn btn-danger btn-sm" href="#">
+                                                <i class="fas fa-trash">
+                                                </i>
+                                                Sil
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+@endsection
+
+
+@section('customJS')
+@endsection
