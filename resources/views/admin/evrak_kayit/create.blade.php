@@ -45,9 +45,11 @@
                                         <label for="ithalatTür" class="control-label">İthalat Türü</label>
                                         <br>
                                         <select class="form-control" name="ithalatTür" id="ithalatTür" required>
-                                            <option value="1" selected>İthalat</option>
-                                            <option value="2">Transit</option>
-                                            <option value="3">Antrepo</option>
+                                            @if (isset($evrak_turs))
+                                                @foreach ($evrak_turs as $evrak_tur)
+                                                    <option value="{{$evrak_tur->id}}">{{$evrak_tur->name}}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
 
@@ -112,7 +114,7 @@
 
 
                                     <div class="form-group">
-                                        <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                        <button type="submit" class="btn btn-primary">KAYDET</button>
                                     </div>
                                 </form>
                             </div>

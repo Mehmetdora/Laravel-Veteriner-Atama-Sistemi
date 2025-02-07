@@ -61,6 +61,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{route('admin.evrak_tur.index')}}" class="nav-link ">
+                        <i class="fas fa-syringe"></i>
+                        <p>Evrak Türleri</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-circle"></i>
                         <p>

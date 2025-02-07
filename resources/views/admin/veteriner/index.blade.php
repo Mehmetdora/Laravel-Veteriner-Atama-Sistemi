@@ -23,7 +23,10 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Tüm Veterinerler</h3>
-                </div>
+                    <div style="display:flex; justify-content: end;">
+                        <a href="{{ route('admin.veteriner.create') }}"><button type="button"
+                                class="btn btn-primary">Yeni Veteriner Ekle</button></a>
+                    </div>                </div>
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
@@ -34,14 +37,14 @@
                                 <th style="width: 20%">
                                     Adı Soyadı
                                 </th>
-                                <th style="width: 41%">
+                                <th style="width: 35%">
                                     Evrakların Durumları
                                 </th>
 
-                                <th style="width: 8%" class="text-center">
+                                <th style="width: 9%" class="text-center">
                                     Nöbetçi Mi?
                                 </th>
-                                <th style="width: 20%" class="text-center">
+                                <th style="width: 25%" class="text-center">
                                     İşlemler
                                 </th>
                             </tr>
@@ -55,22 +58,22 @@
                                         </td>
                                         <td>
                                             <a>
-                                                {{$veteriner->name}}
+                                                {{ $veteriner->name }}
                                             </a>
                                             <br />
                                             <small>
-                                                Eklendi {{$veteriner->created_at->format('d-m-y')}}
+                                                Eklendi {{ $veteriner->created_at->format('d-m-y') }}
                                             </small>
                                         </td>
 
                                         <td class="project_progress">
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
-                                                    aria-valuemin="0" aria-valuemax="100" style="width: 57%">
+                                                    aria-valuemin="0" aria-valuemax="100" style="width: 37%">
                                                 </div>
                                             </div>
                                             <small>
-                                                Evrakların %34 Tamamlandı
+                                                Evrakların %37 Tamamlandı
                                             </small>
                                         </td>
                                         <td class="project-state">

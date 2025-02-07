@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Evrak;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Evrak;
+use App\Models\EvrakTur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -26,13 +28,15 @@ class EvrakController extends Controller
 
     public function edit($evrak_id){
 
+        $data['veteriners'] = User::role('veteriner')->get();
+        $data['evrak_turs'] = EvrakTur::all();
         $data['evrak'] = Evrak::find($evrak_id);
 
         return view('admin.evrak_kayit.edit',$data);
     }
 
     public function edited(Request $request){
-$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'siraNo' => 'required',
             'vgbOnBildirimNo' => 'required',
             'ithalatTür' => 'required',
@@ -87,7 +91,8 @@ $validator = Validator::make($request->all(), [
 
     public function create(){
 
-        return view('admin.evrak_kayit.create');
+        $data['evrak_turs'] = EvrakTur::all();
+        return view('admin.evrak_kayit.create',$data);
     }
 
     public function created(Request $request){
@@ -133,7 +138,7 @@ $validator = Validator::make($request->all(), [
         $yeni_evrak->girisGumruk = $request->girisGumruk;
         $yeni_evrak->cıkısGumruk = $request->cıkısGumruk;
         $yeni_evrak->tarih = Carbon::now();
-        $yeni_evrak->veterinerId = 5;   // bunu sistem belirleyecek
+        $yeni_evrak->veterinerId = User::role('veteriner')->get()->first()->id;   // bunu sistem belirleyecek
 
         $saved = $yeni_evrak->save();
 

@@ -69,7 +69,7 @@
                                                     <td>{{ $evrak->tarih }}</td>
                                                     <td>{{ $evrak->siraNo }}</td>
                                                     <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->ithalatTür }}</td>
+                                                    <td>{{ $evrak->evrak_adi() }}</td>
                                                     <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiId }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
@@ -81,7 +81,7 @@
                                                     <td>{{ $evrak->aracPlaka }}</td>
                                                     <td>{{ $evrak->girisGumruk }}</td>
                                                     <td>{{ $evrak->cıkısGumruk }}</td>
-                                                    <td>{{ $evrak->veterinerId }}</td>
+                                                    <td>{{ $evrak->vet_adi() }}</td>
 
                                                     <td><a href="{{ route('admin.evrak.edit', $evrak->id) }}"><button
                                                                 type="button"

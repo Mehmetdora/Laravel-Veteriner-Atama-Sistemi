@@ -12,21 +12,6 @@ use Illuminate\Support\Facades\Validator;
 class Authentication extends Controller
 {
     public function login(){
-        /* User::create([
-            'name' => 'Veteriner ',
-            'username' => 'veteriner123',
-            'email' => 'veteriner@gmail.com',
-            'phone_number' => '1231231212',
-            'password' => bcrypt('123123')
-        ])->assignRole('veteriner');
-        User::create([
-            'name' => 'admin ',
-            'username' => 'admin123',
-            'email' => 'admin@gmail.com',
-            'phone_number' => '1231232323',
-            'password' => bcrypt('123123')
-        ])->assignRole('admin'); */
-
         return view('Authentication.login');
     }
 
@@ -47,13 +32,15 @@ class Authentication extends Controller
             $user = Auth::user();
 
             if($user->hasRole('admin')){
-
                 return redirect()->route('admin_dashboard');
 
             }else if ($user->hasRole('veteriner')){
-
                 return redirect()->route('veteriner_dashboard');
+
+            }else if ($user->hasRole('memur')){
+                return redirect()->route('memur_dashboard');
             }
+
         }else{
             return redirect()->back()->with('error','Lütfen bilgilerinizi kontrol ediniz. Girdiğiniz bilgiler hatalıdır!');
         }
@@ -62,9 +49,12 @@ class Authentication extends Controller
     }
 
 
+
     public function logout(){
         if(Auth::check()){
             Auth::logout();
+            return redirect()->route('login');
+        }else{
             return redirect()->route('login');
         }
     }

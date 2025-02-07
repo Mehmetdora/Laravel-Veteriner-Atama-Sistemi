@@ -46,9 +46,11 @@
                                         <label for="ithalatTür" class="control-label">İthalat Türü</label>
                                         <br>
                                         <select class="form-control" name="ithalatTür" id="ithalatTür" data-id="{{$evrak->ithalatTür}}" required>
-                                            <option value="1"  >İthalat</option>
-                                            <option value="2">Transit</option>
-                                            <option value="3" >Antrepo</option>
+                                            @if (isset($evrak_turs))
+                                                @foreach ($evrak_turs as $evrak_tur)
+                                                    <option value="{{$evrak_tur->id}}">{{$evrak_tur->name}}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
 
@@ -114,18 +116,11 @@
                                     <div class="form-group">
                                         <label for="veterinerId" class="control-label">Veteriner</label>
                                         <select class="form-control" data-id="{{$evrak->veterinerId}}" name="veterinerId" id="veterinerId" required>
-                                            <option value="1">vet</option>
-                                            <option value="2">vet</option>
-                                            <option value="3">vet</option>
-                                            <option value="4">vet</option>
-                                            <option value="5">vet</option>
-                                            <option value="6">vet</option>
-                                            <option value="7">vet</option>
-                                            <option value="8">vet</option>
-                                            <option value="9">vet</option>
-                                            <option value="10">vet</option>
-                                            <option value="11">vet</option>
-                                            <option value="12">vet</option>
+                                            @if (isset($veteriners))
+                                                @foreach ($veteriners as $veteriner)
+                                                    <option value="{{$veteriner->id}}">{{$veteriner->name}}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
 
