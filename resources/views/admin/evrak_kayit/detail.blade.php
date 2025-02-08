@@ -93,8 +93,8 @@
                                             <td>{{ $evrak->cıkısGumruk }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Veteriner Hekim:</th>
-                                            <td>{{ $evrak->veterinerId }}</td>
+                                            <th>Veteriner Hekim Adı:</th>
+                                            <td>{{ $evrak->veteriner->name }}</td>
                                         </tr>
 
                                     </tbody>

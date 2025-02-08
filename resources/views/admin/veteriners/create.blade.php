@@ -28,7 +28,7 @@
 
                                 @include('layouts.messages')
 
-                                <form method="post" action="{{ route('admin.veteriner.created') }}">
+                                <form method="post" action="{{ route('admin.veteriners.created') }}">
                                     @csrf
 
                                     <div class="form-group">
@@ -72,7 +72,7 @@
                                     </div>
                                 </form>
                                 <hr>
-                                <a class="btn btn-primary" href="{{ route('admin.veteriner.index') }}">Geri Dön</a>
+                                <a class="btn btn-primary" href="{{ route('admin.veteriners.index') }}">Geri Dön</a>
                             </div>
                         </div>
                         <!-- /.card -->

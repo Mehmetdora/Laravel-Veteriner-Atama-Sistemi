@@ -15,10 +15,11 @@ use App\Http\Controllers\memur\MemurController;
 
 
 Route::controller(Authentication::class)->group(function(){
-    Route::get('/giris','login')->name('login');
-    Route::post('/giriss','logined')->name('logined');
 
+    Route::get('/','login')->name('login');
+    Route::post('/giriss','logined')->name('logined');
     Route::get('/logout','logout')->name('logout');
+
 });
 
 
@@ -60,10 +61,18 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     // Admin Veteriner işlemleri controller
     Route::controller(VeterinerEController::class)->group(function(){
-        Route::get('/admin/veteriner/liste','index')->name('admin.veteriner.index');
+        Route::get('/admin/veterinerler/liste','index')->name('admin.veteriners.index');
 
-        Route::get('/admin/veteriner/ekle','create')->name('admin.veteriner.create');
-        Route::post('/admin/veteriner/eklendi','created')->name('admin.veteriner.created');
+        Route::get('/admin/veterinerler/ekle','create')->name('admin.veteriners.create');
+        Route::post('/admin/veterinerler/eklendi','created')->name('admin.veteriners.created');
+
+
+        Route::get('/admin/veterinerler/veteriner/evraklar{id}','evraks_list')->name('admin.veteriners.veteriner.evraks');
+
+        Route::get('/admin/veterinerler/veteriner/düzenle/{id}','edit')->name('admin.veteriners.veteriner.edit');
+        Route::post('/admin/veterinerler/veteriner/düzenlendi','edited')->name('admin.veteriners.veteriner.edited');
+
+        Route::get('/admin/veterinerler/veteriner/sil/{id}','delete')->name('admin.veteriners.veteriner.delete');
     });
 
 });

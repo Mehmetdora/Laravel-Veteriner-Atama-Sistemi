@@ -12,7 +12,7 @@ class EvrakTurController extends Controller
 {
     public function index(){
 
-        $data['evrakTurs'] = EvrakTur::all();
+        $data['evrakTurs'] = EvrakTur::where('status',true)->get();
         return view('admin.evrak_tur.index',$data);
     }
 
@@ -65,7 +65,8 @@ class EvrakTurController extends Controller
     public function delete($id){
 
         $evrakT = EvrakTur::find($id);
-        $evrakT->delete();
+        $evrakT->status = false;
+        $evrakT->save();
 
         return redirect()->route('admin.evrak_tur.index')->with('success','Evrak Türü Başarıyla Silindi!');
     }

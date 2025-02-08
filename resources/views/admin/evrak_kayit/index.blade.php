@@ -69,7 +69,7 @@
                                                     <td>{{ $evrak->tarih }}</td>
                                                     <td>{{ $evrak->siraNo }}</td>
                                                     <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->evrak_adi() }}</td>
+                                                    <td>{{ $evrak->evrak_tur_adi() }}</td>
                                                     <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiId }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>

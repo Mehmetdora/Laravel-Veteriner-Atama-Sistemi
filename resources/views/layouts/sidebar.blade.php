@@ -55,14 +55,14 @@
 
                 <li class="nav-header">MULTI LEVEL EXAMPLE</li>
                 <li class="nav-item">
-                    <a href="{{route('admin.veteriner.index')}}" class="nav-link ">
+                    <a href="{{route('admin.veteriners.index')}}" class="nav-link ">
                         <i class="fas fa-syringe"></i>
                         <p>Veterinerler</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('admin.evrak_tur.index')}}" class="nav-link ">
-                        <i class="fas fa-syringe"></i>
+                        <i class="fas fa-file"></i>
                         <p>Evrak Türleri</p>
                     </a>
                 </li>

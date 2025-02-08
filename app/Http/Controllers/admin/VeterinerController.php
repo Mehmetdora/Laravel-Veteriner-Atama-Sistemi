@@ -17,11 +17,11 @@ class VeterinerController extends Controller
         $veterinerler = User::role('veteriner')->get();
         $data['veterinerler'] = $veterinerler;
 
-        return view('admin.veteriner.index',$data);
+        return view('admin.veteriners.index',$data);
     }
 
     public function create(){
-        return view('admin.veteriner.create');
+        return view('admin.veteriners.create');
     }
 
     public function created(Request $request){
@@ -49,7 +49,28 @@ class VeterinerController extends Controller
 
         $vet->save();
 
-        return redirect()->route('admin.veteriner.index')->with('success','Veteriner Başarıyla Ekledi!');
+        return redirect()->route('admin.veteriners.index')->with('success','Veteriner Başarıyla Ekledi!');
+
+    }
+
+    public function evraks_list($id){
+        $data['veteriner'] = User::with('evraks')->find($id);
+
+        return view('admin.veteriners.veteriner.evraks',$data);
+    }
+
+    public function edit($id){
+        $data['veteriner'] = User::with('evraks')->find($id);
+        return view('admin.veteriners.veteriner.edit',$data);
+    }
+
+    public function edited(){
+
+    }
+
+    public function delete($id){
+
+        $veteriner = User::find($id);
 
     }
 }

@@ -13,8 +13,7 @@ class EvrakController extends Controller
 {
     public function index(){
 
-
-        $evraklar = Evrak::all();
+        $evraklar = Evrak::with('veteriner')->get()->all();
         $data['evraklar'] = $evraklar;
 
         return view('admin.evrak_kayit.index',$data);
@@ -29,7 +28,7 @@ class EvrakController extends Controller
     public function edit($evrak_id){
 
         $data['veteriners'] = User::role('veteriner')->get();
-        $data['evrak_turs'] = EvrakTur::all();
+        $data['evrak_turs'] = EvrakTur::where('status',true)->get();
         $data['evrak'] = Evrak::find($evrak_id);
 
         return view('admin.evrak_kayit.edit',$data);
@@ -60,26 +59,26 @@ class EvrakController extends Controller
             return redirect()->back()->with('error',$errors);
         }
 
-        $yeni_evrak = Evrak::find($request->id);
+        $evrak = Evrak::find($request->id);
 
-        $yeni_evrak->siraNo = $request->siraNo;
-        $yeni_evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
-        $yeni_evrak->ithalatTür = $request->ithalatTür;
-        $yeni_evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
-        $yeni_evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
-        $yeni_evrak->urunAdi = $request->urunAdi;
-        $yeni_evrak->kategoriId = $request->kategoriId;
-        $yeni_evrak->gtipNo = $request->gtipNo;
-        $yeni_evrak->urunKG = $request->urunKG;
-        $yeni_evrak->sevkUlke = $request->sevkUlke;
-        $yeni_evrak->orjinUlke = $request->orjinUlke;
-        $yeni_evrak->aracPlaka = $request->aracPlaka;
-        $yeni_evrak->girisGumruk = $request->girisGumruk;
-        $yeni_evrak->cıkısGumruk = $request->cıkısGumruk;
-        $yeni_evrak->tarih = Carbon::now();
-        $yeni_evrak->veterinerId = $request->veterinerId;   // bunu sistem belirleyecek
+        $evrak->siraNo = $request->siraNo;
+        $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+        $evrak->ithalatTür = $request->ithalatTür;
+        $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
+        $evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
+        $evrak->urunAdi = $request->urunAdi;
+        $evrak->kategoriId = $request->kategoriId;
+        $evrak->gtipNo = $request->gtipNo;
+        $evrak->urunKG = $request->urunKG;
+        $evrak->sevkUlke = $request->sevkUlke;
+        $evrak->orjinUlke = $request->orjinUlke;
+        $evrak->aracPlaka = $request->aracPlaka;
+        $evrak->girisGumruk = $request->girisGumruk;
+        $evrak->cıkısGumruk = $request->cıkısGumruk;
+        $evrak->tarih = Carbon::now();
 
-        $saved = $yeni_evrak->save();
+        $veteriner = User::find($request->veterinerId);
+        $saved = $veteriner->evraks()->save($evrak);
 
         if($saved){
             return redirect()->route('admin.evrak.index')->with('success','Evrak Başarıyla Düzenlendi.');
@@ -91,7 +90,7 @@ class EvrakController extends Controller
 
     public function create(){
 
-        $data['evrak_turs'] = EvrakTur::all();
+        $data['evrak_turs'] = EvrakTur::where('status',true)->get();
         return view('admin.evrak_kayit.create',$data);
     }
 
@@ -138,9 +137,10 @@ class EvrakController extends Controller
         $yeni_evrak->girisGumruk = $request->girisGumruk;
         $yeni_evrak->cıkısGumruk = $request->cıkısGumruk;
         $yeni_evrak->tarih = Carbon::now();
-        $yeni_evrak->veterinerId = User::role('veteriner')->get()->first()->id;   // bunu sistem belirleyecek
 
-        $saved = $yeni_evrak->save();
+        $veteriner = User::with('evraks')->role('veteriner')->first();   // bunu sistem belirleyecek
+        $saved = $veteriner->evraks()->save($yeni_evrak);
+
 
         if($saved){
             return redirect()->route('admin.evrak.index')->with('success','Evrak Başarıyla Eklendi.');

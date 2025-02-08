@@ -51,4 +51,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function evraks(){
+        return $this->hasMany(Evrak::class,'user_id','id');
+    }
 }

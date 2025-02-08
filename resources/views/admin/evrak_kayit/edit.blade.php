@@ -117,6 +117,8 @@
                                         <label for="veterinerId" class="control-label">Veteriner</label>
                                         <select class="form-control" data-id="{{$evrak->veterinerId}}" name="veterinerId" id="veterinerId" required>
                                             @if (isset($veteriners))
+                                                <option value="{{$evrak->veteriner->id}}">{{$evrak->veteriner->name}}</option>
+                                                <hr>
                                                 @foreach ($veteriners as $veteriner)
                                                     <option value="{{$veteriner->id}}">{{$veteriner->name}}</option>
                                                 @endforeach

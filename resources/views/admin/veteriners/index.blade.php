@@ -24,7 +24,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Tüm Veterinerler</h3>
                     <div style="display:flex; justify-content: end;">
-                        <a href="{{ route('admin.veteriner.create') }}"><button type="button"
+                        <a href="{{ route('admin.veteriners.create') }}"><button type="button"
                                 class="btn btn-primary">Yeni Veteriner Ekle</button></a>
                     </div>                </div>
                 <div class="card-body p-0">
@@ -34,15 +34,19 @@
                                 <th style="width: 1%">
                                     id
                                 </th>
-                                <th style="width: 20%">
+                                <th style="width: 15%">
                                     Adı Soyadı
                                 </th>
-                                <th style="width: 35%">
+                                <th style="width: 25%">
                                     Evrakların Durumları
                                 </th>
 
-                                <th style="width: 9%" class="text-center">
+                                <th style="width: 12%" class="text-center">
                                     Nöbetçi Mi?
+                                </th>
+
+                                <th style="width: 12%" class="text-center">
+                                    İzinli Mi?
                                 </th>
                                 <th style="width: 25%" class="text-center">
                                     İşlemler
@@ -79,21 +83,24 @@
                                         <td class="project-state">
                                             <span class="badge badge-success">Nöbetçi</span>
                                         </td>
+                                        <td class="project-state">
+                                            <span class="badge badge-success">Aktif</span>
+                                        </td>
                                         <td class="project-actions text-right">
-                                            <a class="btn btn-primary btn-sm" href="#">
+                                            <a class="btn btn-primary btn-sm" href="{{route('admin.veteriners.veteriner.evraks',$veteriner->id)}}">
                                                 <i class="fas fa-folder">
                                                 </i>
-                                                Evraklar
+                                                Evrakları
                                             </a>
-                                            <a class="btn btn-info btn-sm" href="#">
+                                            <a class="btn btn-info btn-sm" href="{{route('admin.veteriners.veteriner.edit',$veteriner->id)}}">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Düzenle
                                             </a>
-                                            <a class="btn btn-danger btn-sm" href="#">
+                                            <a class="btn btn-danger btn-sm" href="{{route('admin.veteriners.veteriner.delete',$veteriner->id)}}">
                                                 <i class="fas fa-trash">
                                                 </i>
-                                                Sil
+                                                Veterineri Sistemden Kaldır
                                             </a>
                                         </td>
                                     </tr>
