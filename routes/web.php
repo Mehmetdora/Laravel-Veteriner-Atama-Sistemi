@@ -29,6 +29,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::controller(AdminController::class)->group(function(){
         Route::get('/admin/anasayfa','dashboard')->name('admin_dashboard');
+
+        Route::get('/admin/profil','profile')->name('admin_profile');
+
+        Route::get('/admin/profil/düzenle','edit')->name('admin_edit');
+        Route::post('/admin/profil/düzenlendi','edited')->name('admin_edited');
     });
 
 

@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Veteriner: {{$veteriner->name}}</h1>
+                        <h1 class="m-0">Yönetici Adı: {{Auth::user()->name}}</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -28,25 +28,25 @@
 
                                 @include('layouts.messages')
 
-                                <form method="post" action="{{ route('admin.veteriners.veteriner.edited') }}">
+                                <form method="post" action="{{ route('admin_edited') }}">
                                     @csrf
 
                                     <div class="form-group">
-                                        <label name="name" class="control-label">Adı-Soyadı</label>
-                                        <input id="name" name="name" class="form-control" value="{{$veteriner->name}}" required />
+                                        <label name="name" class="control-label">Adı-Soyadı (*)</label>
+                                        <input id="name" name="name" class="form-control" value="{{Auth::user()->name}}" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="username" class="control-label">Kullanıcı Adı (Giriş için
-                                            kullanılacaktır)</label>
-                                        <input id="username" name="username" value="{{$veteriner->username}}" class="form-control" required />
+                                            kullanılacaktır) (*)</label>
+                                        <input id="username" name="username" value="{{Auth::user()->username}}" class="form-control" required />
                                     </div>
                                     <div class="form-group">
-                                        <label name="email" class="control-label">Kullanıcı Email Adresi</label>
-                                        <input id="email" name="email" value="{{$veteriner->email}}" class="form-control" required />
+                                        <label name="email" class="control-label">Kullanıcı Email Adresi (*)</label>
+                                        <input id="email" name="email" value="{{Auth::user()->email}}" class="form-control" required />
                                     </div>
                                     <div class="form-group">
-                                        <label name="phone_number" class="control-label">Telefon Numarası</label>
-                                        <input id="phone_number" name="phone_number" value="{{$veteriner->phone_number}}" class="form-control" required />
+                                        <label name="phone_number" class="control-label">Telefon Numarası (*)</label>
+                                        <input id="phone_number" name="phone_number" value="{{Auth::user()->phone_number}}" class="form-control" required />
                                     </div>
                                     {{-- <div class="form-group">
                                         <label>US phone mask:</label>
@@ -60,20 +60,28 @@
                                         </div>
                                         <!-- /.input group -->
                                     </div> --}}
+                                    <hr>
+
+                                    <div class="form-group">
+                                        <label name="password_old" class="control-label">Kullanıcının Eski Şifresi</label>
+                                        <input type="password"  class="form-control"   name="password_old" >
+                                    </div>
 
                                     <div class="form-group">
                                         <label name="password" class="control-label">Kullanıcının Yeni Şifresi</label>
-                                        <input type="text"  class="form-control"   name="password" >
+                                        <input type="password"  class="form-control"   name="password" >
                                     </div>
 
-                                    <input type="hidden" name="id" id="user_id" value="{{$veteriner->id}}">
-
+                                    <div class="form-group">
+                                        <label name="password_confirmation" class="control-label">Kullanıcının Yeni Şifresi(Tekrar)</label>
+                                        <input type="password"  class="form-control"   name="password_confirmation"  >
+                                    </div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary">KAYDET</button>
                                     </div>
                                 </form>
                                 <hr>
-                                <a class="btn btn-primary" href="{{ route('admin.veteriners.index') }}">Geri Dön</a>
+                                <a class="btn btn-primary" href="{{ route('admin_profile') }}">Geri Dön</a>
                             </div>
                         </div>
                         <!-- /.card -->

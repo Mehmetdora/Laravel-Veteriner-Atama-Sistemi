@@ -38,11 +38,11 @@
                                 <th style="width: 15%">
                                     VGB Ön Bildirim Numarası
                                 </th>
-                                <th style="width: 15%">
+                                <th style="width: 15%" class="text-center">
                                     Evrak Türü
                                 </th>
 
-                                <th style="width: 15%">
+                                <th style="width: 15%" class="text-center">
                                     Evrak Durumu
                                 </th>
 
@@ -62,11 +62,11 @@
                                             {{ $evrak->vgbOnBildirimNo }}
                                         </td>
 
-                                        <td>
+                                        <td class="text-center">
                                             {{ $evrak->evrak_tur_adi() }}
                                         </td>
 
-                                        <td class="project-state">
+                                        <td class="project-state ">
                                             {{-- evrak_durum adında bir tablo oluştur ve bu tabloda evrak id ve veterinerin aldığı evrağın Durumu tutulsun
                                                 her oluşan evrak bir veterinere atandıktan sonra bir evrak_durum oluşturulur ve evrak ile ervak_durum tablosu arasında 1e1 ilişki kurulsun
                                                 böylece veterinerin evrakları üzerinden evrak durumu güncellenmiş olacak
@@ -80,7 +80,7 @@
                                             <span class="badge badge-warning">Beklemede</span>
                                         </td>
 
-                                        <td class="project-actions text-right">
+                                        <td class="project-actions text-center">
                                             <a class="btn btn-primary btn-sm"
                                                 href="{{ route('admin.veteriners.veteriner.evraks', $veteriner->id) }}">
                                                 <i class="fas fa-folder">

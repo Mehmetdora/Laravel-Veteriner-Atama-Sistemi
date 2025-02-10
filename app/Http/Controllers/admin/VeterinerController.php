@@ -64,7 +64,38 @@ class VeterinerController extends Controller
         return view('admin.veteriners.veteriner.edit',$data);
     }
 
-    public function edited(){
+    public function edited(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'username' => 'required',
+            'email' => 'required|email',
+            'phone_number' => 'required|max:10|min:10',
+            'password' => 'Nullable|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
+            return redirect()->back()->with('error',$errors);
+        }
+
+        $vet = User::find($request->input('id'));
+        $vet->name = $request->name;
+        $vet->username = $request->username;
+        $vet->email = $request->email;
+        $vet->phone_number = $request->phone_number;
+        if($request->input('password')){
+            $vet->password = $request->password;
+        }
+        $save = $vet->save();
+
+        if($save){
+            return redirect()->route('admin.veteriners.index')->with('success','Veteriner Bilgileri Başarıyla Güncellendi!');
+        }else{
+            return redirect()->back()->with('error','Lütfen Bilgileri Kontrol Ederek Tekrar Deneyiniz!');
+        }
+
 
     }
 
