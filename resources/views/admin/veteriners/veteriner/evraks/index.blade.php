@@ -28,6 +28,7 @@
                                 Veteriner Ekle</button></a>
                     </div> --}}
                 </div>
+                @include('layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
@@ -68,7 +69,7 @@
 
                                         <td class="project-state ">
                                             {{-- evrak_durum adında bir tablo oluştur ve bu tabloda evrak id ve veterinerin aldığı evrağın Durumu tutulsun
-                                                her oluşan evrak bir veterinere atandıktan sonra bir evrak_durum oluşturulur ve evrak ile ervak_durum tablosu arasında 1e1 ilişki kurulsun
+                                                her oluşan evrak bir "veterinere atandıktan sonra" bir evrak_durum oluşturulur ve evrak ile ervak_durum tablosu arasında 1e1 ilişki kurulsun
                                                 böylece veterinerin evrakları üzerinden evrak durumu güncellenmiş olacak
                                             --}}
 
@@ -77,7 +78,16 @@
                                                 bu tablo her gün güncellensin(admin in girdiği aylık nöbet tablosuna göre değişecek her gün değişecek)
                                                 böylece her veterinerin nöbet durumu gösterilsin
                                             --}}
-                                            <span class="badge badge-warning">Beklemede</span>
+                                            @if ($evrak->evrak_durumu->evrak_durum == 'Onaylanacak')
+                                                <span
+                                                    class="badge badge-danger">{{ $evrak->evrak_durumu->evrak_durum }}</span>
+                                            @elseif ($evrak->evrak_durumu->evrak_durum == 'Beklemede')
+                                                <span
+                                                    class="badge badge-warning">{{ $evrak->evrak_durumu->evrak_durum }}</span>
+                                            @elseif ($evrak->evrak_durumu->evrak_durum == 'Onaylandı')
+                                                <span
+                                                    class="badge badge-success">{{ $evrak->evrak_durumu->evrak_durum }}</span>
+                                            @endif
                                         </td>
 
                                         <td class="project-actions text-center">
@@ -85,10 +95,10 @@
                                                 href="{{ route('admin.veteriners.veteriner.evraks', $veteriner->id) }}">
                                                 <i class="fas fa-folder">
                                                 </i>
-                                                Evraklar
+                                                İncele
                                             </a>
                                             <a class="btn btn-info btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.edit', $veteriner->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.evrak.edit', $evrak->id) }}">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Düzenle

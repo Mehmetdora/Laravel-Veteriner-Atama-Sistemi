@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\EvrakDurum;
 use App\Models\User;
+use App\Models\Evrak;
+use App\Models\EvrakTur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -29,7 +33,7 @@ class VeterinerController extends Controller
             'name' => 'required',
             'username' => 'required',
             'email' => 'required|email',
-            'phone_number' => 'required|max:10|min:10',
+            'phone_number' => 'required|max:10|min:10|unique:users',
             'password' => 'required|min:6',
         ]);
 
@@ -56,7 +60,7 @@ class VeterinerController extends Controller
     public function evraks_list($id){
         $data['veteriner'] = User::with('evraks')->find($id);
 
-        return view('admin.veteriners.veteriner.evraks',$data);
+        return view('admin.veteriners.veteriner.evraks.index',$data);
     }
 
     public function edit($id){
@@ -70,7 +74,7 @@ class VeterinerController extends Controller
             'name' => 'required',
             'username' => 'required',
             'email' => 'required|email',
-            'phone_number' => 'required|max:10|min:10',
+            'phone_number' => 'required|max:10|min:10|unique:users',
             'password' => 'Nullable|min:6',
         ]);
 
@@ -98,6 +102,82 @@ class VeterinerController extends Controller
 
 
     }
+
+
+    public function evrak_edit($id){
+
+        $data['evrak'] = Evrak::find($id);
+        $data['veteriners'] = User::role('veteriner')->get();
+        $data['evrak_turs'] = EvrakTur::where('status',true)->get();
+
+        return view('admin.veteriners.veteriner.evraks.edit',$data);
+
+
+    }
+
+    public function evrak_edited(Request $request){
+
+        $validator = Validator::make($request->all(), [
+            'siraNo' => 'required',
+            'vgbOnBildirimNo' => 'required',
+            'ithalatTür' => 'required',
+            'vetSaglikSertifikasiNo' => 'required',
+            'vekaletFirmaKisiId' => 'required',
+            'urunAdi' => 'required',
+            'kategoriId' => 'required',
+            'gtipNo' => 'required',
+            'urunKG' => 'required',
+            'sevkUlke' => 'required',
+            'orjinUlke' => 'required',
+            'aracPlaka' => 'required',
+            'girisGumruk' => 'required',
+            'cıkısGumruk' => 'required',
+            'veterinerId' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
+            return redirect()->back()->with('error',$errors);
+        }
+
+        $evrak = Evrak::find($request->id);
+
+        $evrak->siraNo = $request->siraNo;
+        $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+        $evrak->ithalatTür = $request->ithalatTür;
+        $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
+        $evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
+        $evrak->urunAdi = $request->urunAdi;
+        $evrak->kategoriId = $request->kategoriId;
+        $evrak->gtipNo = $request->gtipNo;
+        $evrak->urunKG = $request->urunKG;
+        $evrak->sevkUlke = $request->sevkUlke;
+        $evrak->orjinUlke = $request->orjinUlke;
+        $evrak->aracPlaka = $request->aracPlaka;
+        $evrak->girisGumruk = $request->girisGumruk;
+        $evrak->cıkısGumruk = $request->cıkısGumruk;
+        $evrak->tarih = Carbon::now();
+
+        $veteriner = User::find($request->veterinerId);
+        $saved = $veteriner->evraks()->save($evrak);
+
+
+        $evrak->evrak_durumu()->delete();
+        $evrak_durum = new EvrakDurum;
+        $evrak_durum->evrak_durum = $request->evrak_durum;
+        $evrak->evrak_durumu()->save($evrak_durum);
+
+
+        if($saved){
+            return redirect()->route('admin.veteriners.veteriner.evraks',$veteriner->id)->with('success','Evrak Başarıyla Düzenlendi.');
+        }else{
+            return redirect()->back()->with('error','Evrak Düzenleme Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
+        }
+
+    }
+
+
 
     public function delete($id){
 

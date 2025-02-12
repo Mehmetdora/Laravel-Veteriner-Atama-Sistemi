@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Evrak;
+use App\Models\EvrakDurum;
 use App\Models\EvrakTur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -138,8 +140,16 @@ class EvrakController extends Controller
         $yeni_evrak->cıkısGumruk = $request->cıkısGumruk;
         $yeni_evrak->tarih = Carbon::now();
 
-        $veteriner = User::with('evraks')->role('veteriner')->first();   // bunu sistem belirleyecek
+        $veteriner = User::with('evraks')->role('veteriner')->first();   // BUNU SİSTEM BELİRLEYECEK
         $saved = $veteriner->evraks()->save($yeni_evrak);
+
+
+        // EVRAK DURUMU ATAMASI
+        $evrak_durum = new EvrakDurum;
+        $yeni_evrak->evrak_durum()->save($evrak_durum);
+
+
+
 
 
         if($saved){

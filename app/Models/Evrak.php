@@ -20,4 +20,8 @@ class Evrak extends Model
     public function veteriner(){
         return $this->belongsTo(User::class,'user_id','id');
     }
+
+    public function evrak_durumu(){
+        return $this->hasOne(EvrakDurum::class);
+    }
 }
