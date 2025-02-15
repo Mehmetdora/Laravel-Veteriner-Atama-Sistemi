@@ -68,10 +68,7 @@
                                         </td>
 
                                         <td class="project-state ">
-                                            {{-- evrak_durum adında bir tablo oluştur ve bu tabloda evrak id ve veterinerin aldığı evrağın Durumu tutulsun
-                                                her oluşan evrak bir "veterinere atandıktan sonra" bir evrak_durum oluşturulur ve evrak ile ervak_durum tablosu arasında 1e1 ilişki kurulsun
-                                                böylece veterinerin evrakları üzerinden evrak durumu güncellenmiş olacak
-                                            --}}
+                                            
 
                                             {{--
                                                 veteriner nöbetleri için bir veteriner_nöbet tablosu ile o gün için hangi veterinerlerin nöbetçi olacağı tutulsun

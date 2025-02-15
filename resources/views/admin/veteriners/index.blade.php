@@ -24,9 +24,11 @@
                 <div class="card-header">
                     <h3 class="card-title">Tüm Veterinerler</h3>
                     <div style="display:flex; justify-content: end;">
-                        <a href="{{ route('admin.veteriners.create') }}"><button type="button"
-                                class="btn btn-primary">Yeni Veteriner Ekle</button></a>
-                    </div>                </div>
+                        <a href="{{ route('admin.veteriners.create') }}"><button type="button" class="btn btn-primary">Yeni
+                                Veteriner Ekle</button></a>
+                    </div>
+                </div>
+                @include('layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
@@ -73,11 +75,15 @@
                                         <td class="project_progress">
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
-                                                    aria-valuemin="0" aria-valuemax="100" style="width: 37%">
+                                                    aria-valuemin="0" aria-valuemax="100" style="width: {{$yuzdeler[$loop->index]}}%">
                                                 </div>
                                             </div>
                                             <small>
-                                                Evrakların %37 Tamamlandı
+                                                @if ($yuzdeler[$loop->index] == -1)
+                                                    Hiç Evrak Atanmamış
+                                                @else
+                                                Evraklar %{{$yuzdeler[$loop->index]}} Tamamlandı
+                                                @endif
                                             </small>
                                         </td>
                                         <td class="project-state">
@@ -87,17 +93,21 @@
                                             <span class="badge badge-success">Aktif</span>
                                         </td>
                                         <td class="project-actions text-right">
-                                            <a class="btn btn-primary btn-sm" href="{{route('admin.veteriners.veteriner.evraks',$veteriner->id)}}">
+                                            <a class="btn btn-primary btn-sm"
+                                                href="{{ route('admin.veteriners.veteriner.evraks', $veteriner->id) }}">
                                                 <i class="fas fa-folder">
                                                 </i>
                                                 Evrakları
                                             </a>
-                                            <a class="btn btn-info btn-sm" href="{{route('admin.veteriners.veteriner.edit',$veteriner->id)}}">
+                                            <a class="btn btn-info btn-sm"
+                                                href="{{ route('admin.veteriners.veteriner.edit', $veteriner->id) }}">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Düzenle
                                             </a>
-                                            <a class="btn btn-danger btn-sm" href="{{route('admin.veteriners.veteriner.delete',$veteriner->id)}}">
+                                            <a class="btn btn-danger btn-sm veteriner_sil" data-toggle="modal"
+                                                data-target="#modal-veteriner-delete" role="button"
+                                                data-yeni="{{ route('admin.veteriners.veteriner.delete', $veteriner->id) }}">
                                                 <i class="fas fa-trash">
                                                 </i>
                                                 Veterineri Sistemden Kaldır
@@ -114,7 +124,29 @@
                 <!-- /.card-body -->
             </div>
             <!-- /.card -->
-
+            <div class="modal fade" id="modal-veteriner-delete">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Emin Misiniz?</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Veterinerini sistemden silmek istediğinize emin misiniz?</p>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Vazgeç</button>
+                            <a href="#" id="veteriner-sil-modal">
+                                <button type="button" class="btn btn-primary">Sil</button>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
         </section>
         <!-- /.content -->
     </div>
@@ -123,4 +155,15 @@
 
 
 @section('customJS')
+    <script>
+        const silB = document.querySelectorAll('.veteriner_sil');
+        var sil_modal = document.getElementById('veteriner-sil-modal');
+
+        silB.forEach(function(element) {
+            element.addEventListener('click', function() {
+                var url = this.getAttribute('data-yeni');
+                sil_modal.setAttribute('href', url);
+            });
+        });
+    </script>
 @endsection

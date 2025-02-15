@@ -146,7 +146,7 @@ class EvrakController extends Controller
 
         // EVRAK DURUMU ATAMASI
         $evrak_durum = new EvrakDurum;
-        $yeni_evrak->evrak_durum()->save($evrak_durum);
+        $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
 
 

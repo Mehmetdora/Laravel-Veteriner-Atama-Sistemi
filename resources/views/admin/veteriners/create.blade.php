@@ -33,20 +33,20 @@
 
                                     <div class="form-group">
                                         <label name="name" class="control-label">Adı-Soyadı</label>
-                                        <input id="name" name="name" class="form-control" required />
+                                        <input id="name" name="name" class="form-control" value="{{old('name')}}" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="username" class="control-label">Kullanıcı Adı (Giriş için
                                             kullanılacaktır)</label>
-                                        <input id="username" name="username" class="form-control" required />
+                                        <input id="username" name="username" class="form-control"  value="{{old('username')}}"required />
                                     </div>
                                     <div class="form-group">
                                         <label name="email" class="control-label">Kullanıcı Email Adresi</label>
-                                        <input id="email" name="email" class="form-control" required />
+                                        <input id="email" name="email" class="form-control" value="{{old('email')}}" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="phone_number" class="control-label">Telefon Numarası</label>
-                                        <input id="phone_number" name="phone_number" class="form-control" required />
+                                        <input id="phone_number" name="phone_number" class="form-control" value="{{old('phone_number')}}" required />
                                     </div>
                                     {{-- <div class="form-group">
                                         <label>US phone mask:</label>
