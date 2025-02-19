@@ -1,8 +1,8 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 @endsection
 
-@section('content')
+@section('admin.content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -22,7 +22,7 @@
 
                 <div class="row">
                     <div class="col-4">
-                        @include('layouts.messages')
+                        @include('admin.layouts.messages')
 
                         <form action="{{ route('admin.evrak_tur.edited') }}" method="post">
                             @csrf
@@ -51,5 +51,5 @@
 @endsection
 
 
-@section('customJS')
+@section('admin.customJS')
 @endsection

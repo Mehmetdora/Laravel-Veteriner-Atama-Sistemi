@@ -1,8 +1,8 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('veteriner.layouts.app')
+@section('veteriner.customCSS')
 @endsection
 
-@section('admin.content')
+@section('veteriner.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Yönetici Adı 1: {{Auth::user()->name}}</h1>
+                        <h1 class="m-0">Veteriner Adı: {{Auth::user()->name}}</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -26,9 +26,9 @@
                         <div class="row">
                             <div class="col-md-4">
 
-                                @include('admin.layouts.messages')
+                                @include('veteriner.layouts.messages')
 
-                                <form method="post" action="{{ route('admin_edited') }}">
+                                <form method="post" action="{{ route('veteriner.profile.edited') }}">
                                     @csrf
 
                                     <div class="form-group">
@@ -81,7 +81,7 @@
                                     </div>
                                 </form>
                                 <hr>
-                                <a class="btn btn-primary" href="{{ route('admin_profile') }}">Geri Dön</a>
+                                <a class="btn btn-primary" href="{{ route('veteriner.profile.index') }}">Geri Dön</a>
                             </div>
                         </div>
                         <!-- /.card -->
@@ -95,7 +95,7 @@
 @endsection
 
 
-@section('admin.customJS')
+@section('veteriner.customJS')
     <script src="{{ asset('admin_Lte/') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
     <script>
         $(function() {

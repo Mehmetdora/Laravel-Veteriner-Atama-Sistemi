@@ -1,8 +1,8 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('veteriner.layouts.app')
+@section('veteriner.customCSS')
 @endsection
 
-@section('admin.content')
+@section('veteriner.content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -24,8 +24,9 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header ">
-                                <a href="{{ route('admin.evrak.edit',$evrak->id) }}" style="margin-right:0px;"><button type="button"
-                                        class="btn btn-primary">Düzenle</button></a>
+                                <a href="" style="margin-right:0px;">
+                                    <button type="button" class="btn btn-primary">İşlem Yap</button>
+                                </a>
 
                             </div>
                             <!-- /.card-header -->
@@ -46,7 +47,7 @@
                                         </tr>
                                         <tr>
                                             <th>Evrak Türü:</th>
-                                            <td>{{ $evrak->evrak_tur_adi() }}</td>
+                                            <td>{{ $evrak->ithalatTür }}</td>
                                         </tr>
                                         <tr>
                                             <th>Veteriner Sağlık Sertifikası Türü:</th>
@@ -112,5 +113,5 @@
 @endsection
 
 
-@section('admin.customJS')
+@section('veteriner.customJS')
 @endsection

@@ -29,7 +29,7 @@ class EvrakController extends Controller
 
     public function edit($evrak_id){
 
-        $data['veteriners'] = User::role('veteriner')->get();
+        $data['veteriners'] = User::role('veteriner')->where('status',1)->get();
         $data['evrak_turs'] = EvrakTur::where('status',true)->get();
         $data['evrak'] = Evrak::find($evrak_id);
 

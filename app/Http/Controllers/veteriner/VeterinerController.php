@@ -1,27 +1,36 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\veteriner;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Evrak;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AdminController extends Controller
+class VeterinerController extends Controller
 {
     public function dashboard(){
-        return view('admin.dashboard');
+
+        $vet = Auth::user();
+        $data['unread_evraks_count'] = $vet->unread_evraks_count();
+
+        return view('veteriner.dashboard',$data);
     }
 
-    public function profile(){
-        return view('admin.admin_profile.index');
+    public function profile_index(){
+        $data['unread_evraks_count'] = Auth::user()->unread_evraks_count();
+        return view('veteriner.profile.index',$data);
     }
 
-    public function edit(){
-        return view('admin.admin_profile.edit');
+    public function profile_edit(){
+        $data['unread_evraks_count'] = Auth::user()->unread_evraks_count();
+        return view('veteriner.profile.edit',$data);
     }
-    public function edited(Request $request){
+
+    public function profile_edited(Request $request){
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'username' => 'required',
@@ -55,13 +64,32 @@ class AdminController extends Controller
         $save = $user->save();
 
         if($save){
-            return redirect()->route('admin_profile')->with('success','Yönetici Bilgileri Başarıyla Güncellendi!');
+            return redirect()->route('veteriner.profile.index')->with('success','Kullanıcı Bilgileri Başarıyla Güncellendi!');
         }else{
             return redirect()->back()->with('error','Lütfen Bilgileri Kontrol Ederek Tekrar Doldurunuz!');
         }
+    }
+
+    public function evraks_index(){
+        $vet = Auth::user();
+        $evraks = $vet->evraks;
+
+        foreach ($evraks as $evrak) {
+            $evrak->evrak_durumu->update(['isRead'=>1]);
+        }
+        $data['evraklar'] = $evraks;
 
 
-
+        return view('veteriner.evraks.index',$data);
 
     }
+
+    public function evrak_index($id){
+        $data['evrak'] = Evrak::find($id);
+        $data['unread_evraks_count'] = Auth::user()->unread_evraks_count();
+
+        return view('veteriner.evraks.evrak.index',$data);
+
+    }
+
 }

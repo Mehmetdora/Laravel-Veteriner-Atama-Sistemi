@@ -5,9 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @include('layouts.head')
+    @include('admin.layouts.head')
 
-    @yield('customCSS')
+    @yield('admin.customCSS')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -15,21 +15,21 @@
 
 
 
-        @include('layouts.header')
+        @include('admin.layouts.header')
 
-        @include('layouts.sidebar')
+        @include('admin.layouts.sidebar')
 
-        @yield('content')
+        @yield('admin.content')
 
-        @include('layouts.footer')
+        @include('admin.layouts.footer')
 
 
     </div>
     <!-- ./wrapper -->
 
-    @include('layouts.scripts')
+    @include('admin.layouts.scripts')
 
-    @yield('customJS')
+    @yield('admin.customJS')
 
 </body>
 

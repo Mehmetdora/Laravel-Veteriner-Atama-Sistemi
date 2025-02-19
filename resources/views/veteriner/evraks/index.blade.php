@@ -1,8 +1,8 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('veteriner.layouts.app')
+@section('veteriner.customCSS')
 @endsection
 
-@section('admin.content')
+@section('veteriner.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Evrak Kayıt</h1>
+                        <h1 class="m-0">Atanmış Evraklar</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -25,18 +25,11 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Evrak Listesi</h3>
-
-                                <div style="display:flex; justify-content: end;">
-                                    <a href="{{ route('admin.evrak.create') }}"><button type="button"
-                                            class="btn btn-primary">Yeni Evrak</button></a>
-                                </div>
-
-
+                                <h3 class="card-title">Tüm Evraklarım</h3>
                             </div>
                             <!-- /.card-header -->
 
-                            @include('admin.layouts.messages')
+                            @include('veteriner.layouts.messages')
 
                             <div class="card-body table-responsive p-0">
                                 <table class="table table-hover table-head-fixed ">
@@ -83,11 +76,11 @@
                                                     <td>{{ $evrak->cıkısGumruk }}</td>
                                                     <td>{{ $evrak->vet_adi() }}</td>
 
-                                                    <td><a href="{{ route('admin.evrak.edit', $evrak->id) }}"><button
+                                                    <td><a href=""><button
                                                                 type="button"
-                                                                class="btn btn-warning">Düzenle</button></a><br><a
-                                                            href="{{ route('admin.evrak.detail', $evrak->id) }}"><button
-                                                                type="button" class="btn btn-info">Detay</button></a></td>
+                                                                class="btn btn-warning">İşlem Yap</button></a><br><a
+                                                            href="{{route('veteriner.evraks.evrak.index',$evrak->id)}}"><button
+                                                                type="button" class="btn btn-info">İncele</button></a></td>
                                                 </tr>
                                             @endforeach
                                         @endif
@@ -107,5 +100,5 @@
 @endsection
 
 
-@section('admin.customJS')
+@section('veteriner.customJS')
 @endsection

@@ -1,8 +1,8 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 @endsection
 
-@section('content')
+@section('admin.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -26,7 +26,7 @@
                         <div class="row">
                             <div class="col-md-4">
 
-                                @include('layouts.messages')
+                                @include('admin.layouts.messages')
 
                                 <form method="post" action="{{ route('admin.veteriners.created') }}">
                                     @csrf
@@ -86,7 +86,7 @@
 @endsection
 
 
-@section('customJS')
+@section('admin.customJS')
     <script src="{{ asset('admin_Lte/') }}/plugins/inputmask/jquery.inputmask.min.js"></script>
     <script>
         $(function() {

@@ -1,8 +1,8 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 @endsection
 
-@section('content')
+@section('admin.content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            @include('layouts.messages')
+                            @include('admin.layouts.messages')
 
                             <div class="card-header ">
                                 <a href="{{ route('admin.evrak_tur.create') }}" style="margin-right:0px;"><button
@@ -90,7 +90,7 @@
 @endsection
 
 
-@section('customJS')
+@section('admin.customJS')
     <script>
         const silB = document.querySelectorAll('.evrakT_sil');
         var sil_modal = document.getElementById('evrak-sil-modal');

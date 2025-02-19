@@ -76,7 +76,7 @@ class VeterinerController extends Controller
                 'email',
                 Rule::unique('users')->where(function ($query) {
                     return $query->where('status', 1);
-                }),
+                }), // user tablosundaki değerlerden status ü 1 olanlar içinden unique kontrolü
             ],
             'phone_number' => [
                 'required',
@@ -231,9 +231,11 @@ class VeterinerController extends Controller
         $veteriner = User::find($request->veterinerId);
         $saved = $veteriner->evraks()->save($evrak);
 
-
+        $isRead = $evrak->evrak_durumu->isRead;
         $evrak->evrak_durumu()->delete();
-        $evrak_durum = new EvrakDurum;
+
+        $evrak_durum = new EvrakDurum;  // Evrak Durumu güncelleme
+        $evrak_durum->isRead = $isRead;
         $evrak_durum->evrak_durum = $request->evrak_durum;
         $evrak->evrak_durumu()->save($evrak_durum);
 
@@ -243,6 +245,12 @@ class VeterinerController extends Controller
         } else {
             return redirect()->back()->with('error', 'Evrak Düzenleme Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
         }
+    }
+
+    public function evrak_detail($id){
+        $data['evrak'] = Evrak::find($id);
+
+        return view('admin.veteriners.veteriner.evraks.detail',$data);
     }
 
 

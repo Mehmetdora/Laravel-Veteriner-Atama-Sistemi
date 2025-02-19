@@ -1,9 +1,9 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 
 @endsection
 
-@section('content')
+@section('admin.content')
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
@@ -34,7 +34,7 @@
 <!-- /.content-wrapper -->
 @endsection
 
-@section('customJS')
+@section('admin.customJS')
 
 
 @endsection

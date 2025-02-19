@@ -55,4 +55,11 @@ class User extends Authenticatable
     public function evraks(){
         return $this->hasMany(Evrak::class,'user_id','id');
     }
+
+    public function unread_evraks_count(){
+        return $this->evraks()
+        ->whereHas('evrak_durumu', function ($query) {
+            $query->where('isRead', 0);
+        })->count();
+    }
 }

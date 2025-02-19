@@ -1,8 +1,8 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 @endsection
 
-@section('content')
+@section('admin.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -28,7 +28,7 @@
                                 Veteriner Ekle</button></a>
                     </div> --}}
                 </div>
-                @include('layouts.messages')
+                @include('admin.layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
@@ -68,13 +68,6 @@
                                         </td>
 
                                         <td class="project-state ">
-                                            
-
-                                            {{--
-                                                veteriner nöbetleri için bir veteriner_nöbet tablosu ile o gün için hangi veterinerlerin nöbetçi olacağı tutulsun
-                                                bu tablo her gün güncellensin(admin in girdiği aylık nöbet tablosuna göre değişecek her gün değişecek)
-                                                böylece her veterinerin nöbet durumu gösterilsin
-                                            --}}
                                             @if ($evrak->evrak_durumu->evrak_durum == 'Onaylanacak')
                                                 <span
                                                     class="badge badge-danger">{{ $evrak->evrak_durumu->evrak_durum }}</span>
@@ -89,7 +82,7 @@
 
                                         <td class="project-actions text-center">
                                             <a class="btn btn-primary btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.evraks', $veteriner->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.evrak.detail', $evrak->id) }}">
                                                 <i class="fas fa-folder">
                                                 </i>
                                                 İncele
@@ -126,5 +119,5 @@
 @endsection
 
 
-@section('customJS')
+@section('admin.customJS')
 @endsection

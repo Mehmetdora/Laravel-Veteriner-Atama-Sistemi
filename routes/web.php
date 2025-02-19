@@ -5,11 +5,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\EvrakController;
-use App\Http\Controllers\VeterinerController;
 use App\Http\Controllers\admin\AdminController;
-use App\Http\Controllers\admin\EvrakTurController;
-use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
 use App\Http\Controllers\memur\MemurController;
+use App\Http\Controllers\admin\EvrakTurController;
+use App\Http\Controllers\veteriner\VeterinerController;
+use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
 
     // HER MİGRATE:FRESH YAPINCA SEEDER ile  BERABER ÇALIŞTIR
 
@@ -74,6 +74,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/veterinerler/veteriner/evraklar{id}','evraks_list')->name('admin.veteriners.veteriner.evraks');
         Route::get('/admin/veterinerler/veteriner/evrak/{id}/düzenle','evrak_edit')->name('admin.veteriners.veteriner.evrak.edit');
+        Route::get('/admin/veterinerler/veteriner/evrak/{id}/detay','evrak_detail')->name('admin.veteriners.veteriner.evrak.detail');
         Route::post('/admin/veterinerler/veteriner/evrak/düzenlendi','evrak_edited')->name('admin.veteriners.veteriner.evrak.edited');
 
         Route::get('/admin/veterinerler/veteriner/düzenle/{id}','edit')->name('admin.veteriners.veteriner.edit');
@@ -87,11 +88,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
 
+
+
 Route::middleware(['auth', 'role:veteriner'])->group(function () {
 
     // Veteriner Actions controller
     Route::controller(VeterinerController::class)->group(function(){
         Route::get('/veteriner/anasayfa','dashboard')->name('veteriner_dashboard');
+
+        Route::get('/veteriner/profil','profile_index')->name('veteriner.profile.index');
+
+        Route::get('/veteriner/profil/düzenle','profile_edit')->name('veteriner.profile.edit');
+        Route::post('/veteriner/profil/düzenlendi','profile_edited')->name('veteriner.profile.edited');
+
+        Route::get('/veteriner/evraklar/liste','evraks_index')->name('veteriner.evraks.index');
+        Route::get('/veteriner/evraklar/{id}/detay','evrak_index')->name('veteriner.evraks.evrak.index');
     });
 
 });

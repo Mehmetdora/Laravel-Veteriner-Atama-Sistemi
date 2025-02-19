@@ -31,15 +31,20 @@ class Authentication extends Controller
         if(Auth::attempt(['username' => $request->username, 'password' => $request->password])){
             $user = Auth::user();
 
-            if($user->hasRole('admin')){
-                return redirect()->route('admin_dashboard');
+            if($user->status == 1){
+                if($user->hasRole('admin')){
+                    return redirect()->route('admin_dashboard');
 
-            }else if ($user->hasRole('veteriner')){
-                return redirect()->route('veteriner_dashboard');
+                }else if ($user->hasRole('veteriner')){
+                    return redirect()->route('veteriner_dashboard');
 
-            }else if ($user->hasRole('memur')){
-                return redirect()->route('memur_dashboard');
+                }else if ($user->hasRole('memur')){
+                    return redirect()->route('memur_dashboard');
+                }
+            }else{
+                return redirect()->back()->with('error','Lütfen bilgilerinizin sistemde kayıtlı olduğundan emin olup doğru bilgileriniz ile tekrar deneyiniz!');
             }
+
 
         }else{
             return redirect()->back()->with('error','Lütfen bilgilerinizi kontrol ediniz. Girdiğiniz bilgiler hatalıdır!');

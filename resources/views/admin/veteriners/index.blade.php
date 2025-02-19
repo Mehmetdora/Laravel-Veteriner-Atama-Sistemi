@@ -1,8 +1,8 @@
-@extends('layouts.app')
-@section('customCSS')
+@extends('admin.layouts.app')
+@section('admin.customCSS')
 @endsection
 
-@section('content')
+@section('admin.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -28,7 +28,7 @@
                                 Veteriner Ekle</button></a>
                     </div>
                 </div>
-                @include('layouts.messages')
+                @include('admin.layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
@@ -154,7 +154,7 @@
 @endsection
 
 
-@section('customJS')
+@section('admin.customJS')
     <script>
         const silB = document.querySelectorAll('.veteriner_sil');
         var sil_modal = document.getElementById('veteriner-sil-modal');
