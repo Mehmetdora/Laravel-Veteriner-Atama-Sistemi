@@ -14,7 +14,7 @@
                     alt="User Image">
             </div>
             <div class="info">
-                <a href="{{route('admin_profile')}}" class="d-block">{{Auth::user()->name}}</a>
+                <a href="{{ route('admin_profile') }}" class="d-block">{{ Auth::user()->name }}</a>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
                 data-accordion="false">
 
                 <li class="nav-item ">
-                    <a href="{{route('admin.evrak.index')}}" class="nav-link active">
+                    <a href="{{ route('admin.evrak.index') }}" class="nav-link active">
                         <i class="nav-icon fas fa-layer-group"></i>
                         <p>
                             Evrak Kayıt
@@ -50,18 +50,23 @@
                         </p>
                     </a>
                 </li>
-
-                <li class="nav-header">MULTI LEVEL EXAMPLE</li>
+                <br>
                 <li class="nav-item">
-                    <a href="{{route('admin.veteriners.index')}}" class="nav-link ">
+                    <a href="{{ route('admin.veteriners.index') }}" class="nav-link ">
                         <i class="fas fa-syringe"></i>
                         <p>Veterinerler</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route('admin.evrak_tur.index')}}" class="nav-link ">
+                    <a href="{{ route('admin.evrak_tur.index') }}" class="nav-link ">
                         <i class="fas fa-file"></i>
                         <p>Evrak Türleri</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route('admin.nobets.index')}}" class="nav-link">
+                        <i class="far fa-calendar"></i>
+                        <p>Haftalık Nöbet Listesi</p>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -108,12 +113,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Level 2</p>
-                            </a>
-                        </li>
+
                     </ul>
                 </li>
                 <li class="nav-item">

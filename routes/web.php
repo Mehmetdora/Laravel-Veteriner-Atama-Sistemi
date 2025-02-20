@@ -10,6 +10,7 @@ use App\Http\Controllers\memur\MemurController;
 use App\Http\Controllers\admin\EvrakTurController;
 use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
+use App\Http\Controllers\NobetController;
 
     // HER MİGRATE:FRESH YAPINCA SEEDER ile  BERABER ÇALIŞTIR
 
@@ -36,9 +37,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/profil/düzenlendi','edited')->name('admin_edited');
     });
 
-
-
-
     Route::controller(EvrakController::class)->group(function(){
         Route::get('/admin/evrak/liste','index')->name('admin.evrak.index');
         Route::get('/admin/evrak/detay/{id}','detail')->name('admin.evrak.detail');
@@ -62,8 +60,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     });
 
-
-
     // Admin Veteriner işlemleri controller
     Route::controller(VeterinerEController::class)->group(function(){
         Route::get('/admin/veterinerler/liste','index')->name('admin.veteriners.index');
@@ -81,6 +77,15 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/veterinerler/veteriner/düzenlendi','edited')->name('admin.veteriners.veteriner.edited');
 
         Route::get('/admin/veterinerler/veteriner/sil/{id}','delete')->name('admin.veteriners.veteriner.delete');
+    });
+
+
+    // Nöbet işlemleri
+    Route::controller(NobetController::class)->group(function(){
+
+        Route::get('/admin/nöbet/liste','index')->name('admin.nobets.index');
+
+        Route::post('/admin/nöbet/düzenlendi','nobet_edited')->name('admin.nobet.edited');
     });
 
 });

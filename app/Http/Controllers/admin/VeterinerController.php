@@ -20,38 +20,38 @@ class VeterinerController extends Controller
     {
 
         $veterinerler = User::role('veteriner')
-        ->where("status", 1)
-        ->with('evraks.evrak_durumu')
-        ->get();
+            ->where("status", 1)
+            ->with('evraks.evrak_durumu')
+            ->get();
 
         $data['veterinerler'] = $veterinerler;
         $ortalamalar = [];
 
         foreach ($veterinerler as $user) {
 
-            if($user->evraks()->exists()){
+            if ($user->evraks()->exists()) {
                 $onaylanacak = 0;
                 $onaylandi = 0;
 
                 foreach ($user->evraks as $evrak) {
                     $durum = $evrak->evrak_durumu->evrak_durum;
-                    if(isset($durum)){
-                        if($durum == "Onaylanacak"){
+                    if (isset($durum)) {
+                        if ($durum == "Onaylanacak") {
                             $onaylanacak += 1;
-                        }else{
+                        } else {
                             $onaylandi += 1;
                         }
                     }
                 }
                 $yuzde = 0;
 
-                if($onaylandi != 0){
-                    $yuzde = round($onaylandi / ($onaylanacak+$onaylandi),2) * 100;
+                if ($onaylandi != 0) {
+                    $yuzde = round($onaylandi / ($onaylanacak + $onaylandi), 2) * 100;
                 }
 
-                $ortalamalar []= $yuzde;
-            }else{
-                $ortalamalar []= -1;
+                $ortalamalar[] = $yuzde;
+            } else {
+                $ortalamalar[] = -1;
             }
         }
 
@@ -97,8 +97,8 @@ class VeterinerController extends Controller
 
         // EĞER SİLİNMİŞ BİR KULLANICI YENİDEN EKLENİLECEK OLURSA
         $user_old = User::where("phone_number", $request->phone_number)
-        ->orWhere("email", $request->email)
-        ->first();
+            ->orWhere("email", $request->email)
+            ->first();
         if (isset($user_old)) {
             $user_old->status = 1;
             $user_old->name = $request->name;
@@ -144,8 +144,23 @@ class VeterinerController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'username' => 'required',
-            'email' => 'required|email',
-            'phone_number' => 'required|max:10|min:10|unique:users',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users')->where(function ($query) use($request) {
+                    return $query->where('id','!=', $request->id);
+                    // users arasından gelen id ye sahip kullanıcı hariç diğer kullanıcılar arasına unique phone num.
+                }),
+            ],
+            'phone_number' => [
+                'required',
+                'max:10',
+                'min:10',
+                Rule::unique('users')->where(function ($query) use($request) {
+                    return $query->where('id','!=', $request->id);
+                    // users arasından gelen id ye sahip kullanıcı hariç diğer kullanıcılar arasına unique phone num.
+                }),
+            ],
             'password' => 'Nullable|min:6',
         ]);
 
@@ -247,10 +262,11 @@ class VeterinerController extends Controller
         }
     }
 
-    public function evrak_detail($id){
+    public function evrak_detail($id)
+    {
         $data['evrak'] = Evrak::find($id);
 
-        return view('admin.veteriners.veteriner.evraks.detail',$data);
+        return view('admin.veteriners.veteriner.evraks.detail', $data);
     }
 
 
