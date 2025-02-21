@@ -10,15 +10,14 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Nöbet Listesi</h1>
+                        <h1>Nöbet Listesi Takvimi</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#"><button onclick="exportCalendarToPDF()">Takvimi PDF
-                                        Olarak Kaydet</button></a>
+                            <li class="breadcrumb-item"><a href="#"><button class="btn btn-primary"
+                                        onclick="exportCalendarToPDF()">Takvimi PDF
+                                        Olarak İndir</button></a>
                             </li>
-
-
                         </ol>
                     </div>
                 </div>
@@ -28,12 +27,32 @@
         <!-- Main content -->
         <section class="content">
             <div class="container-fluid">
+                <hr class="mt3-">
+                <div class="row mb-3">
+                    <h5 class="ml-1"><b>Uyarı:</b> Takvim üzerinde sadece boyalı günler için ekleme-düzenleme yapılabilir.
+                    </h5>
+                    <h5 class="ml-1"><b>Dikkat:</b> Takvim üzerinde değişiklikler yapıldıktan sonra kaydet butonu ile
+                        kaydedilmelidir, aksi takdirde değişiklikler kayıt edilmez!
+                    </h5>
+                </div>
+
                 <div class="row">
+                    <div class="col-md-9">
+                        <div class="card card-primary">
+                            <div class="card-body p-0">
+                                <!-- THE CALENDAR -->
+                                <div id="calendar"></div>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                        <!-- /.card -->
+                    </div>
+
                     <div class="col-md-3">
                         <div class="sticky-top mb-3">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Sürükle Bırak</h4>
+                                    <h4 class="card-title">Veterinerler(Sürükle Bırak)</h4>
                                 </div>
                                 <div class="card-body">
                                     <!-- the events -->
@@ -55,7 +74,7 @@
                                 <!-- /.card-body -->
                             </div>
                             <div class="card">
-                                <a class="btn btn-primary card-title" onclick="getModifiedWeeks()">
+                                <a class="btn btn-primary card-title" onclick="saveWeeks()">
                                     Kaydet
                                 </a>
                             </div>
@@ -63,16 +82,7 @@
                         </div>
                     </div>
                     <!-- /.col -->
-                    <div class="col-md-9">
-                        <div class="card card-primary">
-                            <div class="card-body p-0">
-                                <!-- THE CALENDAR -->
-                                <div id="calendar"></div>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>
+
                     <!-- /.col -->
                 </div>
                 <!-- /.row -->
@@ -99,6 +109,25 @@
         var calendar;
 
         $(function() {
+
+            //bugün ü belirleme
+            var today = new Date();
+            today.setDate(today.getDate());
+            today = today.toISOString().split("T")[0];
+
+            // Düzenleme yapılabilecek günlerin listesini oluşturma(bu günleri farklı renge boyamak için)
+            var editable_days = [];
+            var bugun = new Date();
+            var buHafta = new Date(bugun.setDate(bugun.getDate() - bugun.getDay()));
+            var ilk_gun = new Date(buHafta);
+            ilk_gun.setDate(ilk_gun.getDate() - 14); // 2 hafta önce başla
+            var son_gun = new Date(buHafta);
+            son_gun.setDate(son_gun.getDate() + 20); // 2 hafta sonrası
+            let gecici = new Date(ilk_gun);
+            while (gecici <= son_gun) {
+                editable_days.push(gecici.toISOString().split("T")[0]);
+                gecici.setDate(gecici.getDate() + 1);
+            }
 
 
 
@@ -170,6 +199,14 @@
                     list: "Liste",
                 },
 
+                dayCellDidMount: function(info) { // günleri boyama
+                    if (today == info.date.toISOString().split("T")[0]) {
+                        info.el.style.backgroundColor = "#f9c4c4"; // Açık kırmızı arka plan
+                    } else if (editable_days.includes(info.date.toISOString().split('T')[0])) {
+                        info.el.style.backgroundColor = "#c4f9ce"; // Açık kırmızı arka plan
+                    }
+                },
+
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
@@ -182,13 +219,16 @@
                     @foreach ($nobetci_haftalari as $week)
                         @php
                             $days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                            $colors = ['#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF','#1E3A8A']; // Günlere özel renkler
+                            $colors = ['#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF', '#1E3A8A']; // Günlere özel renkler
                         @endphp
 
                         @foreach ($days as $index => $day)
                             @foreach ($week->$day as $event)
                                 {
                                     title: "{{ $event['vet_name'] }}",
+                                    extendedProps: {
+                                        veteriner_id: "{{ $event['vet_id'] }}"
+                                    },
                                     start: new Date("{{ $event['date'] }}"),
                                     backgroundColor: "{{ $colors[$index] }}",
                                     borderColor: "{{ $colors[$index] }}",
@@ -216,6 +256,7 @@
 
                     // Yeni bir event ID oluştur,her öğenin farklı olması için
                     newEvent.setProp('id', 'event-' + Date.now());
+                    newEvent.setExtendedProp('veteriner_id', info.draggedEl.id);
 
                     var existingEvents = calendar.getEvents();
                     var isDuplicate = existingEvents.some(event =>
@@ -224,7 +265,15 @@
                         event.title === newEvent.title
                     );
 
+                    // Sadece günlerin renkli olarak belirtildiği günlerde ekleme yapılabilir
+                    var isInEditableArea = !(editable_days.includes(newEvent.start.toISOString().split(
+                        "T")[0]));
 
+
+                    if (isInEditableArea) {
+                        alert("Takvimde  belirtilen günler için düzenleme yapılabilir!");
+                        info.event.remove();
+                    }
                     if (isDuplicate) {
                         alert("Bu bölmeye zaten aynı etkinlik eklenmiş!");
                         info.event.remove(); // Aynı olanı kaldır
@@ -286,6 +335,9 @@
             calendar.render();
             // $('#calendar').fullCalendar()
 
+
+
+
             /* ADDING EVENTS */
             var currColor = '#3c8dbc' //Red by default
             // Color chooser button
@@ -328,47 +380,71 @@
 
         })
 
-        function getModifiedWeeks() {
+        function saveWeeks() {
             var existingEvents = calendar.getEvents();
             var today = new Date();
-            var currentWeekStart = new Date(today.setDate(today.getDate() - today
-                .getDay())); // Haftanın başlangıcı (Pazartesi)
+
+            // Haftanın başlangıcını bul (Pazar)
+            var currentWeekStart = new Date(today.setDate(today.getDate() - today.getDay()));
 
             // 2 hafta öncesi ve 2 hafta sonrası dahil tüm haftaları belirle
             var startDate = new Date(currentWeekStart);
             startDate.setDate(startDate.getDate() - 14); // 2 hafta önce başla
 
             var endDate = new Date(currentWeekStart);
-            endDate.setDate(endDate.getDate() + 21); // 2 hafta sonrası
+            endDate.setDate(endDate.getDate() + 20); // 2 hafta sonrası
 
             let weekGroups = {}; // Haftaları objeye ayıracağız
+            let weekNames = [];
 
+            // 📌 **Önce tüm haftaları oluştur** (Boş olsa bile eklenecek)
+            let tempDate = new Date(startDate);
+            while (tempDate <= endDate) {
+                let weekName = getWeekNumber(tempDate); // Haftayı belirle
+                if (!weekGroups[weekName]) {
+                    weekGroups[weekName] = {
+                        weekName: weekName,
+                        startOfWeek: getWeekStart(tempDate), // Haftanın başlangıç tarihi (Pazar)
+                        endOfWeek: getWeekEnd(tempDate), // Haftanın bitiş tarihi (Cumartesi)
+                        events: [] // Başlangıçta boş
+                    };
+                    weekNames.push(weekName);
+                }
+                tempDate.setDate(tempDate.getDate() + 7); // Haftaları artır
+            }
+
+
+
+
+            // 📌 **Şimdi etkinlikleri ilgili haftalara ekle**
             existingEvents.forEach(event => {
+                console.log(event);
                 let eventStart = new Date(event.start);
+                let eventStartDay = new Date(eventStart.getTime() - eventStart.getTimezoneOffset() * 60000);
+
+                //console.log(eventStartDay, ' Event Day');
 
                 // Etkinlik belirtilen 5 hafta içinde mi?
-                if (eventStart >= startDate && eventStart <= endDate) {
-                    let weekName = getWeekNumber(eventStart); // Haftayı belirle
+                if (eventStartDay >= startDate && eventStartDay <= endDate) {
+                    let weekName = getWeekNumber(eventStartDay); // Haftayı belirle
 
-                    if (!weekGroups[weekName]) {
-                        weekGroups[weekName] = {
-                            weekName: weekName,
-                            startOfWeek: getWeekStart(eventStart), // Haftanın başlangıç tarihi
-                            endOfWeek: getWeekEnd(eventStart), // Haftanın bitiş tarihi
-                            events: []
-                        };
+                    if (weekNames.includes(weekName)) { // 5 haftalık zaman içindeyse ekle
+                        weekGroups[weekName].events.push({
+                            vet_id: event._def.extendedProps.veteriner_id,
+                            vet_name: event.title,
+                            date: eventStartDay.toISOString().split("T")[0],
+                        });
                     }
-
-                    weekGroups[weekName].events.push({
-                        vet_name: event.title,
-                        date: eventStart.toISOString(),
-                    });
                 }
             });
 
-            // Sadece değişiklik yapılmış (etkinlik eklenmiş) haftaları al
-            save_users(Object.values(weekGroups).filter(week => week.events.length > 0));
+            //Tüm 5 haftayı içeren weekGroups'u logla**
+            //console.log(weekGroups, ' Tüm 5 hafta verisi');
+
+            // Haftaları backend'e kaydet**
+            save_users(Object.values(weekGroups)); // Artık her hafta var(5 hafta her seferinde), boş olanlar da dahil
         }
+
 
 
         function save_users(modifiedWeeks) {
@@ -385,7 +461,7 @@
                         alert("Nöbetçi listesi başarıyla kaydedildi!");
                         window.location.reload();
                     } else {
-                        alert(response.message);
+                        console.log(response.message);
                     }
                 },
                 error: function(xhr) {
@@ -398,26 +474,31 @@
         // 📌 Yardımcı Fonksiyonlar
 
         // Tarihin hangi hafta numarasına ait olduğunu bul
+        // Tarihin hangi hafta numarasına ait olduğunu bul (Hafta Pazar günü başlıyor)
         function getWeekNumber(date) {
             let d = new Date(date);
             d.setHours(0, 0, 0, 0);
-            d.setDate(d.getDate() - d.getDay() + 1); // Haftanın başlangıcını bul
+            d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Haftanın başlangıcını bul (Pazar)
             let startYear = new Date(d.getFullYear(), 0, 1);
-            let weekNumber = Math.ceil((((d - startYear) / 86400000) + startYear.getDay() + 1) / 7);
+            let weekNumber = Math.ceil((((d - startYear) / 86400000) + startYear.getDay()) / 7);
             return `${d.getFullYear()}-W${weekNumber}`;
         }
 
-        // Haftanın başlangıcını bul (Pazartesi)
+        // Haftanın başlangıcını bul (Pazar)
         function getWeekStart(date) {
             let d = new Date(date);
-            d.setDate(d.getDate() - d.getDay() + 1); // Haftanın Pazartesi'sini bul
+            d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Pazar'ı bul
+
+            //console.log(d.toISOString().split('T')[0], ' hafta başı');
             return d.toISOString().split('T')[0];
         }
 
-        // Haftanın bitişini bul (Pazar)
+        // Haftanın bitişini bul (Cumartesi)
         function getWeekEnd(date) {
             let d = new Date(date);
-            d.setDate(d.getDate() - d.getDay() + 7); // Haftanın Pazar'ını bul
+            d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 6); // Cumartesi'yi bul
+
+            //console.log(d.toISOString().split('T')[0], ' hafta sonu');
             return d.toISOString().split('T')[0];
         }
     </script>

@@ -22,8 +22,6 @@ class NobetController extends Controller
 
     public function nobet_edited(Request $request)
     {
-
-
         try {
             $modifiedWeeks = $request->input('modifiedWeeks');
 
@@ -52,15 +50,16 @@ class NobetController extends Controller
                     $dayOfWeek = strtolower($eventDate->format('D')); // Günün adını al (mon, tue, wed, ...)
 
                     // Eğer geçerli bir gün ise, ilgili günün listesine ekle
-                    if (array_key_exists($dayOfWeek, $data)) {
-                        $data[$dayOfWeek][] = [
+                    if (array_key_exists($dayOfWeek, $data)) {  // koşul her gün için true döner,
+                        $data[$dayOfWeek][] = [     // datanın istenilen gününe objeyi ekleme
+                            'vet_id' => $event['vet_id'],
                             'vet_name' => $event['vet_name'],
                             'date'     => $event['date'],
-                        ];
+                        ]; 
                     }
                 }
 
-                // Veriyi kaydet veya güncelle
+
                 $updated_week = NobetHafta::updateOrCreate(
                     ['weekName' => $week['weekName']], // Güncellenecek veya oluşturulacak kayıt kriteri
                     $data
