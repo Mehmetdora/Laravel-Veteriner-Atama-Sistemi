@@ -5,6 +5,7 @@ namespace App\Http\Controllers\veteriner;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Evrak;
+use App\Models\NobetHafta;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -89,6 +90,14 @@ class VeterinerController extends Controller
         $data['unread_evraks_count'] = Auth::user()->unread_evraks_count();
 
         return view('veteriner.evraks.evrak.index',$data);
+
+    }
+
+
+    public function nobets_index(){
+
+        $data['weeks'] = NobetHafta::all();
+        return view('veteriner.nobets_index',$data);
 
     }
 

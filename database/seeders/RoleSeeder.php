@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\EvrakTur;
+use App\Models\Izin;
 use App\Models\User;
 use App\Models\Veteriner;
 use Illuminate\Database\Seeder;
@@ -70,5 +71,13 @@ class RoleSeeder extends Seeder
         EvrakTur::create(['name' => 'İthalat']);
         EvrakTur::create(['name' => 'Transit']);
         EvrakTur::create(['name' => 'Antrepo']);
+
+        $permissions = ['Yıllık İzin', 'Hastalık İzni', 'Özel İzin', 'Eğitim İzni'];
+
+        foreach ($permissions as $permission) {
+            Izin::create(['name' => $permission]);
+        }
+
+        User::find(1)->izins()->attach(1,['startDate' => '2025-03-01','endDate'=>'2025-03-05']);
     }
 }

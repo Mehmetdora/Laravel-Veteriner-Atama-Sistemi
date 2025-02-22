@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->hasMany(Evrak::class,'user_id','id');
     }
 
+    public function izins(){
+        return $this->belongsToMany(Izin::class,'user_izin')->withPivot('startDate', 'endDate')
+        ->withTimestamps();;
+    }
+
     public function unread_evraks_count(){
         return $this->evraks()
         ->whereHas('evrak_durumu', function ($query) {

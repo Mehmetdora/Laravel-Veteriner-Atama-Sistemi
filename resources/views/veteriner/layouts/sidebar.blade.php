@@ -29,7 +29,7 @@
                     <a href="{{ route('veteriner.evraks.index') }}" class="nav-link active">
                         <i class="nav-icon fas fa-layer-group"></i>
                         <p>
-                            Evraklar
+                            Evraklarım
                             @if (isset($unread_evraks_count))
                                 @if ($unread_evraks_count > 0)
                                     <span class="right badge badge-danger">{{ $unread_evraks_count }} Yeni</span>
@@ -38,8 +38,15 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item ">
+                    <a href="{{ route('veteriner.nobet.index') }}" class="nav-link active">
+                        <i class="nav-icon fas fa-calendar"></i>
+                        <p>
+                            Nöbet Günlerim
+                        </p>
+                    </a>
+                </li>
 
-                
 
             </ul>
         </nav>

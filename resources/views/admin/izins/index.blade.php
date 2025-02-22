@@ -234,10 +234,7 @@
                 events: [
 
                     @foreach ($nobetci_haftalari as $week)
-                        @php
-                            $days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                            $colors = ['#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF', '#1E3A8A']; // Günlere özel renkler
-                        @endphp
+                      
 
                         @foreach ($days as $index => $day)
                             @foreach ($week->$day as $event)
@@ -247,8 +244,8 @@
                                         veteriner_id: "{{ $event['vet_id'] }}"
                                     },
                                     start: new Date("{{ $event['date'] }}"),
-                                    backgroundColor: "{{ $colors[$index] }}",
-                                    borderColor: "{{ $colors[$index] }}",
+                                    backgroundColor: "#2A92E4",
+                                    borderColor: "#2A92E4",
                                     allDay: true,
                                 },
                             @endforeach
@@ -291,7 +288,7 @@
                         info.event.remove();
                     }
                     if (isDuplicate) {
-                        alert("Bu gün için seçilen kullanıcı zaten ekli!");
+                        alert("Bu bölmeye zaten aynı etkinlik eklenmiş!");
                         info.event.remove(); // Aynı olanı kaldır
                     }
                 },

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 use function PHPSTORM_META\map;
+use function PHPUnit\Framework\isEmpty;
 
 class VeterinerController extends Controller
 {
@@ -39,48 +40,46 @@ class VeterinerController extends Controller
         $week = NobetHafta::where('startOfWeek', '<=', $today)
             ->where('endOfWeek', '>=', $today)->first();
 
-        $today_nobetciler = [];
-
-        switch ($today_name) {
-            case 'mon':
-                $today_nobetciler[] = $week->mon;
-
-                break;
-            case 'tue':
-                $today_nobetciler[] = $week->tue;
-
-                break;
-            case 'wed':
-                $today_nobetciler[] = $week->wed;
-
-                break;
-            case 'thu':
-                $today_nobetciler[] = $week->thu;
-
-                break;
-            case 'fri':
-                $today_nobetciler[] = $week->fri;
-
-                break;
-            case 'sat':
-                $today_nobetciler[] = $week->sat;
-
-                break;
-            case 'sun':
-                $today_nobetciler[] = $week->sun;
-
-                break;
-            default:
-                return redirect()->back()->with('error', 'Hatalı gün sorgusu!');
-        }
-
         $today_vet_arr = [];    // veterinerlerin id listesi
-        foreach ($today_nobetciler[0] as $nobetci) {
-            $today_vet_arr[] = $nobetci['vet_id'];
+        if(isset($week)){
+            $today_nobetciler = [];
+            switch ($today_name) {
+                case 'mon':
+                    $today_nobetciler[] = $week->mon;
+
+                    break;
+                case 'tue':
+                    $today_nobetciler[] = $week->tue;
+
+                    break;
+                case 'wed':
+                    $today_nobetciler[] = $week->wed;
+
+                    break;
+                case 'thu':
+                    $today_nobetciler[] = $week->thu;
+
+                    break;
+                case 'fri':
+                    $today_nobetciler[] = $week->fri;
+
+                    break;
+                case 'sat':
+                    $today_nobetciler[] = $week->sat;
+
+                    break;
+                case 'sun':
+                    $today_nobetciler[] = $week->sun;
+
+                    break;
+                default:
+                    return redirect()->back()->with('error', 'Hatalı gün sorgusu!');
+            }
+
+            foreach ($today_nobetciler[0] as $nobetci) {
+                $today_vet_arr[] = $nobetci['vet_id'];
+            }
         }
-
-
-
 
         $veterinerler = User::role('veteriner')
             ->where("status", 1)

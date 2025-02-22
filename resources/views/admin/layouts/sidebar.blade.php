@@ -69,6 +69,12 @@
                         <p>Nöbet Listesi Takvimi</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route('admin.izin.index')}}" class="nav-link">
+                        <i class="far fa-user"></i>
+                        <p>İzin Listesi Takvimi</p>
+                    </a>
+                </li>
 
             </ul>
         </nav>
