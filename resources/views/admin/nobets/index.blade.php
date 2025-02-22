@@ -115,19 +115,31 @@
             today.setDate(today.getDate());
             today = today.toISOString().split("T")[0];
 
-            // Düzenleme yapılabilecek günlerin listesini oluşturma(bu günleri farklı renge boyamak için)
+            // Düzenleme yapılabilecek günlerin listesini oluşturma
             var editable_days = [];
-            var bugun = new Date();
-            var buHafta = new Date(bugun.setDate(bugun.getDate() - bugun.getDay()));
+            var day = new Date();
+
+            // Haftanın ilk gününü (Pazartesi) bul
+            var buHafta = new Date(day);
+            buHafta.setDate(day.getDate() - day.getDay() + (day.getDay() === 0 ? -6 : 1));
+
+            // 2 hafta önceki Pazartesi
             var ilk_gun = new Date(buHafta);
-            ilk_gun.setDate(ilk_gun.getDate() - 14); // 2 hafta önce başla
+            ilk_gun.setDate(ilk_gun.getDate() - 14);
+
+            // 2 hafta sonraki Pazar
             var son_gun = new Date(buHafta);
-            son_gun.setDate(son_gun.getDate() + 20); // 2 hafta sonrası
+            son_gun.setDate(son_gun.getDate() + 20);
+
             let gecici = new Date(ilk_gun);
             while (gecici <= son_gun) {
                 editable_days.push(gecici.toISOString().split("T")[0]);
                 gecici.setDate(gecici.getDate() + 1);
             }
+
+            //console.log("İlk Gün:", ilk_gun.toISOString().split("T")[0]);
+            //console.log("Son Gün:", son_gun.toISOString().split("T")[0]);
+            //console.log("Editable Days:", editable_days);
 
 
 
@@ -200,10 +212,15 @@
                 },
 
                 dayCellDidMount: function(info) { // günleri boyama
-                    if (today == info.date.toISOString().split("T")[0]) {
-                        info.el.style.backgroundColor = "#f9c4c4"; // Açık kırmızı arka plan
-                    } else if (editable_days.includes(info.date.toISOString().split('T')[0])) {
-                        info.el.style.backgroundColor = "#c4f9ce"; // Açık kırmızı arka plan
+                    const date = new Date(info.date);
+                    const formattedDate = date.toLocaleDateString('fr-CA');
+
+                    if (editable_days.includes(formattedDate)) {
+                        if (today === formattedDate) {
+                            info.el.style.backgroundColor = "#f9c4c4"; // Açık kırmızı arka plan
+                        } else {
+                            info.el.style.backgroundColor = "#c4f9ce"; //  arka plan
+                        }
                     }
                 },
 
@@ -266,11 +283,10 @@
                     );
 
                     // Sadece günlerin renkli olarak belirtildiği günlerde ekleme yapılabilir
-                    var isInEditableArea = !(editable_days.includes(newEvent.start.toISOString().split(
-                        "T")[0]));
+                    var isInEditableArea = editable_days.includes(newEvent.start.toLocaleDateString('fr-CA'));
 
 
-                    if (isInEditableArea) {
+                    if (!isInEditableArea) {
                         alert("Takvimde  belirtilen günler için düzenleme yapılabilir!");
                         info.event.remove();
                     }
@@ -392,7 +408,7 @@
             startDate.setDate(startDate.getDate() - 14); // 2 hafta önce başla
 
             var endDate = new Date(currentWeekStart);
-            endDate.setDate(endDate.getDate() + 20); // 2 hafta sonrası
+            endDate.setDate(endDate.getDate() + 27); // 2 hafta sonrası
 
             let weekGroups = {}; // Haftaları objeye ayıracağız
             let weekNames = [];
@@ -418,7 +434,6 @@
 
             // 📌 **Şimdi etkinlikleri ilgili haftalara ekle**
             existingEvents.forEach(event => {
-                console.log(event);
                 let eventStart = new Date(event.start);
                 let eventStartDay = new Date(eventStart.getTime() - eventStart.getTimezoneOffset() * 60000);
 

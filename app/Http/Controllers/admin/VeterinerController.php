@@ -10,8 +10,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Models\NobetHafta;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
+use function PHPSTORM_META\map;
 
 class VeterinerController extends Controller
 {
@@ -19,14 +22,73 @@ class VeterinerController extends Controller
     public function index()
     {
 
+        $today = date('Y-m-d');
+        $day_name = date('l'); // İngilizce gün
+
+        $gunler = [
+            'Monday' => 'mon',
+            'Tuesday' => 'tue',
+            'Wednesday' => 'wed',
+            'Thursday' => 'thu',
+            'Friday' => 'fri',
+            'Saturday' => 'sat',
+            'Sunday' => 'sun',
+        ];
+        $today_name =  $gunler[$day_name]; // Türkçeye çevir
+
+        $week = NobetHafta::where('startOfWeek', '<=', $today)
+            ->where('endOfWeek', '>=', $today)->first();
+
+        $today_nobetciler = [];
+
+        switch ($today_name) {
+            case 'mon':
+                $today_nobetciler[] = $week->mon;
+
+                break;
+            case 'tue':
+                $today_nobetciler[] = $week->tue;
+
+                break;
+            case 'wed':
+                $today_nobetciler[] = $week->wed;
+
+                break;
+            case 'thu':
+                $today_nobetciler[] = $week->thu;
+
+                break;
+            case 'fri':
+                $today_nobetciler[] = $week->fri;
+
+                break;
+            case 'sat':
+                $today_nobetciler[] = $week->sat;
+
+                break;
+            case 'sun':
+                $today_nobetciler[] = $week->sun;
+
+                break;
+            default:
+                return redirect()->back()->with('error', 'Hatalı gün sorgusu!');
+        }
+
+        $today_vet_arr = [];    // veterinerlerin id listesi
+        foreach ($today_nobetciler[0] as $nobetci) {
+            $today_vet_arr[] = $nobetci['vet_id'];
+        }
+
+
+
+
         $veterinerler = User::role('veteriner')
             ->where("status", 1)
             ->with('evraks.evrak_durumu')
             ->get();
 
-        $data['veterinerler'] = $veterinerler;
-        $ortalamalar = [];
 
+        $ortalamalar = [];
         foreach ($veterinerler as $user) {
 
             if ($user->evraks()->exists()) {
@@ -54,9 +116,20 @@ class VeterinerController extends Controller
                 $ortalamalar[] = -1;
             }
         }
-
-
         $data['yuzdeler'] = $ortalamalar;
+
+        $veterinerler = collect($veterinerler)->map(function ($vet) use ($today_vet_arr) {
+            return [
+                'id' => $vet->id,
+                'name' => $vet->name,
+                'is_nobetci' => in_array($vet->id, $today_vet_arr),
+                'created_at' => $vet->created_at,
+
+            ];
+        });
+
+        $data['veterinerler'] = $veterinerler;
+
 
         return view('admin.veteriners.index', $data);
     }
@@ -147,8 +220,8 @@ class VeterinerController extends Controller
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users')->where(function ($query) use($request) {
-                    return $query->where('id','!=', $request->id);
+                Rule::unique('users')->where(function ($query) use ($request) {
+                    return $query->where('id', '!=', $request->id);
                     // users arasından gelen id ye sahip kullanıcı hariç diğer kullanıcılar arasına unique phone num.
                 }),
             ],
@@ -156,8 +229,8 @@ class VeterinerController extends Controller
                 'required',
                 'max:10',
                 'min:10',
-                Rule::unique('users')->where(function ($query) use($request) {
-                    return $query->where('id','!=', $request->id);
+                Rule::unique('users')->where(function ($query) use ($request) {
+                    return $query->where('id', '!=', $request->id);
                     // users arasından gelen id ye sahip kullanıcı hariç diğer kullanıcılar arasına unique phone num.
                 }),
             ],

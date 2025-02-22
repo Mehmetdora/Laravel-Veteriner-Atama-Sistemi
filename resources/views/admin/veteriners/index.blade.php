@@ -44,7 +44,7 @@
                                 </th>
 
                                 <th style="width: 12%" class="text-center">
-                                    Nöbetçi Mi?
+                                    Nöbetçi Mi?(Bugün)
                                 </th>
 
                                 <th style="width: 12%" class="text-center">
@@ -64,50 +64,55 @@
                                         </td>
                                         <td>
                                             <a>
-                                                {{ $veteriner->name }}
+                                                {{ $veteriner['name'] }}
                                             </a>
                                             <br />
                                             <small>
-                                                Eklendi {{ $veteriner->created_at->format('d-m-y') }}
+                                                Eklendi {{ $veteriner['created_at']->format('d-m-y') }}
                                             </small>
                                         </td>
 
                                         <td class="project_progress">
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
-                                                    aria-valuemin="0" aria-valuemax="100" style="width: {{$yuzdeler[$loop->index]}}%">
+                                                    aria-valuemin="0" aria-valuemax="100"
+                                                    style="width: {{ $yuzdeler[$loop->index] }}%">
                                                 </div>
                                             </div>
                                             <small>
                                                 @if ($yuzdeler[$loop->index] == -1)
                                                     Hiç Evrak Atanmamış
                                                 @else
-                                                Evraklar %{{$yuzdeler[$loop->index]}} Tamamlandı
+                                                    Evraklar %{{ $yuzdeler[$loop->index] }} Tamamlandı
                                                 @endif
                                             </small>
                                         </td>
                                         <td class="project-state">
-                                            <span class="badge badge-success">Nöbetçi</span>
+                                            @if ($veteriner['is_nobetci'] == true)
+                                                <span class="badge badge-success">Nöbetçi</span>
+                                            @else
+                                                <span class="badge badge-warning">Nöbetçi değil</span>
+                                            @endif
                                         </td>
                                         <td class="project-state">
                                             <span class="badge badge-success">Aktif</span>
                                         </td>
                                         <td class="project-actions text-right">
                                             <a class="btn btn-primary btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.evraks', $veteriner->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.evraks', $veteriner['id']) }}">
                                                 <i class="fas fa-folder">
                                                 </i>
                                                 Evrakları
                                             </a>
                                             <a class="btn btn-info btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.edit', $veteriner->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.edit', $veteriner['id']) }}">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Düzenle
                                             </a>
                                             <a class="btn btn-danger btn-sm veteriner_sil" data-toggle="modal"
                                                 data-target="#modal-veteriner-delete" role="button"
-                                                data-yeni="{{ route('admin.veteriners.veteriner.delete', $veteriner->id) }}">
+                                                data-yeni="{{ route('admin.veteriners.veteriner.delete', $veteriner['id']) }}">
                                                 <i class="fas fa-trash">
                                                 </i>
                                                 Veterineri Sistemden Kaldır
