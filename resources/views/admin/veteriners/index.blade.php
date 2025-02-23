@@ -95,7 +95,11 @@
                                             @endif
                                         </td>
                                         <td class="project-state">
-                                            <span class="badge badge-success">Aktif</span>
+                                            @if ($veteriner['is_izinli'] == true)
+                                                <span class="badge badge-success">İzinli</span>
+                                            @else
+                                                <span class="badge badge-warning">İzinli değil</span>
+                                            @endif
                                         </td>
                                         <td class="project-actions text-right">
                                             <a class="btn btn-primary btn-sm"

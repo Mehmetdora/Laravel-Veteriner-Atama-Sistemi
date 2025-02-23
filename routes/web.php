@@ -97,7 +97,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/izin/ekle','create')->name('admin.izin.create');
         Route::post('/admin/izin/eklendi','created')->name('admin.izin.created');
 
-        Route::get('/admin/izin/sil/{id}','delete')->name('admin.izin.delete');
+        Route::post('/admin/izin/silindi','delete')->name('admin.izin.delete');
 
     });
 

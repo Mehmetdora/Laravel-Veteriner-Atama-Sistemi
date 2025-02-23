@@ -236,7 +236,7 @@
                     @foreach ($nobetci_haftalari as $week)
                         @php
                             $days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                            $colors = ['#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF', '#1E3A8A']; // Günlere özel renkler
+                            $colors = ['#1E3A8A','#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF']; // Günlere özel renkler
                         @endphp
 
                         @foreach ($days as $index => $day)

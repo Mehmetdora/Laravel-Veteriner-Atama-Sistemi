@@ -24,8 +24,9 @@ class VeterinerController extends Controller
     {
 
         $today = date('Y-m-d');
-        $day_name = date('l'); // İngilizce gün
 
+        // NÖBETÇİ VETERİNERLERİ BULMA
+        $day_name = date('l'); // İngilizce gün
         $gunler = [
             'Monday' => 'mon',
             'Tuesday' => 'tue',
@@ -40,8 +41,8 @@ class VeterinerController extends Controller
         $week = NobetHafta::where('startOfWeek', '<=', $today)
             ->where('endOfWeek', '>=', $today)->first();
 
-        $today_vet_arr = [];    // veterinerlerin id listesi
-        if(isset($week)){
+        $today_nobetcileri_arr = [];    // veterinerlerin id listesi
+        if (isset($week)) {
             $today_nobetciler = [];
             switch ($today_name) {
                 case 'mon':
@@ -77,16 +78,28 @@ class VeterinerController extends Controller
             }
 
             foreach ($today_nobetciler[0] as $nobetci) {
-                $today_vet_arr[] = $nobetci['vet_id'];
+                $today_nobetcileri_arr[] = $nobetci['vet_id'];
             }
         }
 
+        // Tüm veterinerler
         $veterinerler = User::role('veteriner')
             ->where("status", 1)
             ->with('evraks.evrak_durumu')
             ->get();
 
 
+        // izinli veterinerleri bulma
+        $izinliler = [];
+        foreach ($veterinerler as $vet) {
+            $is_izinli = $vet->izins()->wherePivot('startDate','<=',$today)->wherePivot('endDate','>=',$today)->get();
+            if(!($is_izinli->isEmpty())){
+                $izinliler[] = $vet->id;
+            }
+        }
+
+
+        // EVRAK BİTİRME YÜZDESİ HESAPLAMA
         $ortalamalar = [];
         foreach ($veterinerler as $user) {
 
@@ -117,11 +130,13 @@ class VeterinerController extends Controller
         }
         $data['yuzdeler'] = $ortalamalar;
 
-        $veterinerler = collect($veterinerler)->map(function ($vet) use ($today_vet_arr) {
+        // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
+        $veterinerler = collect($veterinerler)->map(function ($vet) use ($today_nobetcileri_arr,$izinliler) {
             return [
                 'id' => $vet->id,
                 'name' => $vet->name,
-                'is_nobetci' => in_array($vet->id, $today_vet_arr),
+                'is_nobetci' => in_array($vet->id, $today_nobetcileri_arr),
+                'is_izinli' => in_array($vet->id,$izinliler),
                 'created_at' => $vet->created_at,
 
             ];
@@ -348,6 +363,8 @@ class VeterinerController extends Controller
 
         $veteriner = User::find($id);
         $veteriner->status = 0;
+        $veteriner->izins()->detach();
+
 
         $veteriner->save();
         return redirect()->route('admin.veteriners.index')->with('success', 'Veteriner Başarıyla Sistemden Çıkarılmıştır!');
