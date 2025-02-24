@@ -22,79 +22,28 @@ class VeterinerController extends Controller
 
     public function index()
     {
-
+        date_default_timezone_set('Europe/Istanbul');
         $today = date('Y-m-d');
 
-        // NÖBETÇİ VETERİNERLERİ BULMA
-        $day_name = date('l'); // İngilizce gün
-        $gunler = [
-            'Monday' => 'mon',
-            'Tuesday' => 'tue',
-            'Wednesday' => 'wed',
-            'Thursday' => 'thu',
-            'Friday' => 'fri',
-            'Saturday' => 'sat',
-            'Sunday' => 'sun',
-        ];
-        $today_name =  $gunler[$day_name]; // Türkçeye çevir
-
-        $week = NobetHafta::where('startOfWeek', '<=', $today)
-            ->where('endOfWeek', '>=', $today)->first();
-
-        $today_nobetcileri_arr = [];    // veterinerlerin id listesi
-        if (isset($week)) {
-            $today_nobetciler = [];
-            switch ($today_name) {
-                case 'mon':
-                    $today_nobetciler[] = $week->mon;
-
-                    break;
-                case 'tue':
-                    $today_nobetciler[] = $week->tue;
-
-                    break;
-                case 'wed':
-                    $today_nobetciler[] = $week->wed;
-
-                    break;
-                case 'thu':
-                    $today_nobetciler[] = $week->thu;
-
-                    break;
-                case 'fri':
-                    $today_nobetciler[] = $week->fri;
-
-                    break;
-                case 'sat':
-                    $today_nobetciler[] = $week->sat;
-
-                    break;
-                case 'sun':
-                    $today_nobetciler[] = $week->sun;
-
-                    break;
-                default:
-                    return redirect()->back()->with('error', 'Hatalı gün sorgusu!');
-            }
-
-            foreach ($today_nobetciler[0] as $nobetci) {
-                $today_nobetcileri_arr[] = $nobetci['vet_id'];
-            }
-        }
-
-        // Tüm veterinerler
+        // Tüm veterinerler ilişkileri ile
         $veterinerler = User::role('veteriner')
             ->where("status", 1)
-            ->with('evraks.evrak_durumu')
+            ->with(['evraks.evrak_durumu','nobets','izins'])
             ->get();
 
 
-        // izinli veterinerleri bulma
+        // izinli veterinerleri ve nobetçi veterinerleri bulma
         $izinliler = [];
+        $nobetliler = [];
         foreach ($veterinerler as $vet) {
             $is_izinli = $vet->izins()->wherePivot('startDate','<=',$today)->wherePivot('endDate','>=',$today)->get();
             if(!($is_izinli->isEmpty())){
                 $izinliler[] = $vet->id;
+            }
+
+            $is_nobetci = $vet->nobets()->where('date',$today)->exists();
+            if($is_nobetci){
+                $nobetliler[] = $vet->id;
             }
         }
 
@@ -131,11 +80,11 @@ class VeterinerController extends Controller
         $data['yuzdeler'] = $ortalamalar;
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
-        $veterinerler = collect($veterinerler)->map(function ($vet) use ($today_nobetcileri_arr,$izinliler) {
+        $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler,$izinliler) {
             return [
                 'id' => $vet->id,
                 'name' => $vet->name,
-                'is_nobetci' => in_array($vet->id, $today_nobetcileri_arr),
+                'is_nobetci' => in_array($vet->id, $nobetliler),
                 'is_izinli' => in_array($vet->id,$izinliler),
                 'created_at' => $vet->created_at,
 
@@ -364,6 +313,7 @@ class VeterinerController extends Controller
         $veteriner = User::find($id);
         $veteriner->status = 0;
         $veteriner->izins()->detach();
+        $veteriner->nobets()->detach();
 
 
         $veteriner->save();

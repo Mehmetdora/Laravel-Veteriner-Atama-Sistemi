@@ -7,6 +7,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Psy\TabCompletion\Matcher\FunctionDefaultParametersMatcher;
 
 class User extends Authenticatable
 {
@@ -59,6 +60,10 @@ class User extends Authenticatable
     public function izins(){
         return $this->belongsToMany(Izin::class,'user_izin')->withPivot('startDate', 'endDate')
         ->withTimestamps();;
+    }
+
+    public function nobets(){
+        return $this->hasMany(Nobet::class,'user_id');
     }
 
     public function unread_evraks_count(){

@@ -74,7 +74,7 @@
             //bugün ü belirleme
             var today = new Date();
             today.setDate(today.getDate());
-            today = today.toISOString().split("T")[0];
+            today = today.toLocaleDateString('fr-CA');
 
             /* initialize the external events
              -----------------------------------------------------------------*/

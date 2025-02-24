@@ -28,14 +28,6 @@
         <section class="content">
             <div class="container-fluid">
                 <hr class="mt3-">
-                <div class="row mb-3">
-                    <h5 class="ml-1"><b>Uyarı:</b> Takvim üzerinde sadece boyalı günler için ekleme-düzenleme yapılabilir.
-                    </h5>
-                    <h5 class="ml-1"><b>Dikkat:</b> Takvim üzerinde değişiklikler yapıldıktan sonra kaydet butonu ile
-                        kaydedilmelidir, aksi takdirde değişiklikler kayıt edilmez!
-                    </h5>
-                </div>
-
                 <div class="row">
                     <div class="col-md-9">
                         <div class="card card-primary">
@@ -59,7 +51,8 @@
                                     <div id="external-events">
                                         @if (isset($vets))
                                             @foreach ($vets as $vet)
-                                                <div class="external-event bg-warning" id="{{ $vet->id }}">
+                                                <div class="external-event bg-warning" id="{{ $vet->id }}"
+                                                    data-id="{{ $vet->id }}">
                                                     {{ $vet->name }}</div>
                                             @endforeach
                                         @endif
@@ -73,11 +66,7 @@
                                 </div>
                                 <!-- /.card-body -->
                             </div>
-                            <div class="card">
-                                <a class="btn btn-primary card-title" onclick="saveWeeks()">
-                                    Kaydet
-                                </a>
-                            </div>
+
                             <!-- /.card -->
                         </div>
                     </div>
@@ -111,35 +100,24 @@
         $(function() {
 
             //bugün ü belirleme
-            var today = new Date();
-            today.setDate(today.getDate());
-            today = today.toISOString().split("T")[0];
+            var today = new Date().toLocaleDateString('fr-CA');
+            var dayColors = { // Günlere özel renkler
+                "Sun": "#1E3A8A",
+                "Mon": "#215EAA",
+                "Tue": "#2478C6",
+                "Wed": "#2A92E4",
+                "Thu": "#3FA3F7",
+                "Fri": "#5CAAFD",
+                "Sat": "#72B5FF",
+            };
 
-            // Düzenleme yapılabilecek günlerin listesini oluşturma
-            var editable_days = [];
-            var day = new Date();
 
-            // Haftanın ilk gününü (Pazartesi) bul
-            var buHafta = new Date(day);
-            buHafta.setDate(day.getDate() - day.getDay() + (day.getDay() === 0 ? -6 : 1));
-
-            // 2 hafta önceki Pazartesi
-            var ilk_gun = new Date(buHafta);
-            ilk_gun.setDate(ilk_gun.getDate() - 14);
-
-            // 2 hafta sonraki Pazar
-            var son_gun = new Date(buHafta);
-            son_gun.setDate(son_gun.getDate() + 20);
-
-            let gecici = new Date(ilk_gun);
-            while (gecici <= son_gun) {
-                editable_days.push(gecici.toISOString().split("T")[0]);
-                gecici.setDate(gecici.getDate() + 1);
+            function string_to_dayIndex(date) {
+                var date = new Date(date);
+                return date.toLocaleDateString('en-US', {
+                    weekday: 'short'
+                });
             }
-
-            //console.log("İlk Gün:", ilk_gun.toISOString().split("T")[0]);
-            //console.log("Son Gün:", son_gun.toISOString().split("T")[0]);
-            //console.log("Editable Days:", editable_days);
 
 
 
@@ -215,12 +193,8 @@
                     const date = new Date(info.date);
                     const formattedDate = date.toLocaleDateString('fr-CA');
 
-                    if (editable_days.includes(formattedDate)) {
-                        if (today === formattedDate) {
-                            info.el.style.backgroundColor = "#f9c4c4"; // Açık kırmızı arka plan
-                        } else {
-                            info.el.style.backgroundColor = "#c4f9ce"; //  arka plan
-                        }
+                    if (today === formattedDate) {
+                        info.el.style.backgroundColor = "#f9c4c4"; // Bugün ün arkaplan rengi
                     }
                 },
 
@@ -233,25 +207,20 @@
                 //Random default events
                 events: [
 
-                    @foreach ($nobetci_haftalari as $week)
-                        @php
-                            $days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-                            $colors = ['#1E3A8A','#215EAA', '#2478C6', '#2A92E4', '#3FA3F7', '#5CAAFD', '#72B5FF']; // Günlere özel renkler
-                        @endphp
-
-                        @foreach ($days as $index => $day)
-                            @foreach ($week->$day as $event)
-                                {
-                                    title: "{{ $event['vet_name'] }}",
-                                    extendedProps: {
-                                        veteriner_id: "{{ $event['vet_id'] }}"
-                                    },
-                                    start: new Date("{{ $event['date'] }}"),
-                                    backgroundColor: "{{ $colors[$index] }}",
-                                    borderColor: "{{ $colors[$index] }}",
-                                    allDay: true,
+                    @foreach ($vets as $vet)
+                        @foreach ($vet->nobets as $nobet)
+                            {
+                                title: "{{ $vet->name }}",
+                                extendedProps: {
+                                    veteriner_id: "{{ $vet->id }}",
+                                    old_date: "{{ $nobet->date }}"
                                 },
-                            @endforeach
+                                id: "event-" + Date.now() + Math.floor(Math.random() * 10000),
+                                start: new Date("{{ $nobet->date }}"),
+                                backgroundColor: dayColors[string_to_dayIndex("{{ $nobet->date }}")],
+                                borderColor: dayColors[string_to_dayIndex("{{ $nobet->date }}")],
+                                allDay: true,
+                            },
                         @endforeach
                     @endforeach
                 ],
@@ -265,43 +234,61 @@
                     }
                 },
 
-                eventReceive: function(info) {
+                eventReceive: function(info) { // YENİ BİR ÖĞE EKLENDİĞİNDE
+
                     var newEvent = info.event;
-
-                    // Eğer event zaten bir id'ye sahipse, o zaman tekrar kontrolü yapma
-                    if (newEvent.id) return;
-
-                    // Yeni bir event ID oluştur,her öğenin farklı olması için
-                    newEvent.setProp('id', 'event-' + Date.now());
+                    var newEventId = 'event-' + Date.now() + Math.floor(Math.random() * 10000);
+                    newEvent.setProp('id', newEventId);
                     newEvent.setExtendedProp('veteriner_id', info.draggedEl.id);
+                    newEvent.setExtendedProp('old_date', info.event.startStr);
 
                     var existingEvents = calendar.getEvents();
-                    var isDuplicate = existingEvents.some(event =>
-                        event.id !== newEvent.id &&
-                        event.start.getTime() === newEvent.start.getTime() &&
-                        event.title === newEvent.title
-                    );
 
-                    // Sadece günlerin renkli olarak belirtildiği günlerde ekleme yapılabilir
-                    var isInEditableArea = editable_days.includes(newEvent.start.toLocaleDateString('fr-CA'));
+                    var ids = existingEvents.map(function(event) {
+                        return {
+                            'id': event.id,
+                            'title': event.title,
+                            'date': event.start.toLocaleDateString('fr-CA')
+                        }
+                    });
+
+                    var isDuplicate = false;
+
+                    // Hata mesajını verebilmek için;
+                    // * id'ler farklı olmalı ki yeni bir öğenin eklendiği anlaşılsın
+                    // * title ve date aynı olusun ki aynı güne 2 aynı isim eklenmiş olsun
+                    ids.forEach(event => {
+                        if (event.id !== newEvent.id) {
+                            if (event.date == newEvent.start.toLocaleDateString('fr-CA')) {
+                                if (event.title.trim().toLowerCase() === newEvent.title.trim()
+                                    .toLowerCase()) {
+                                    isDuplicate = true;
+                                }
+                            }
+                        }
+                    })
 
 
-                    if (!isInEditableArea) {
-                        alert("Takvimde  belirtilen günler için düzenleme yapılabilir!");
-                        info.event.remove();
-                    }
                     if (isDuplicate) {
                         alert("Bu gün için seçilen kullanıcı zaten ekli!");
                         info.event.remove(); // Aynı olanı kaldır
+
+                    } else {
+                        var date = new Date(info.event.startStr);
+                        date = date.toLocaleDateString('fr-CA');
+
+                        var vet_id = info.draggedEl.id;
+
+                        create_nobet(vet_id, date);
+
                     }
                 },
 
                 initialView: 'dayGridMonth', // Başlangıçta haftalık görünüm olsun
                 slotMinTime: "16:00:00", // En erken gösterilecek saat
                 slotMaxTime: "23:00:00", // En geç gösterilecek saat
-                eventDidMount: function(info) {
 
-                    //info.el.innerHTML = ""; // Önceki içeriği temizle
+                eventDidMount: function(info) {
 
                     // Ana div oluştur (Etkinliği 2 parçaya bölecek)
                     var wrapper = document.createElement("div");
@@ -323,6 +310,8 @@
                     deleteDiv.style.display = "flex";
                     deleteDiv.style.justifyContent = "center";
                     deleteDiv.style.alignItems = "center";
+                    deleteDiv.classList.add('delete_btn');
+
 
                     // Silme butonu oluştur
                     var deleteBtn = document.createElement("span");
@@ -330,11 +319,23 @@
                     deleteBtn.style.cursor = "pointer";
                     deleteBtn.style.color = "red";
 
+
                     // Silme butonuna tıklanınca işlemi gerçekleştir
                     deleteBtn.addEventListener("click", function(event) {
                         event.stopPropagation(); // Takvimdeki diğer işlemleri engelle
-                        if (confirm("Bu etkinliği silmek istiyor musunuz?")) {
-                            info.event.remove();
+
+                        var vet_id = info.event._def.extendedProps.veteriner_id;
+                        var date = info.event.startStr;
+
+                        if (confirm("Bu nöbeti silmek istiyor musunuz?")) {
+                            delete_nobet(vet_id, date, function(result) {
+                                if (result === 1) {
+                                    console.log("Silme işlemi başarılı");
+                                    info.event.remove();
+                                } else {
+                                    console.log("Silme işlemi başarısız");
+                                }
+                            });
                         }
                     });
 
@@ -351,129 +352,39 @@
             calendar.render();
             // $('#calendar').fullCalendar()
 
+            calendar.on('eventDrop', function(info) { // EKLİ ÖĞENİN YERİ DEĞİŞİRSE
+                var new_date = info.event.startStr;
 
+                var old_date = info.event._def.extendedProps.old_date;
+                var vet_id = info.event._def.extendedProps.veteriner_id;
 
+                info.event.setExtendedProp('old_date', new_date);
 
-            /* ADDING EVENTS */
-            var currColor = '#3c8dbc' //Red by default
-            // Color chooser button
-            $('#color-chooser > li > a').click(function(e) {
-                e.preventDefault()
-                // Save color
-                currColor = $(this).css('color')
-                // Add color effect to button
-                $('#add-new-event').css({
-                    'background-color': currColor,
-                    'border-color': currColor
-                })
-            })
-            $('#add-new-event').click(function(e) {
-                e.preventDefault()
-                // Get value and make sure it is not null
-                var val = $('#new-event').val()
-                if (val.length == 0) {
-                    return
-                }
+                // Bir nöbet güncellenirse anında değişikliği ilet
 
-                // Create events
-                var event = $('<div />')
-                event.css({
-                    'background-color': currColor,
-                    'border-color': currColor,
-                    'color': '#fff'
-                }).addClass('external-event')
-                event.text(val)
-                $('#external-events').prepend(event)
-
-                // Add draggable funtionality
-                ini_events(event)
-
-                // Remove event from text input
-                $('#new-event').val('')
-            })
-
-
+                console.log(vet_id, old_date, new_date);
+                edit_nobet(vet_id, old_date, new_date);
+            });
 
         })
 
-        function saveWeeks() {
-            var existingEvents = calendar.getEvents();
-            var today = new Date();
-
-            // Haftanın başlangıcını bul (Pazar)
-            var currentWeekStart = new Date(today.setDate(today.getDate() - today.getDay()));
-
-            // 2 hafta öncesi ve 2 hafta sonrası dahil tüm haftaları belirle
-            var startDate = new Date(currentWeekStart);
-            startDate.setDate(startDate.getDate() - 14); // 2 hafta önce başla
-
-            var endDate = new Date(currentWeekStart);
-            endDate.setDate(endDate.getDate() + 27); // 2 hafta sonrası
-
-            let weekGroups = {}; // Haftaları objeye ayıracağız
-            let weekNames = [];
-
-            // 📌 **Önce tüm haftaları oluştur** (Boş olsa bile eklenecek)
-            let tempDate = new Date(startDate);
-            while (tempDate <= endDate) {
-                let weekName = getWeekNumber(tempDate); // Haftayı belirle
-                if (!weekGroups[weekName]) {
-                    weekGroups[weekName] = {
-                        weekName: weekName,
-                        startOfWeek: getWeekStart(tempDate), // Haftanın başlangıç tarihi (Pazar)
-                        endOfWeek: getWeekEnd(tempDate), // Haftanın bitiş tarihi (Cumartesi)
-                        events: [] // Başlangıçta boş
-                    };
-                    weekNames.push(weekName);
-                }
-                tempDate.setDate(tempDate.getDate() + 7); // Haftaları artır
-            }
 
 
 
-
-            // 📌 **Şimdi etkinlikleri ilgili haftalara ekle**
-            existingEvents.forEach(event => {
-                let eventStart = new Date(event.start);
-                let eventStartDay = new Date(eventStart.getTime() - eventStart.getTimezoneOffset() * 60000);
-
-                //console.log(eventStartDay, ' Event Day');
-
-                // Etkinlik belirtilen 5 hafta içinde mi?
-                if (eventStartDay >= startDate && eventStartDay <= endDate) {
-                    let weekName = getWeekNumber(eventStartDay); // Haftayı belirle
-
-                    if (weekNames.includes(weekName)) { // 5 haftalık zaman içindeyse ekle
-                        weekGroups[weekName].events.push({
-                            vet_id: event._def.extendedProps.veteriner_id,
-                            vet_name: event.title,
-                            date: eventStartDay.toISOString().split("T")[0],
-                        });
-                    }
-                }
-            });
-
-            //Tüm 5 haftayı içeren weekGroups'u logla**
-            //console.log(weekGroups, ' Tüm 5 hafta verisi');
-
-            // Haftaları backend'e kaydet**
-            save_users(Object.values(weekGroups)); // Artık her hafta var(5 hafta her seferinde), boş olanlar da dahil
-        }
-
-
-
-        function save_users(modifiedWeeks) {
+        // POST FUNCS
+        function create_nobet(vet_id, date) {
             $.ajax({
-                url: "{{ route('admin.nobet.edited') }}", // Laravel rotası
+                url: "{{ route('admin.nobet.created') }}", // Laravel rotası
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
                     _token: "{{ csrf_token() }}",
-                    modifiedWeeks: modifiedWeeks
+                    vet_id: vet_id,
+                    date: date
                 }),
                 success: function(response) {
                     if (response.success) {
-                        alert("Nöbetçi listesi başarıyla kaydedildi!");
+                        alert("Nöbetçi eklendi!");
                         window.location.reload();
                     } else {
                         console.log(response.message);
@@ -485,36 +396,56 @@
             });
         }
 
-
-        // 📌 Yardımcı Fonksiyonlar
-
-        // Tarihin hangi hafta numarasına ait olduğunu bul
-        // Tarihin hangi hafta numarasına ait olduğunu bul (Hafta Pazar günü başlıyor)
-        function getWeekNumber(date) {
-            let d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-            d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Haftanın başlangıcını bul (Pazar)
-            let startYear = new Date(d.getFullYear(), 0, 1);
-            let weekNumber = Math.ceil((((d - startYear) / 86400000) + startYear.getDay()) / 7);
-            return `${d.getFullYear()}-W${weekNumber}`;
+        function edit_nobet(vet_id, old_date, new_date) {
+            $.ajax({
+                url: "{{ route('admin.nobet.edited') }}", // Laravel rotası
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    _token: "{{ csrf_token() }}",
+                    vet_id: vet_id,
+                    old_date: old_date,
+                    new_date: new_date
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        alert("Nöbetçi düzenlendi!");
+                        //window.location.reload();
+                    } else {
+                        console.log(response.message);
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Hata:", xhr.responseText);
+                }
+            });
         }
 
-        // Haftanın başlangıcını bul (Pazar)
-        function getWeekStart(date) {
-            let d = new Date(date);
-            d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // Pazar'ı bul
-
-            //console.log(d.toISOString().split('T')[0], ' hafta başı');
-            return d.toISOString().split('T')[0];
-        }
-
-        // Haftanın bitişini bul (Cumartesi)
-        function getWeekEnd(date) {
-            let d = new Date(date);
-            d.setDate(d.getDate() - ((d.getDay() + 6) % 7) + 6); // Cumartesi'yi bul
-
-            //console.log(d.toISOString().split('T')[0], ' hafta sonu');
-            return d.toISOString().split('T')[0];
+        function delete_nobet(vet_id, date, sonuc) {
+            $.ajax({
+                url: "{{ route('admin.nobet.deleted') }}", // Laravel rotası
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    _token: "{{ csrf_token() }}",
+                    vet_id: vet_id,
+                    date: date
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        sonuc(1);
+                        //alert("Nöbetçi silindi!");
+                        //window.location.reload();
+                    } else {
+                        console.log(response.message);
+                        sonuc(0);
+                    }
+                },
+                error: function(xhr) {
+                    sonuc(0);
+                    console.error("Hata:", xhr.responseText);
+                }
+            });
         }
     </script>
 

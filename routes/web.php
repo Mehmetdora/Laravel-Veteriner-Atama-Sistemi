@@ -86,7 +86,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/nöbet/liste','index')->name('admin.nobets.index');
 
+        Route::post('/admin/nöbet/eklendi','nobet_created')->name('admin.nobet.created');
         Route::post('/admin/nöbet/düzenlendi','nobet_edited')->name('admin.nobet.edited');
+        Route::post('/admin/nöbet/silindi','nobet_deleted')->name('admin.nobet.deleted');
     });
 
     // İzin işlemleri

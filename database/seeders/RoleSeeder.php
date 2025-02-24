@@ -77,7 +77,5 @@ class RoleSeeder extends Seeder
         foreach ($permissions as $permission) {
             Izin::create(['name' => $permission]);
         }
-
-        User::find(1)->izins()->attach(1,['startDate' => '2025-03-01','endDate'=>'2025-03-05']);
     }
 }
