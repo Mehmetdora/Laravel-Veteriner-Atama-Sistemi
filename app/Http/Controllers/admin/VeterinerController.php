@@ -313,7 +313,7 @@ class VeterinerController extends Controller
         $veteriner = User::find($id);
         $veteriner->status = 0;
         $veteriner->izins()->detach();
-        $veteriner->nobets()->detach();
+        $veteriner->nobets()->delete();
 
 
         $veteriner->save();
