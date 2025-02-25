@@ -52,6 +52,12 @@
                 </li>
                 <br>
                 <li class="nav-item">
+                    <a href="{{ route('admin.memurs.index') }}" class="nav-link ">
+                        <i class="fas fa-user"></i>
+                        <p>Memurlar</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route('admin.veteriners.index') }}" class="nav-link ">
                         <i class="fas fa-syringe"></i>
                         <p>Veterinerler</p>
@@ -66,13 +72,13 @@
                 <li class="nav-item">
                     <a href="{{route('admin.nobets.index')}}" class="nav-link">
                         <i class="far fa-calendar"></i>
-                        <p>Nöbet Listesi Takvimi</p>
+                        <p>Nöbet Takvimi</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route('admin.izin.index')}}" class="nav-link">
-                        <i class="far fa-user"></i>
-                        <p>İzin Listesi Takvimi</p>
+                        <i class="far fa-calendar"></i>
+                        <p>İzin Takvimi</p>
                     </a>
                 </li>
 

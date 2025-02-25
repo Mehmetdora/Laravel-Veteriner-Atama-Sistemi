@@ -8,6 +8,7 @@ use App\Http\Controllers\EvrakController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\memur\MemurController;
 use App\Http\Controllers\admin\EvrakTurController;
+use App\Http\Controllers\admin\MemurController as AdminMemurController;
 use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
 use App\Http\Controllers\IzinController;
@@ -29,6 +30,7 @@ Route::controller(Authentication::class)->group(function(){
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
+    // Admin Genel ve Profil İşlemleri
     Route::controller(AdminController::class)->group(function(){
         Route::get('/admin/anasayfa','dashboard')->name('admin_dashboard');
 
@@ -38,6 +40,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/profil/düzenlendi','edited')->name('admin_edited');
     });
 
+    // Evrak İşlemleri
     Route::controller(EvrakController::class)->group(function(){
         Route::get('/admin/evrak/liste','index')->name('admin.evrak.index');
         Route::get('/admin/evrak/detay/{id}','detail')->name('admin.evrak.detail');
@@ -49,6 +52,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/evrak/eklendi','created')->name('admin.evrak.created');
     });
 
+    // Evrak Türleri İşlemleri
     Route::controller(EvrakTurController::class)->group(function(){
         Route::get('/admin/evrak-tur/liste','index')->name('admin.evrak_tur.index');
         Route::get('/admin/evrak-tur/sil/{id}','delete')->name('admin.evrak_tur.delete');
@@ -61,7 +65,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     });
 
-    // Admin Veteriner işlemleri controller
+    // Admin Veteriner işlemleri
     Route::controller(VeterinerEController::class)->group(function(){
         Route::get('/admin/veterinerler/liste','index')->name('admin.veteriners.index');
 
@@ -78,6 +82,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/veterinerler/veteriner/düzenlendi','edited')->name('admin.veteriners.veteriner.edited');
 
         Route::get('/admin/veterinerler/veteriner/sil/{id}','delete')->name('admin.veteriners.veteriner.delete');
+    });
+
+    // Admin Memur işlemleri
+    Route::controller(AdminMemurController::class)->group(function(){
+        Route::get('/admin/memurlar/liste','index')->name('admin.memurs.index');
+
+        Route::get('/admin/memurlar/ekle','create')->name('admin.memurs.create');
+        Route::post('/admin/memurlar/eklendi','created')->name('admin.memurs.created');
+
+        Route::get('/admin/memurlar/memur/düzenle/{id}','edit')->name('admin.memurs.memur.edit');
+        Route::post('/admin/memurlar/memur/düzenlendi','edited')->name('admin.memurs.memur.edited');
+
+        Route::get('/admin/memurlar/memur/sil/{id}','delete')->name('admin.memurs.memur.delete');
     });
 
 
@@ -125,6 +142,7 @@ Route::middleware(['auth', 'role:veteriner'])->group(function () {
         Route::get('/veteriner/evraklar/{id}/detay','evrak_index')->name('veteriner.evraks.evrak.index');
 
         Route::get('veteriner/nöbetler/liste','nobets_index')->name('veteriner.nobet.index');
+        Route::get('veteriner/izinler/liste','izins_index')->name('veteriner.izin.index');
 
     });
 
@@ -138,6 +156,11 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
 
     Route::controller(MemurController::class)->group(function(){
         Route::get('/memur/anasayfa','dashboard')->name('memur_dashboard');
+
+        Route::get('/memur/profil','profile_index')->name('memur.profile.index');
+
+        Route::get('/memur/profil/düzenle','profile_edit')->name('memur.profile.edit');
+        Route::post('/memur/profil/düzenlendi','profile_edited')->name('memur.profile.edited');
     });
 
 });

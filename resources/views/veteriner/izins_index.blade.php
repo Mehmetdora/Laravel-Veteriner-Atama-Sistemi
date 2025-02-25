@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Nöbet Takvimi</h1>
+                        <h1>İzin Takvimi</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -155,21 +155,15 @@
                 },
 
                 themeSystem: 'bootstrap',
-                
-                events: [
 
-                    @foreach ($nobets as $nobet)
+                events: [
+                    @foreach ($izins as $izin)
                         {
-                            title: "{{ Auth::user()->name }}",
-                            /*                             extendedProps: {
-                                                            veteriner_id: "{{ Auth::id() }}",
-                                                            old_date: "{{ $nobet->date }}"
-                                                        },
-                                                        id: "event-" + Date.now() + Math.floor(Math.random() * 10000),
-                             */
-                            start: new Date("{{ $nobet->date }}"),
-                            backgroundColor: dayColors[string_to_dayIndex("{{ $nobet->date }}")],
-                            borderColor: dayColors[string_to_dayIndex("{{ $nobet->date }}")],
+                            title: "{{ Auth::user()->name }} | {{ $izin->name }}",
+                            start: "{{ \Carbon\Carbon::parse($izin->pivot->startDate)->format('Y-m-d') }}T00:00:00",
+                            end: "{{ \Carbon\Carbon::parse($izin->pivot->endDate)->addDay()->format('Y-m-d') }}T23:59:59",
+                            backgroundColor: "#2A92E4",
+                            borderColor: "#2A92E4",
                             allDay: true,
                         },
                     @endforeach

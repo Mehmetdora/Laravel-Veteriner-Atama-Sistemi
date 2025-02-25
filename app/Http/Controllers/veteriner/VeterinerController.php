@@ -96,8 +96,17 @@ class VeterinerController extends Controller
 
     public function nobets_index(){
 
-        $data['weeks'] = NobetHafta::all();
+        $vet = Auth::user();
+        $data['nobets'] = $vet->nobets;
         return view('veteriner.nobets_index',$data);
+
+    }
+
+    public function izins_index(){
+
+        $vet = Auth::user();
+        $data['izins'] = $vet->izins;
+        return view('veteriner.izins_index',$data);
 
     }
 

@@ -47,6 +47,15 @@
                     </a>
                 </li>
 
+                <li class="nav-item ">
+                    <a href="{{ route('veteriner.izin.index') }}" class="nav-link active">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>
+                            İzin Günlerim
+                        </p>
+                    </a>
+                </li>
+
 
             </ul>
         </nav>
