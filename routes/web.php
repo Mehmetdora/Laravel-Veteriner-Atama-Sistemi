@@ -20,8 +20,8 @@ use App\Http\Controllers\NobetController;
 Route::controller(Authentication::class)->group(function(){
 
     Route::get('/','login')->name('login');
-    Route::post('/giriss','logined')->name('logined');
-    Route::get('/logout','logout')->name('logout');
+    Route::post('/girildi','logined')->name('logined');
+    Route::get('/çıkış','logout')->name('logout');
 
 });
 
