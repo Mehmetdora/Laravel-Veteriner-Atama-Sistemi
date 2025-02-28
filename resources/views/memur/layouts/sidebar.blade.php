@@ -26,7 +26,14 @@
                 data-accordion="false">
 
 
-               
+                <li class="nav-item ">
+                    <a href="{{ route('memur.izin.index') }}" class="nav-link active">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>
+                            İzin Günlerim
+                        </p>
+                    </a>
+                </li>
 
 
             </ul>

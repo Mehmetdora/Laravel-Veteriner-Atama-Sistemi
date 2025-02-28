@@ -149,9 +149,6 @@ class EvrakController extends Controller
         $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
 
-
-
-
         if($saved){
             return redirect()->route('admin.evrak.index')->with('success','Evrak Başarıyla Eklendi.');
         }else{

@@ -64,5 +64,13 @@ class MemurController extends Controller
             return redirect()->back()->with('error','Lütfen Bilgileri Kontrol Ederek Tekrar Doldurunuz!');
         }
     }
+
+
+    public function izins_index(){
+
+        $izinler = Auth::user()->izins;
+        $data['izins'] = $izinler;
+        return view('memur.izins_index',$data);
+    }
 }
 

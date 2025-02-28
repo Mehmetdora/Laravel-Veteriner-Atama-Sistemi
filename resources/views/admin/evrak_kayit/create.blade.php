@@ -32,7 +32,7 @@
                                     @csrf
 
                                     <div class="form-group">
-                                        <label name="siraNo" class="control-label">Sıra No</label>
+                                        <label name="siraNo" class="control-label">Evrak Kayıt No</label>
                                         <input id="siraNo" name="siraNo" class="form-control" required />
                                     </div>
 

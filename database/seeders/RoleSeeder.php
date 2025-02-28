@@ -37,6 +37,14 @@ class RoleSeeder extends Seeder
 
 
         User::create([
+            'name' => 'veteriner2',
+            'username' => 'veteriner2',
+            'email' => 'veteriner2@gmail.com',
+            'phone_number' => '1213423249',
+            'password' => bcrypt('123123')
+        ])->assignRole('veteriner');
+
+        User::create([
             'name' => 'veteriner1 ',
             'username' => 'veteriner1',
             'email' => 'veteriner1@gmail.com',
@@ -73,7 +81,6 @@ class RoleSeeder extends Seeder
         EvrakTur::create(['name' => 'Antrepo']);
 
         $permissions = ['Yıllık İzin', 'Hastalık İzni', 'Özel İzin', 'Eğitim İzni'];
-
         foreach ($permissions as $permission) {
             Izin::create(['name' => $permission]);
         }

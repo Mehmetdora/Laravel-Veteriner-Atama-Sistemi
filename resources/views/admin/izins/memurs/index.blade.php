@@ -10,11 +10,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Nöbet Listesi Takvimi</h1>
+                        <h1>Memur İzin Takvimi</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="{{ route('admin.izin.create') }}"><button
+                            <li class="breadcrumb-item"><a href="{{ route('admin.izin.memur.create') }}"><button
                                         class="btn btn-primary">Yeni İzin Ekle</button></a>
                             </li>
                         </ol>
@@ -124,9 +124,9 @@
                 buttonText: {
                     today: "Bugün",
                     month: "Aylık",
-                    week: "Hafta",
-                    day: "Gün",
-                    list: "Liste",
+                    week: "Haftalık",
+                    day: "Günlük",
+                    list: "Listele",
                 },
 
                 dayCellDidMount: function(info) { // günleri boyama
@@ -141,25 +141,24 @@
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth', //timeGridWeek
+                    right: 'dayGridMonth,timeGridWeek,list', //timeGridWeek
                 },
                 themeSystem: 'bootstrap',
                 //Random default events
                 events: [
 
-                    @foreach ($vets as $vet)
-                        @foreach ($vet->izins as $izin)
+                    @foreach ($memurs as $memur)
+                        @foreach ($memur->izins as $izin)
                             {
-                                title: "{{ $vet->name }} | {{ $izin->name }}",
+                                title: "{{ $memur->name }} | {{ $izin->name }}",
                                 extendedProps: {
-                                    veteriner_id: "{{ $vet->id }}",
+                                    veteriner_id: "{{ $memur->id }}",
                                     izin_id: "{{ $izin->id }}"
                                 },
-                                start: "{{ \Carbon\Carbon::parse($izin->pivot->startDate)->format('Y-m-d') }}T00:00:00",
-                                end: "{{ \Carbon\Carbon::parse($izin->pivot->endDate)->addDay()->format('Y-m-d') }}T23:59:59",
+                                start: "{{ \Carbon\Carbon::parse($izin->pivot->startDate)->format('Y-m-d\TH:i:s') }}",
+                                end: "{{ \Carbon\Carbon::parse($izin->pivot->endDate)->format('Y-m-d\TH:i:s') }}",
                                 backgroundColor: "#2A92E4",
                                 borderColor: "#2A92E4",
-                                allDay: true,
                             },
                         @endforeach
                     @endforeach
@@ -171,11 +170,9 @@
 
 
                 initialView: 'dayGridMonth', // Başlangıçta haftalık görünüm olsun
-                slotMinTime: "16:00:00", // En erken gösterilecek saat
-                slotMaxTime: "23:00:00", // En geç gösterilecek saat
+                slotMinTime: "00:00:00", // En erken gösterilecek saat
+                slotMaxTime: "23:59:00", // En geç gösterilecek saat
                 eventDidMount: function(info) {
-
-                    //info.el.innerHTML = ""; // Önceki içeriği temizle
 
                     // Ana div oluştur (Etkinliği 2 parçaya bölecek)
                     var wrapper = document.createElement("div");
@@ -210,13 +207,21 @@
                         event.stopPropagation(); // Takvimdeki diğer işlemleri engelle
                         var startD = new Date(info.event.startStr);
                         var endD = new Date(info.event.endStr);
-                        endD.setDate(endD.getDate() - 1);
+                        endD.setHours(endD.getHours() + 3); // Zaman farkı için
+                        startD.setHours(startD.getHours() + 3); // Zaman farkı için
 
                         var end_date = endD.toISOString().split("T")[0];
+                        var end_hour = endD.toISOString().split("T")[1].split(".")[0];
                         var start_date = startD.toISOString().split("T")[0];
+                        var start_hour = startD.toISOString().split("T")[1].split(".")[0];
+
+                        // Yeni tarih formatı oluşturma
+                        end_date = end_date + ' ' + end_hour;
+                        start_date = start_date + ' ' + start_hour;
 
                         if (confirm("Bu izini silmek istiyor musunuz?")) {
-                            delete_izin(info.event._def.extendedProps.veteriner_id,info.event._def.extendedProps.izin_id,start_date,end_date);
+                            delete_izin(info.event._def.extendedProps.veteriner_id, info.event
+                                ._def.extendedProps.izin_id, start_date, end_date);
                             info.event.remove();
                         }
                     });
@@ -228,7 +233,9 @@
 
                     // Ana elemana ekle
                     info.el.appendChild(wrapper);
-                }
+                },
+
+
             });
 
             calendar.render();
@@ -237,16 +244,16 @@
         })
 
 
-        function delete_izin(user_id,izin_id,start_date,end_date) {
+        function delete_izin(user_id, izin_id, start_date, end_date) {
             $.ajax({
-                url: "{{ route('admin.izin.delete') }}", // Laravel rotası
+                url: "{{ route('admin.izin.memur.delete') }}", // Laravel rotası
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
                     _token: "{{ csrf_token() }}",
                     user_id: user_id,
-                    izin_id:izin_id,
-                    start_date:start_date,
+                    izin_id: izin_id,
+                    start_date: start_date,
                     end_date: end_date
                 }),
                 success: function(response) {

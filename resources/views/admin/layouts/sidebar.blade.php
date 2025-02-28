@@ -69,19 +69,38 @@
                         <p>Evrak Türleri</p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{route('admin.nobets.index')}}" class="nav-link">
-                        <i class="far fa-calendar"></i>
-                        <p>Nöbet Takvimi</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route('admin.izin.index')}}" class="nav-link">
-                        <i class="far fa-calendar"></i>
-                        <p>İzin Takvimi</p>
-                    </a>
-                </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('admin.nobet.veteriner.index') }}" class="nav-link">
+                        <i class="far fa-calendar"></i>
+                        <p>Veteriner Nöbet Takvimi</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-calendar"></i>
+                        <p>
+                            İzinler
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.izin.memur.index') }}" class="nav-link">
+                                <i class="far fa-calendar nav-icon"></i>
+                                <p>Memur İzin Takvimi</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.izin.veteriner.index') }}" class="nav-link">
+                                <i class="far fa-calendar nav-icon"></i>
+                                <p>
+                                    Veteriner İzin Takvimi
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

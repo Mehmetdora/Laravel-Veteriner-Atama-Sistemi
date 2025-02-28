@@ -1,9 +1,9 @@
-@extends('veteriner.layouts.app')
-@section('veteriner.customCSS')
+@extends('memur.layouts.app')
+@section('memur.customCSS')
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/fullcalendar/main.css">
 @endsection
 
-@section('veteriner.content')
+@section('memur.content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -49,7 +49,7 @@
     <!-- /.content-wrapper -->
 @endsection
 
-@section('veteriner.customJS')
+@section('memur.customJS')
     <script src="{{ asset('admin_Lte/') }}/plugins/fullcalendar/main.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/moment/moment.min.js"></script>
@@ -134,8 +134,8 @@
                 buttonText: {
                     today: "Bugün",
                     month: "Aylık",
-                    week: "Haftalık",
-                    day: "Gün",
+                    week: "Hafta",
+                    day: "Günlük",
                     list: "Liste",
                 },
 
@@ -157,15 +157,17 @@
                 themeSystem: 'bootstrap',
 
                 events: [
-                    @foreach ($izins as $izin)
-                        {
-                            title: "{{ Auth::user()->name }} | {{ $izin->name }}",
-                            start: "{{ \Carbon\Carbon::parse($izin->pivot->startDate)->format('Y-m-d\TH:i:s') }}",
-                            end: "{{ \Carbon\Carbon::parse($izin->pivot->endDate)->format('Y-m-d\TH:i:s') }}",
-                            backgroundColor: "#2A92E4",
-                            borderColor: "#2A92E4",
-                        },
-                    @endforeach
+                    @if (isset($izins))
+                        @foreach ($izins as $izin)
+                            {
+                                title: "{{ Auth::user()->name }} | {{ $izin->name }}",
+                                start: "{{ \Carbon\Carbon::parse($izin->pivot->startDate)->format('Y-m-d\TH:i:s') }}",
+                                end: "{{ \Carbon\Carbon::parse($izin->pivot->endDate)->format('Y-m-d\TH:i:s') }}",
+                                backgroundColor: "#2A92E4",
+                                borderColor: "#2A92E4",
+                            },
+                        @endforeach
+                    @endif
                 ],
                 editable: false,
                 droppable: false, // this allows things to be dropped onto the calendar !!!

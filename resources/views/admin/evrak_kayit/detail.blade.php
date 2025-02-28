@@ -37,7 +37,7 @@
                                             <td>{{ $evrak->tarih }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Sıra No:</th>
+                                            <th>Evrak Kayıt No:</th>
                                             <td>{{ $evrak->siraNo }}</td>
                                         </tr>
                                         <tr>

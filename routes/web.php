@@ -8,11 +8,14 @@ use App\Http\Controllers\EvrakController;
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\memur\MemurController;
 use App\Http\Controllers\admin\EvrakTurController;
+use App\Http\Controllers\admin\izin\MemurIzinController;
+use App\Http\Controllers\admin\izin\VeterinerIzinController;
 use App\Http\Controllers\admin\MemurController as AdminMemurController;
+use App\Http\Controllers\admin\nobet\MemurNobetController;
+use App\Http\Controllers\admin\nobet\VeterinerNobetController;
 use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
-use App\Http\Controllers\IzinController;
-use App\Http\Controllers\NobetController;
+
 
     // HER MİGRATE:FRESH YAPINCA SEEDER ile  BERABER ÇALIŞTIR
 
@@ -99,24 +102,28 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 
     // Nöbet işlemleri
-    Route::controller(NobetController::class)->group(function(){
-
-        Route::get('/admin/nöbet/liste','index')->name('admin.nobets.index');
-
-        Route::post('/admin/nöbet/eklendi','nobet_created')->name('admin.nobet.created');
-        Route::post('/admin/nöbet/düzenlendi','nobet_edited')->name('admin.nobet.edited');
-        Route::post('/admin/nöbet/silindi','nobet_deleted')->name('admin.nobet.deleted');
+    Route::controller(VeterinerNobetController::class)->group(function(){
+        Route::get('/admin/veteriner/nöbet/liste','index')->name('admin.nobet.veteriner.index');
+        Route::post('/admin/veteriner/nöbet/eklendi','nobet_created')->name('admin.nobet.veteriner.created');
+        Route::post('/admin/veteriner/nöbet/düzenlendi','nobet_edited')->name('admin.nobet.veteriner.edited');
+        Route::post('/admin/veteriner/nöbet/silindi','nobet_deleted')->name('admin.nobet.veteriner.deleted');
     });
 
+
+
     // İzin işlemleri
-    Route::controller(IzinController::class)->group(function(){
+    Route::controller(VeterinerIzinController::class)->group(function(){
+        Route::get('/admin/veteriner/izin/liste','index')->name('admin.izin.veteriner.index');
+        Route::get('/admin/veteriner/izin/ekle','create')->name('admin.izin.veteriner.create');
+        Route::post('/admin/veteriner/izin/eklendi','created')->name('admin.izin.veteriner.created');
+        Route::post('/admin/veteriner/izin/silindi','delete')->name('admin.izin.veteriner.delete');
 
-        Route::get('/admin/izin/liste','index')->name('admin.izin.index');
-
-        Route::get('/admin/izin/ekle','create')->name('admin.izin.create');
-        Route::post('/admin/izin/eklendi','created')->name('admin.izin.created');
-
-        Route::post('/admin/izin/silindi','delete')->name('admin.izin.delete');
+    });
+    Route::controller(MemurIzinController::class)->group(function(){
+        Route::get('/admin/memur/izin/liste','index')->name('admin.izin.memur.index');
+        Route::get('/admin/memur/izin/ekle','create')->name('admin.izin.memur.create');
+        Route::post('/admin/memur/izin/eklendi','created')->name('admin.izin.memur.created');
+        Route::post('/admin/memur/izin/silindi','delete')->name('admin.izin.memur.delete');
 
     });
 
@@ -161,6 +168,9 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
 
         Route::get('/memur/profil/düzenle','profile_edit')->name('memur.profile.edit');
         Route::post('/memur/profil/düzenlendi','profile_edited')->name('memur.profile.edited');
+
+        Route::get('memur/izinler/liste','izins_index')->name('memur.izin.index');
+
     });
 
 });

@@ -43,7 +43,7 @@
                                     <thead>
                                         <tr>
                                             <th>Tarih</th>
-                                            <th>Sıra No</th>
+                                            <th>Evrak Kayıt No</th>
                                             <th>VGB Ön Bildirim Numarası</th>
                                             <th>Evrak Türü</th>
                                             <th>Veteriner Sağlık Sertifikası Türü</th>

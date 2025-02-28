@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Nöbet Listesi Takvimi</h1>
+                        <h1>Veteriner Nöbet Takvimi</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
@@ -374,7 +374,7 @@
         // POST FUNCS
         function create_nobet(vet_id, date) {
             $.ajax({
-                url: "{{ route('admin.nobet.created') }}", // Laravel rotası
+                url: "{{ route('admin.nobet.veteriner.created') }}", // Laravel rotası
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -398,7 +398,7 @@
 
         function edit_nobet(vet_id, old_date, new_date) {
             $.ajax({
-                url: "{{ route('admin.nobet.edited') }}", // Laravel rotası
+                url: "{{ route('admin.nobet.veteriner.edited') }}", // Laravel rotası
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -423,7 +423,7 @@
 
         function delete_nobet(vet_id, date, sonuc) {
             $.ajax({
-                url: "{{ route('admin.nobet.deleted') }}", // Laravel rotası
+                url: "{{ route('admin.nobet.veteriner.deleted') }}", // Laravel rotası
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({

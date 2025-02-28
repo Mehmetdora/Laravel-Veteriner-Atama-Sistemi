@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->foreignId('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreignId('izin_id')->references('id')->on('izins')->cascadeOnDelete();
-            $table->date('startDate');
-            $table->date('endDate');
+            $table->dateTime('startDate');
+            $table->dateTime('endDate');
 
 
             $table->timestamps();

@@ -12,10 +12,34 @@ class MemurController extends Controller
 {
     public function index()
     {
+        date_default_timezone_set('Europe/Istanbul');
+        $today = date('Y-m-d');
+
         // Tüm memurlar
         $memurlar = User::role('memur')
+            ->with(['izins'])
             ->where("status", 1)
             ->get();
+
+        // izinli memurları bulma
+        $izinliler = [];
+        foreach ($memurlar as $memur) {
+            $is_izinli = $memur->izins()->wherePivot('startDate','<=',$today)->wherePivot('endDate','>=',$today)->get();
+            if(!($is_izinli->isEmpty())){
+                $izinliler[] = $memur->id;
+            }
+        }
+
+
+        // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
+        $memurlar = collect($memurlar)->map(function ($memur) use ($izinliler) {
+            return [
+                'id' => $memur->id,
+                'name' => $memur->name,
+                'is_izinli' => in_array($memur->id,$izinliler),
+                'created_at' => $memur->created_at,
+            ];
+        });
 
         $data['memurlar'] = $memurlar;
         return view('admin.memurs.index', $data);

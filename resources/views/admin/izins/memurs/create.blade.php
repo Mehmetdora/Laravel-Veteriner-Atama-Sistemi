@@ -26,29 +26,27 @@
 
                         @include('admin.layouts.messages')
 
-                        <form method="post" action="{{ route('admin.izin.created') }}">
+                        <form method="post" action="{{ route('admin.izin.memur.created') }}">
                             @csrf
 
                             <div class="form-group">
-                                <label for="vet_id" class="control-label">İzinli Veteriner</label>
+                                <label for="memur_id" class="control-label">İzinli Memur:*</label>
                                 <br>
-                                <select class="form-control" name="vet_id" id="vet_id" required>
-                                    <option value="">Veteriner Seç</option>
+                                <select class="form-control" name="memur_id" id="memur_id" required>
+                                    <option value="">Memur Seç</option>
                                     <hr>
-                                    @if (isset($vets))
-                                        @foreach ($vets as $vet)
-                                            <option value="{{ $vet->id }}">{{ $vet->name }}</option>
+                                    @if (isset($memurs))
+                                        @foreach ($memurs as $memur)
+                                            <option value="{{ $memur->id }}">{{ $memur->name }}</option>
                                         @endforeach
                                     @endif
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <label for="izin_input">İzin Türü:</label>
+                                <label for="izin_input">İzin Türü(Seç yada yeni bir tane oluştur):*</label>
                                 <div class="row" style="display: flex; align-items: center;">
-                                    <input class="col-sm-8 form-control" type="text" name="izin_name" id="izin_input"
-                                        placeholder="İzin türü gir veya seç" required>
-                                    <select class="col-sm-4" id="izin_select">
+                                    <select class="col-sm-6 form-control" id="izin_select">
                                         <option value="">İzin Türleri</option>
                                         <hr>
                                         @if (isset($izins))
@@ -57,12 +55,16 @@
                                             @endforeach
                                         @endif
                                     </select>
+                                    <div class="col-sm-1"></div>
+                                    <input class="col-sm-5 form-control" type="text" name="izin_name" id="izin_input"
+                                        placeholder="Yeni izin türü oluştur" required>
+
                                 </div>
 
 
                             </div>
                             <div class="form-group">
-                                <label>İzin Tarihleri:</label>
+                                <label>İzin Tarihleri:*</label>
 
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -70,7 +72,8 @@
                                             <i class="far fa-calendar-alt"></i>
                                         </span>
                                     </div>
-                                    <input type="text" name="izin_tarihleri" class="form-control float-right" id="reservation" required>
+                                    <input type="text" name="izin_tarihleri" class="form-control float-right"
+                                        id="reservation" required>
                                 </div>
                                 <!-- /.input group -->
                             </div>
@@ -103,23 +106,15 @@
 
     <script>
         $(function() {
-
-
-
-
             //Date range picker
             $('#reservation').daterangepicker({
+                timePicker: true,
+                timePicker24Hour: true, // 24 saat formatı
+                timePickerIncrement: 30,
                 locale: {
-                    format: 'DD/MM/YYYY'
+                    format: 'DD/MM/YYYY hh:mm A'
                 }
             })
-
-
-
-
-
-
-
         })
     </script>
 

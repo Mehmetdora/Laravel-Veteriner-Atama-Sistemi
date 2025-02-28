@@ -36,10 +36,14 @@
                                 <th style="width: 1%">
                                     id
                                 </th>
-                                <th style="width: 15%">
+                                <th style="width: 10%" class="text-center">
                                     Adı Soyadı
                                 </th>
                                 <th style="width: 10%" class="text-center">
+                                    İzinli mi?
+                                </th>
+
+                                <th style="width: 15%" class="text-center">
                                     İşlemler
                                 </th>
                             </tr>
@@ -51,7 +55,7 @@
                                         <td>
                                             #
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             <a>
                                                 {{ $memur['name'] }}
                                             </a>
@@ -60,6 +64,14 @@
                                                 Eklendi {{ $memur['created_at']->format('d-m-y') }}
                                             </small>
                                         </td>
+                                        <td class="text-center">
+                                            @if ($memur['is_izinli'] == true)
+                                                <span class="badge badge-success">İzinli</span>
+                                            @else
+                                                <span class="badge badge-warning">İzinli değil</span>
+                                            @endif
+                                        </td>
+
 
                                         <td class="project-actions text-center">
                                             <a class="btn btn-info btn-sm"
