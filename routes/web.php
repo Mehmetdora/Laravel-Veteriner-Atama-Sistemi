@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\izin\VeterinerIzinController;
 use App\Http\Controllers\admin\MemurController as AdminMemurController;
 use App\Http\Controllers\admin\nobet\MemurNobetController;
 use App\Http\Controllers\admin\nobet\VeterinerNobetController;
+use App\Http\Controllers\admin\UrunController;
 use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
 
@@ -65,6 +66,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/evrak-tur/ekle','create')->name('admin.evrak_tur.create');
         Route::post('/admin/evrak-tur/eklendi','created')->name('admin.evrak_tur.created');
+
+    });
+
+    // Ürün İşlemleri
+    Route::controller(UrunController::class)->group(function(){
+        Route::get('/admin/ürün/liste','index')->name('admin.uruns.index');
+        Route::get('/admin/ürün/sil/{id}','delete')->name('admin.uruns.delete');
+
+        Route::get('/admin/ürün/düzenle/{id}','edit')->name('admin.uruns.edit');
+        Route::post('/admin/ürün/düzenlendi','edited')->name('admin.uruns.edited');
+
+        Route::get('/admin/ürün/ekle','create')->name('admin.uruns.create');
+        Route::post('/admin/ürün/eklendi','created')->name('admin.uruns.created');
 
     });
 

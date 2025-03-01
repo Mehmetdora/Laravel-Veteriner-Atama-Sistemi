@@ -13,7 +13,7 @@ class MemurController extends Controller
     public function index()
     {
         date_default_timezone_set('Europe/Istanbul');
-        $today = date('Y-m-d');
+        $real_time = date('Y-m-d H:i:s');
 
         // Tüm memurlar
         $memurlar = User::role('memur')
@@ -24,7 +24,7 @@ class MemurController extends Controller
         // izinli memurları bulma
         $izinliler = [];
         foreach ($memurlar as $memur) {
-            $is_izinli = $memur->izins()->wherePivot('startDate','<=',$today)->wherePivot('endDate','>=',$today)->get();
+            $is_izinli = $memur->izins()->wherePivot('startDate','<=',$real_time)->wherePivot('endDate','>=',$real_time)->get();
             if(!($is_izinli->isEmpty())){
                 $izinliler[] = $memur->id;
             }

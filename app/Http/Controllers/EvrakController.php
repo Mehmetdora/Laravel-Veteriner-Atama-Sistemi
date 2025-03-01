@@ -8,43 +8,51 @@ use App\Models\User;
 use App\Models\Evrak;
 use App\Models\EvrakDurum;
 use App\Models\EvrakTur;
+use App\Models\Urun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class EvrakController extends Controller
 {
-    public function index(){
+    public function index()
+    {
 
-        $evraklar = Evrak::with('veteriner')->get()->all();
+        $evraklar = Evrak::with(['veteriner', 'evrak_tur', 'urun'])->get()->all();
         $data['evraklar'] = $evraklar;
 
-        return view('admin.evrak_kayit.index',$data);
+        return view('admin.evrak_kayit.index', $data);
     }
 
-    public function detail($evrak_id){
+    public function detail($evrak_id)
+    {
 
-        $data['evrak'] = Evrak::find($evrak_id);
-        return view('admin.evrak_kayit.detail',$data);
+        $data['evrak'] = Evrak::with(['urun', 'veteriner', 'evrak_tur', 'evrak_durumu'])
+        ->find($evrak_id);
+
+        return view('admin.evrak_kayit.detail', $data);
     }
 
-    public function edit($evrak_id){
+    public function edit($evrak_id)
+    {
 
-        $data['veteriners'] = User::role('veteriner')->where('status',1)->get();
-        $data['evrak_turs'] = EvrakTur::where('status',true)->get();
-        $data['evrak'] = Evrak::find($evrak_id);
+        $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
+        $data['uruns'] = Urun::all();
+        $data['evrak_turs'] = EvrakTur::where('status', true)->get();
+        $data['evrak'] = Evrak::with(['urun', 'evrak_tur', 'veteriner'])->find($evrak_id);
 
-        return view('admin.evrak_kayit.edit',$data);
+        return view('admin.evrak_kayit.edit', $data);
     }
 
-    public function edited(Request $request){
+    public function edited(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'siraNo' => 'required',
             'vgbOnBildirimNo' => 'required',
-            'ithalatTür' => 'required',
+            'evrak_tur_id' => 'required',
             'vetSaglikSertifikasiNo' => 'required',
             'vekaletFirmaKisiId' => 'required',
             'urunAdi' => 'required',
-            'kategoriId' => 'required',
+            'urun_kategori_id' => 'required',
             'gtipNo' => 'required',
             'urunKG' => 'required',
             'sevkUlke' => 'required',
@@ -58,18 +66,16 @@ class EvrakController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
-            return redirect()->back()->with('error',$errors);
+            return redirect()->back()->with('error', $errors);
         }
 
         $evrak = Evrak::find($request->id);
 
         $evrak->siraNo = $request->siraNo;
         $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
-        $evrak->ithalatTür = $request->ithalatTür;
         $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
         $evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
         $evrak->urunAdi = $request->urunAdi;
-        $evrak->kategoriId = $request->kategoriId;
         $evrak->gtipNo = $request->gtipNo;
         $evrak->urunKG = $request->urunKG;
         $evrak->sevkUlke = $request->sevkUlke;
@@ -79,33 +85,42 @@ class EvrakController extends Controller
         $evrak->cıkısGumruk = $request->cıkısGumruk;
         $evrak->tarih = Carbon::now();
 
+        $urun = Urun::find($request->urun_kategori_id);
+        $evrak->urun()->associate($urun);
+
+        $evrak_tur = EvrakTur::find($request->evrak_tur_id);
+        $evrak->evrak_tur()->associate($evrak_tur);
+
         $veteriner = User::find($request->veterinerId);
         $saved = $veteriner->evraks()->save($evrak);
 
-        if($saved){
-            return redirect()->route('admin.evrak.index')->with('success','Evrak Başarıyla Düzenlendi.');
-        }else{
-            return redirect()->back()->with('error','Evrak Düzenleme Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
+        if ($saved) {
+            return redirect()->route('admin.evrak.index')->with('success', 'Evrak Başarıyla Düzenlendi.');
+        } else {
+            return redirect()->back()->with('error', 'Evrak Düzenleme Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
         }
     }
 
 
-    public function create(){
+    public function create()
+    {
 
-        $data['evrak_turs'] = EvrakTur::where('status',true)->get();
-        return view('admin.evrak_kayit.create',$data);
+        $data['uruns'] = Urun::all();
+        $data['evrak_turs'] = EvrakTur::where('status', true)->get();
+        return view('admin.evrak_kayit.create', $data);
     }
 
-    public function created(Request $request){
+    public function created(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'siraNo' => 'required',
             'vgbOnBildirimNo' => 'required',
-            'ithalatTür' => 'required',
+            'evrak_tur_id' => 'required',
             'vetSaglikSertifikasiNo' => 'required',
             'vekaletFirmaKisiId' => 'required',
             'urunAdi' => 'required',
-            'kategoriId' => 'required',
+            'urun_kategori_id' => 'required',
             'gtipNo' => 'required',
             'urunKG' => 'required',
             'sevkUlke' => 'required',
@@ -118,7 +133,7 @@ class EvrakController extends Controller
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
             $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
-            return redirect()->back()->with('error',$errors);
+            return redirect()->back()->with('error', $errors);
         }
 
 
@@ -126,11 +141,9 @@ class EvrakController extends Controller
 
         $yeni_evrak->siraNo = $request->siraNo;
         $yeni_evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
-        $yeni_evrak->ithalatTür = $request->ithalatTür;
         $yeni_evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
         $yeni_evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
         $yeni_evrak->urunAdi = $request->urunAdi;
-        $yeni_evrak->kategoriId = $request->kategoriId;
         $yeni_evrak->gtipNo = $request->gtipNo;
         $yeni_evrak->urunKG = $request->urunKG;
         $yeni_evrak->sevkUlke = $request->sevkUlke;
@@ -140,19 +153,25 @@ class EvrakController extends Controller
         $yeni_evrak->cıkısGumruk = $request->cıkısGumruk;
         $yeni_evrak->tarih = Carbon::now();
 
-        $veteriner = User::with('evraks')->role('veteriner')->first();   // BUNU SİSTEM BELİRLEYECEK
-        $saved = $veteriner->evraks()->save($yeni_evrak);
+        $urun = Urun::find($request->urun_kategori_id);
+        $yeni_evrak->urun()->associate($urun); // `save()` yerine `associate()` kullanılmalı
 
+        $evrak_tur = EvrakTur::find($request->evrak_tur_id);
+        $yeni_evrak->evrak_tur()->associate($evrak_tur);
 
-        // EVRAK DURUMU ATAMASI
+        $veteriner = User::with('evraks')->role('veteriner')->first(); // Veteriner belirleniyor
+        $saved = $veteriner->evraks()->save($yeni_evrak); // Evrak veteriner ile ilişkilendiriliyor
+
+        // EVRAK DURUMU ATAMASI - veteriner atandıktan sonra belirlenir
         $evrak_durum = new EvrakDurum;
         $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
 
-        if($saved){
-            return redirect()->route('admin.evrak.index')->with('success','Evrak Başarıyla Eklendi.');
-        }else{
-            return redirect()->back()->with('error','Evrak Kaydı Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
+
+        if ($saved) {
+            return redirect()->route('admin.evrak.index')->with('success', 'Evrak Başarıyla Eklendi.');
+        } else {
+            return redirect()->back()->with('error', 'Evrak Kaydı Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
         }
     }
 }

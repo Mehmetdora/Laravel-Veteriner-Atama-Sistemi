@@ -69,6 +69,12 @@
                         <p>Evrak Türleri</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.uruns.index') }}" class="nav-link ">
+                        <i class="fas fa-file"></i>
+                        <p>Ürünler</p>
+                    </a>
+                </li>
 
                 <li class="nav-item">
                     <a href="{{ route('admin.nobet.veteriner.index') }}" class="nav-link">

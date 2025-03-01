@@ -43,12 +43,15 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="ithalatTür" class="control-label">İthalat Türü</label>
+                                        <label for="evrak_tur_id" class="control-label">İthalat Türü</label>
                                         <br>
-                                        <select class="form-control" name="ithalatTür" id="ithalatTür" data-id="{{$evrak->ithalatTür}}" required>
+                                        <select class="form-control" name="evrak_tur_id" id="evrak_tur_id"
+                                            data-id="{{ $evrak->evrak_tur->id }}" required>
                                             @if (isset($evrak_turs))
+                                                <option>{{ $evrak->evrak_tur->name }}</option>
+                                                <hr>
                                                 @foreach ($evrak_turs as $evrak_tur)
-                                                    <option value="{{$evrak_tur->id}}">{{$evrak_tur->name}}</option>
+                                                    <option value="{{ $evrak_tur->id }}">{{ $evrak_tur->name }}</option>
                                                 @endforeach
                                             @endif
                                         </select>
@@ -70,11 +73,16 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="kategoriId" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" data-id="{{$evrak->kategoriId}}" name="kategoriId" id="kategoriId" required>
-                                            <option value="1">tosun</option>
-                                            <option value="2">at</option>
-                                            <option value="3">balık</option>
+                                        <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                        <select class="form-control" data-id="{{ $evrak->urun->id }}"
+                                            name="urun_kategori_id" id="urun_kategori_id" required>
+                                            @if (isset($uruns))
+                                                <option>{{ $evrak->urun->name }}</option>
+                                                <hr>
+                                                @foreach ($uruns as $urun)
+                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
 
@@ -164,7 +172,7 @@
 
     {{-- seçilen değeri select de gösteme --}}
     <script>
-        const ithalatTür = document.querySelector('#ithalatTür');
+        const ithalatTür = document.querySelector('#evrak_tur_id');
         const data_id = ithalatTür.getAttribute('data-id');
         var options = ithalatTür.childNodes;
         options.forEach(element => {
@@ -173,7 +181,7 @@
             }
         });
 
-        const kategoriId = document.querySelector('#kategoriId');
+        const kategoriId = document.querySelector('#urun_kategori_id');
         var data_id2 = kategoriId.getAttribute('data-id');
         var options2 = kategoriId.childNodes;
         options2.forEach(element => {

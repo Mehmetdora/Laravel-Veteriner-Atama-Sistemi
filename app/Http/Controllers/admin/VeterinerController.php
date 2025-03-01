@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Models\Urun;
 use App\Models\User;
 use App\Models\Evrak;
 use App\Models\EvrakTur;
 use App\Models\EvrakDurum;
+use App\Models\NobetHafta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use function PHPSTORM_META\map;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
-use App\Models\NobetHafta;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 
-use function PHPSTORM_META\map;
+use Illuminate\Support\Facades\Hash;
 use function PHPUnit\Framework\isEmpty;
+use Illuminate\Support\Facades\Validator;
 
 class VeterinerController extends Controller
 {
@@ -24,11 +25,12 @@ class VeterinerController extends Controller
     {
         date_default_timezone_set('Europe/Istanbul');
         $today = date('Y-m-d');
+        $real_time = date('Y-m-d H:i:s');
 
         // Tüm veterinerler ilişkileri ile
         $veterinerler = User::role('veteriner')
             ->where("status", 1)
-            ->with(['evraks.evrak_durumu','nobets','izins'])
+            ->with(['evraks.evrak_durumu', 'nobets', 'izins'])
             ->get();
 
 
@@ -36,13 +38,13 @@ class VeterinerController extends Controller
         $izinliler = [];
         $nobetliler = [];
         foreach ($veterinerler as $vet) {
-            $is_izinli = $vet->izins()->wherePivot('startDate','<=',$today)->wherePivot('endDate','>=',$today)->get();
-            if(!($is_izinli->isEmpty())){
+            $is_izinli = $vet->izins()->wherePivot('startDate', '<=', $real_time)->wherePivot('endDate', '>=', $real_time)->get();
+            if (!($is_izinli->isEmpty())) {
                 $izinliler[] = $vet->id;
             }
 
-            $is_nobetci = $vet->nobets()->where('date',$today)->exists();
-            if($is_nobetci){
+            $is_nobetci = $vet->nobets()->where('date', $today)->exists();
+            if ($is_nobetci) {
                 $nobetliler[] = $vet->id;
             }
         }
@@ -80,12 +82,12 @@ class VeterinerController extends Controller
         $data['yuzdeler'] = $ortalamalar;
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
-        $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler,$izinliler) {
+        $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler, $izinliler) {
             return [
                 'id' => $vet->id,
                 'name' => $vet->name,
                 'is_nobetci' => in_array($vet->id, $nobetliler),
-                'is_izinli' => in_array($vet->id,$izinliler),
+                'is_izinli' => in_array($vet->id, $izinliler),
                 'created_at' => $vet->created_at,
 
             ];
@@ -226,10 +228,10 @@ class VeterinerController extends Controller
 
     public function evrak_edit($id)
     {
-
-        $data['evrak'] = Evrak::find($id);
-        $data['veteriners'] = User::role('veteriner')->get();
+        $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
+        $data['uruns'] = Urun::all();
         $data['evrak_turs'] = EvrakTur::where('status', true)->get();
+        $data['evrak'] = Evrak::with(['urun', 'evrak_tur', 'veteriner'])->find($id);
 
         return view('admin.veteriners.veteriner.evraks.edit', $data);
     }
@@ -240,11 +242,11 @@ class VeterinerController extends Controller
         $validator = Validator::make($request->all(), [
             'siraNo' => 'required',
             'vgbOnBildirimNo' => 'required',
-            'ithalatTür' => 'required',
+            'evrak_tur_id' => 'required',
             'vetSaglikSertifikasiNo' => 'required',
             'vekaletFirmaKisiId' => 'required',
             'urunAdi' => 'required',
-            'kategoriId' => 'required',
+            'urun_kategori_id' => 'required',
             'gtipNo' => 'required',
             'urunKG' => 'required',
             'sevkUlke' => 'required',
@@ -265,11 +267,9 @@ class VeterinerController extends Controller
 
         $evrak->siraNo = $request->siraNo;
         $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
-        $evrak->ithalatTür = $request->ithalatTür;
         $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
         $evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
         $evrak->urunAdi = $request->urunAdi;
-        $evrak->kategoriId = $request->kategoriId;
         $evrak->gtipNo = $request->gtipNo;
         $evrak->urunKG = $request->urunKG;
         $evrak->sevkUlke = $request->sevkUlke;
@@ -278,6 +278,13 @@ class VeterinerController extends Controller
         $evrak->girisGumruk = $request->girisGumruk;
         $evrak->cıkısGumruk = $request->cıkısGumruk;
         $evrak->tarih = Carbon::now();
+
+
+        $urun = Urun::find($request->urun_kategori_id);
+        $evrak->urun()->associate($urun);
+
+        $evrak_tur = EvrakTur::find($request->evrak_tur_id);
+        $evrak->evrak_tur()->associate($evrak_tur);
 
         $veteriner = User::find($request->veterinerId);
         $saved = $veteriner->evraks()->save($evrak);

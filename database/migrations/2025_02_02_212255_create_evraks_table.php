@@ -18,11 +18,9 @@ return new class extends Migration
             $table->date('tarih');
             $table->string('siraNo');
             $table->string('vgbOnBildirimNo');
-            $table->string('ithalatTür');
             $table->string('vetSaglikSertifikasiNo');
             $table->integer('vekaletFirmaKisiId');  // firma tablosundan
             $table->string('urunAdi');
-            $table->integer('kategoriId');  // kategori tablosunda
             $table->string('gtipNo');
             $table->integer('urunKG');
             $table->string('sevkUlke');
@@ -30,6 +28,8 @@ return new class extends Migration
             $table->string('aracPlaka');
             $table->string('girisGumruk');
             $table->string('cıkısGumruk');
+            $table->foreignId('urun_id')->references('id')->on('uruns');
+            $table->foreignId('evrak_tur_id')->references('id')->on('evrak_turs');
             $table->foreignId('user_id')->references('id')->on('users');
 
             $table->timestamps();

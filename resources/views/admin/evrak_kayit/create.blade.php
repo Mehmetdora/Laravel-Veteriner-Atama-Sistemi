@@ -30,6 +30,17 @@
 
                                 <form method="post" action="{{ route('admin.evrak.created') }}">
                                     @csrf
+                                    <div class="form-group">
+                                        <label for="evrak_tur_id" class="control-label">İthalat Türü</label>
+                                        <br>
+                                        <select class="form-control" name="evrak_tur_id" id="evrak_tur_id" required>
+                                            @if (isset($evrak_turs))
+                                                @foreach ($evrak_turs as $evrak_tur)
+                                                    <option value="{{$evrak_tur->id}}">{{$evrak_tur->name}}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
 
                                     <div class="form-group">
                                         <label name="siraNo" class="control-label">Evrak Kayıt No</label>
@@ -41,20 +52,10 @@
                                         <input name="vgbOnBildirimNo" type="number" class="form-control" required/>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="ithalatTür" class="control-label">İthalat Türü</label>
-                                        <br>
-                                        <select class="form-control" name="ithalatTür" id="ithalatTür" required>
-                                            @if (isset($evrak_turs))
-                                                @foreach ($evrak_turs as $evrak_tur)
-                                                    <option value="{{$evrak_tur->id}}">{{$evrak_tur->name}}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+
 
                                     <div class="form-group">
-                                        <label for="vetSaglikSertifikasiNo" class="control-label">Veteriner Sağlık Sertifikası Tarih ve Numarası</label>
+                                        <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası</label>
                                         <input name="vetSaglikSertifikasiNo" class="form-control" required/>
                                     </div>
 
@@ -69,11 +70,14 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="kategoriId" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="kategoriId" id="kategoriId" required>
-                                            <option value="1" selected>tosun</option>
-                                            <option value="2">at</option>
-                                            <option value="3">balık</option>
+                                        <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                        <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                                            @if (isset($uruns))
+                                                <option selected value="">Ürün Kategorileri</option>
+                                                @foreach ($uruns as $urun)
+                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
 
@@ -93,7 +97,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="orjinUlke" class="control-label">Ürünün Orijinal Ülkesi</label>
+                                        <label for="orjinUlke" class="control-label">Orjin Ülke</label>
                                         <input name="orjinUlke" class="form-control" required/>
                                     </div>
 

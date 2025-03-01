@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\EvrakTur;
 use App\Models\Izin;
+use App\Models\Urun;
 use App\Models\User;
 use App\Models\Veteriner;
 use Illuminate\Database\Seeder;
@@ -79,6 +80,12 @@ class RoleSeeder extends Seeder
         EvrakTur::create(['name' => 'İthalat']);
         EvrakTur::create(['name' => 'Transit']);
         EvrakTur::create(['name' => 'Antrepo']);
+
+        Urun::create(['name' => 'Tavuk']);
+        Urun::create(['name' => 'Balık']);
+        Urun::create(['name' => 'Süt']);
+        Urun::create(['name' => 'Tohum']);
+        Urun::create(['name' => 'Muz']);
 
         $permissions = ['Yıllık İzin', 'Hastalık İzni', 'Özel İzin', 'Eğitim İzni'];
         foreach ($permissions as $permission) {

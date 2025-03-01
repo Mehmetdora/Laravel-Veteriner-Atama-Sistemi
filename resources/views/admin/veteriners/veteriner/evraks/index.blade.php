@@ -64,7 +64,7 @@
                                         </td>
 
                                         <td class="text-center">
-                                            {{ $evrak->evrak_tur_adi() }}
+                                            {{ $evrak->evrak_tur->name }}
                                         </td>
 
                                         <td class="project-state ">
@@ -93,12 +93,7 @@
                                                 </i>
                                                 Düzenle
                                             </a>
-                                            <a class="btn btn-danger btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.delete', $veteriner->id) }}">
-                                                <i class="fas fa-trash">
-                                                </i>
-                                                Sil
-                                            </a>
+
                                         </td>
                                     </tr>
                                 @endforeach

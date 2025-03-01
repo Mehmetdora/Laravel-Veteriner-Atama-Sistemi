@@ -46,7 +46,7 @@
                                         </tr>
                                         <tr>
                                             <th>Evrak Türü:</th>
-                                            <td>{{ $evrak->evrak_tur_adi() }}</td>
+                                            <td>{{ $evrak->evrak_tur->name }}</td>
                                         </tr>
                                         <tr>
                                             <th>Veteriner Sağlık Sertifikası Türü:</th>
@@ -62,7 +62,7 @@
                                         </tr>
                                         <tr>
                                             <th>Ürünün Kategorisi:</th>
-                                            <td>{{ $evrak->kategoriId }}</td>
+                                            <td>{{ $evrak->urun->name }}</td>
                                         </tr>
                                         <tr>
                                             <th>G.T.İ.P. No İlk 4 Rakamı:</th>

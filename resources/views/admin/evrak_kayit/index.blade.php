@@ -46,7 +46,7 @@
                                             <th>Evrak Kayıt No</th>
                                             <th>VGB Ön Bildirim Numarası</th>
                                             <th>Evrak Türü</th>
-                                            <th>Veteriner Sağlık Sertifikası Türü</th>
+                                            <th>Sağlık Sertifikası Numarası</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
                                             <th>Ürünün Kategorisi</th>
@@ -69,11 +69,11 @@
                                                     <td>{{ $evrak->tarih }}</td>
                                                     <td>{{ $evrak->siraNo }}</td>
                                                     <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->evrak_tur_adi() }}</td>
+                                                    <td>{{ $evrak->evrak_tur->name }}</td>
                                                     <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiId }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->kategoriId }}</td>
+                                                    <td>{{ $evrak->urun->name }}</td>
                                                     <td>{{ $evrak->gtipNo }}</td>
                                                     <td>{{ $evrak->urunKG }}</td>
                                                     <td>{{ $evrak->sevkUlke }}</td>
