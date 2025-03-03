@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('siraNo');
             $table->string('vgbOnBildirimNo');
             $table->string('vetSaglikSertifikasiNo');
-            $table->integer('vekaletFirmaKisiId');  // firma tablosundan
+            $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');
             $table->integer('urunKG');

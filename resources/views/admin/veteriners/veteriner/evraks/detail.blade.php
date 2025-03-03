@@ -38,6 +38,10 @@
                                             <td>{{ $evrak->tarih }}</td>
                                         </tr>
                                         <tr>
+                                            <th>İşlem Türü:</th>
+                                            <td>{{ $evrak->evrak_tur->name }}</td>
+                                        </tr>
+                                        <tr>
                                             <th>Evrak Kayıt No:</th>
                                             <td>{{ $evrak->siraNo }}</td>
                                         </tr>
@@ -45,17 +49,14 @@
                                             <th>VGB Ön Bildirim Numarası:</th>
                                             <td>{{ $evrak->vgbOnBildirimNo }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Evrak Türü:</th>
-                                            <td>{{ $evrak->evrak_tur->name }}</td>
-                                        </tr>
+
                                         <tr>
                                             <th>Veteriner Sağlık Sertifikası Türü:</th>
                                             <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
                                         </tr>
                                         <tr>
                                             <th>Vekalet Sahibi Firma/Kişi Adı:</th>
-                                            <td>{{ $evrak->vekaletFirmaKisiId }}</td>
+                                            <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
                                         </tr>
                                         <tr>
                                             <th>Ürünün Açık İsmi:</th>
@@ -74,11 +75,11 @@
                                             <td>{{ $evrak->urunKG }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Ülkemize Sevk Edilen Ülke:</th>
+                                            <th>Sevk Eden Ülke:</th>
                                             <td>{{ $evrak->sevkUlke }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Orijinal Ülke:</th>
+                                            <th>Orjin Ülke:</th>
                                             <td>{{ $evrak->orjinUlke }}</td>
                                         </tr>
                                         <tr>

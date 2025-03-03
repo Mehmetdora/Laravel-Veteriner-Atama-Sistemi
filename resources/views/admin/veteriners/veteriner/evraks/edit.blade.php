@@ -43,7 +43,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="evrak_tur_id" class="control-label">İthalat Türü</label>
+                                        <label for="evrak_tur_id" class="control-label">İşlem Türü</label>
                                         <br>
                                         <select class="form-control" name="evrak_tur_id" id="evrak_tur_id"
                                             data-id="{{ $evrak->evrak_tur->id }}" required>
@@ -64,7 +64,7 @@
 
                                     <div class="form-group">
                                         <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                                        <input type="number" name="vekaletFirmaKisiId" class="form-control" value="{{$evrak->vekaletFirmaKisiId}}" required/>
+                                        <input type="text" name="vekaletFirmaKisiAdi" class="form-control" value="{{$evrak->vekaletFirmaKisiAdi}}" required/>
                                     </div>
 
                                     <div class="form-group">
@@ -77,7 +77,7 @@
                                         <select class="form-control" data-id="{{ $evrak->urun->id }}"
                                             name="urun_kategori_id" id="urun_kategori_id" required>
                                             @if (isset($uruns))
-                                                <option>{{ $evrak->urun->name }}</option>
+                                                <option selected value="{{$evrak->urun->id}}">{{ $evrak->urun->name }}</option>
                                                 <hr>
                                                 @foreach ($uruns as $urun)
                                                     <option value="{{ $urun->id }}">{{ $urun->name }}</option>
@@ -97,12 +97,12 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="sevkUlke" class="control-label">Ülkemize Sevk Eden Ülke</label>
+                                        <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
                                         <input name="sevkUlke" class="form-control" value="{{$evrak->sevkUlke}}" required/>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="orjinUlke" class="control-label">Ürünün Orijinal Ülkesi</label>
+                                        <label for="orjinUlke" class="control-label">Orjin Ülkesi</label>
                                         <input name="orjinUlke" class="form-control" value="{{$evrak->orjinUlke}}" required/>
                                     </div>
 
@@ -140,7 +140,7 @@
                                             @if (isset($evrak))
                                                 <option value="{{$evrak->evrak_durumu->evrak_durum}}">{{$evrak->evrak_durumu->evrak_durum}}</option>
                                                 <hr>
-                                                <option value="Onaylanacak">Onaylanacak</option>
+                                                <option value="İşlemde">İşlemde</option>
                                                 <option value="Beklemede">Beklemede</option>
                                                 <option value="Onaylandı">Onaylandı</option>
 

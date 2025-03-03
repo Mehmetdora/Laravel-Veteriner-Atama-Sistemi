@@ -17,7 +17,7 @@ class EvrakController extends Controller
     public function index()
     {
 
-        $evraklar = Evrak::with(['veteriner', 'evrak_tur', 'urun'])->get()->all();
+        $evraklar = Evrak::with(['veteriner', 'evrak_tur', 'urun'])->orderByDesc('created_at')->get();
         $data['evraklar'] = $evraklar;
 
         return view('admin.evrak_kayit.index', $data);
@@ -50,7 +50,7 @@ class EvrakController extends Controller
             'vgbOnBildirimNo' => 'required',
             'evrak_tur_id' => 'required',
             'vetSaglikSertifikasiNo' => 'required',
-            'vekaletFirmaKisiId' => 'required',
+            'vekaletFirmaKisiAdi' => 'required',
             'urunAdi' => 'required',
             'urun_kategori_id' => 'required',
             'gtipNo' => 'required',
@@ -74,7 +74,7 @@ class EvrakController extends Controller
         $evrak->siraNo = $request->siraNo;
         $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
         $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
-        $evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
+        $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
         $evrak->urunAdi = $request->urunAdi;
         $evrak->gtipNo = $request->gtipNo;
         $evrak->urunKG = $request->urunKG;
@@ -93,6 +93,14 @@ class EvrakController extends Controller
 
         $veteriner = User::find($request->veterinerId);
         $saved = $veteriner->evraks()->save($evrak);
+
+        $isRead = $evrak->evrak_durumu->isRead;
+        $evrak->evrak_durumu()->delete();
+
+        $evrak_durum = new EvrakDurum;  // Evrak Durumu güncelleme
+        $evrak_durum->isRead = $isRead;
+        $evrak_durum->evrak_durum = $request->evrak_durum;
+        $evrak->evrak_durumu()->save($evrak_durum);
 
         if ($saved) {
             return redirect()->route('admin.evrak.index')->with('success', 'Evrak Başarıyla Düzenlendi.');
@@ -118,7 +126,7 @@ class EvrakController extends Controller
             'vgbOnBildirimNo' => 'required',
             'evrak_tur_id' => 'required',
             'vetSaglikSertifikasiNo' => 'required',
-            'vekaletFirmaKisiId' => 'required',
+            'vekaletFirmaKisiAdi' => 'required',
             'urunAdi' => 'required',
             'urun_kategori_id' => 'required',
             'gtipNo' => 'required',
@@ -142,7 +150,7 @@ class EvrakController extends Controller
         $yeni_evrak->siraNo = $request->siraNo;
         $yeni_evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
         $yeni_evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
-        $yeni_evrak->vekaletFirmaKisiId = $request->vekaletFirmaKisiId;
+        $yeni_evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
         $yeni_evrak->urunAdi = $request->urunAdi;
         $yeni_evrak->gtipNo = $request->gtipNo;
         $yeni_evrak->urunKG = $request->urunKG;

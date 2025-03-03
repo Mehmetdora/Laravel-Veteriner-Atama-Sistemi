@@ -36,11 +36,11 @@
                                 <th style="width: 10%">
                                     Kayıt Tarihi
                                 </th>
+                                <th style="width: 15%" class="text-center">
+                                    İşlem Türü
+                                </th>
                                 <th style="width: 15%">
                                     VGB Ön Bildirim Numarası
-                                </th>
-                                <th style="width: 15%" class="text-center">
-                                    Evrak Türü
                                 </th>
 
                                 <th style="width: 15%" class="text-center">
@@ -59,16 +59,14 @@
                                         <td>
                                             {{ $evrak->tarih }}
                                         </td>
-                                        <td>
-                                            {{ $evrak->vgbOnBildirimNo }}
-                                        </td>
-
                                         <td class="text-center">
                                             {{ $evrak->evrak_tur->name }}
                                         </td>
-
+                                        <td>
+                                            {{ $evrak->vgbOnBildirimNo }}
+                                        </td>
                                         <td class="project-state ">
-                                            @if ($evrak->evrak_durumu->evrak_durum == 'Onaylanacak')
+                                            @if ($evrak->evrak_durumu->evrak_durum == 'İşlemde')
                                                 <span
                                                     class="badge badge-danger">{{ $evrak->evrak_durumu->evrak_durum }}</span>
                                             @elseif ($evrak->evrak_durumu->evrak_durum == 'Beklemede')

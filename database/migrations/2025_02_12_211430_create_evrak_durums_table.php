@@ -17,8 +17,8 @@ return new class extends Migration
             $table->foreignId('evrak_id')->references('id')->on('evraks')->cascadeOnDelete();
             $table->boolean('isRead')->default(false);
             $table->string('evrak_durum')
-            ->default('Onaylanacak')
-            ->comment('Veterinerin evrağı atanadıktan sonra evrak durumu bilgisi, onaylanacak->beklemede->onaylandı ');
+            ->default('İşlemde')
+            ->comment('Veterinerin evrağı atanadıktan sonra evrak durumu bilgisi, işlemde->beklemede->onaylandı ');
 
             $table->timestamps();
         });

@@ -31,6 +31,20 @@
                                 <form method="post" action="{{ route('admin.evrak.edited') }}">
                                     @csrf
                                     <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                    <div class="form-group">
+                                        <label for="evrak_tur_id" class="control-label">İşlem Türü</label>
+                                        <br>
+                                        <select class="form-control" name="evrak_tur_id" id="evrak_tur_id"
+                                            data-id="{{ $evrak->evrak_tur->id }}" required>
+                                            @if (isset($evrak_turs))
+                                                <option value="{{$evrak->evrak_tur->id}}" >{{ $evrak->evrak_tur->name }}</option>
+                                                <hr>
+                                                @foreach ($evrak_turs as $evrak_tur)
+                                                    <option value="{{ $evrak_tur->id }}">{{ $evrak_tur->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
 
                                     <div class="form-group">
                                         <label name="siraNo" class="control-label">Evrak Kayıt No</label>
@@ -44,20 +58,7 @@
                                             value="{{ $evrak->vgbOnBildirimNo }}" required />
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="evrak_tur_id" class="control-label">İthalat Türü</label>
-                                        <br>
-                                        <select class="form-control" name="evrak_tur_id" id="evrak_tur_id"
-                                            data-id="{{ $evrak->evrak_tur->id }}" required>
-                                            @if (isset($evrak_turs))
-                                                <option>{{ $evrak->evrak_tur->name }}</option>
-                                                <hr>
-                                                @foreach ($evrak_turs as $evrak_tur)
-                                                    <option value="{{ $evrak_tur->id }}">{{ $evrak_tur->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+
 
                                     <div class="form-group">
                                         <label for="vetSaglikSertifikasiNo" class="control-label">Veteriner Sağlık
@@ -69,8 +70,8 @@
                                     <div class="form-group">
                                         <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi
                                             İsmi</label>
-                                        <input type="number" name="vekaletFirmaKisiId" class="form-control"
-                                            value="{{ $evrak->vekaletFirmaKisiId }}" required />
+                                        <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                            value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
                                     </div>
 
                                     <div class="form-group">
@@ -84,7 +85,7 @@
                                         <select class="form-control" data-id="{{ $evrak->urun->id }}"
                                             name="urun_kategori_id" id="urun_kategori_id" required>
                                             @if (isset($uruns))
-                                                <option>{{ $evrak->urun->name }}</option>
+                                                <option selected value="{{$evrak->urun->id}}">{{ $evrak->urun->name }}</option>
                                                 <hr>
                                                 @foreach ($uruns as $urun)
                                                     <option value="{{ $urun->id }}">{{ $urun->name }}</option>
@@ -105,7 +106,7 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="sevkUlke" class="control-label">Ülkemize Sevk Eden Ülke</label>
+                                        <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
                                         <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
                                             required />
                                     </div>
@@ -132,6 +133,20 @@
                                         <label for="cıkısGumruk" class="control-label">Çıkış Gümrüğü</label>
                                         <input name="cıkısGumruk" class="form-control" value="{{ $evrak->cıkısGumruk }}"
                                             required />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="veterinerId" class="control-label">Evrak Durumu</label>
+                                        <select class="form-control"  name="evrak_durum" id="evrak_durum" required>
+                                            @if (isset($evrak))
+                                                <option value="{{$evrak->evrak_durumu->evrak_durum}}">{{$evrak->evrak_durumu->evrak_durum}}</option>
+                                                <hr>
+                                                <option value="İşlemde">İşlemde</option>
+                                                <option value="Beklemede">Beklemede</option>
+                                                <option value="Onaylandı">Onaylandı</option>
+
+                                            @endif
+                                        </select>
                                     </div>
 
                                     <div class="form-group">
