@@ -38,15 +38,15 @@
                                             <th>Tarih</th>
                                             <th>Sıra No</th>
                                             <th>VGB Ön Bildirim Numarası</th>
-                                            <th>Evrak Türü</th>
-                                            <th>Veteriner Sağlık Sertifikası Türü</th>
+                                            <th>İşlem Türü</th>
+                                            <th>Sağlık Sertifikası Numarası</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
                                             <th>Ürünün Kategorisi</th>
                                             <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
-                                            <th>Üklemize Sevk Edilen Ülke</th>
-                                            <th>Orijinal Ülke</th>
+                                            <th>Sevk Edilen Ülke</th>
+                                            <th>Orjin Ülke</th>
                                             <th>Araç Plaka veya Konteyner No</th>
                                             <th>Giriş Gümrüğü</th>
                                             <th>Çıkış Gümrüğü</th>
@@ -62,9 +62,9 @@
                                                     <td>{{ $evrak->tarih }}</td>
                                                     <td>{{ $evrak->siraNo }}</td>
                                                     <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->evrak_tur_adi() }}</td>
+                                                    <td>{{ $evrak->evrak_tur->name }}</td>
                                                     <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
-                                                    <td>{{ $evrak->vekaletFirmaKisiId }}</td>
+                                                    <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
                                                     <td>{{ $evrak->kategoriId }}</td>
                                                     <td>{{ $evrak->gtipNo }}</td>

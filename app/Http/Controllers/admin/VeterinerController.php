@@ -55,14 +55,14 @@ class VeterinerController extends Controller
         foreach ($veterinerler as $user) {
 
             if ($user->evraks()->exists()) {
-                $onaylanacak = 0;
+                $islemde = 0;
                 $onaylandi = 0;
 
                 foreach ($user->evraks as $evrak) {
                     $durum = $evrak->evrak_durumu->evrak_durum;
                     if (isset($durum)) {
-                        if ($durum == "Onaylanacak") {
-                            $onaylanacak += 1;
+                        if ($durum == "İşlemde") {
+                            $islemde += 1;
                         } else {
                             $onaylandi += 1;
                         }
@@ -71,7 +71,7 @@ class VeterinerController extends Controller
                 $yuzde = 0;
 
                 if ($onaylandi != 0) {
-                    $yuzde = round($onaylandi / ($onaylanacak + $onaylandi), 2) * 100;
+                    $yuzde = round($onaylandi / ($islemde + $onaylandi), 2) * 100;
                 }
 
                 $ortalamalar[] = $yuzde;

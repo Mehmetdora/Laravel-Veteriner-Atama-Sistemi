@@ -38,7 +38,7 @@
                     <a href="#" class="nav-link active">
                         <i class="nav-icon fas fa-file-import"></i>
                         <p>
-                            Evrak Onay
+                            Stok Takip
                         </p>
                     </a>
                 </li>
