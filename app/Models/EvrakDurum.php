@@ -8,6 +8,6 @@ class EvrakDurum extends Model
 {
     protected $fillable = ['isRead'];
     public function evrak(){
-        return $this->belongsTo(Evrak::class);
+        return $this->morphTo();
     }
 }

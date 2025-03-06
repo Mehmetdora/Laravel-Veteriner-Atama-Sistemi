@@ -121,6 +121,8 @@ class EvrakController extends Controller
     public function created(Request $request)
     {
 
+
+
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
 
         if (!$formData) {
@@ -128,35 +130,140 @@ class EvrakController extends Controller
         }
 
 
+        // İlk gelen formdaki evrağın türü ne ise diğerleride aynı türde olduğunu
+        // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı
         $errors = [];
 
-        foreach ($formData as $index => $form) {
-            $validator = Validator::make($form, [
-                'siraNo' => 'required',
-                'vgbOnBildirimNo' => 'required',
-                'evrak_tur_id' => 'required',
-                'vetSaglikSertifikasiNo' => 'required',
-                'vekaletFirmaKisiAdi' => 'required',
-                'urunAdi' => 'required',
-                'urun_kategori_id' => 'required',
-                'gtipNo' => 'required',
-                'urunKG' => 'required',
-                'sevkUlke' => 'required',
-                'orjinUlke' => 'required',
-                'aracPlaka' => 'required',
-                'girisGumruk' => 'required',
-                'cıkısGumruk' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                $errors[$index] = $validator->errors()->all();
+        if($formData[0]['evrak_turu'] == 0 || $formData[0]['evrak_turu'] == 1){
+            for($i = 1; $i<count($formData); $i++){
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'aracPlaka' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
             }
+
+
+
+
+        }elseif($formData[0]['evrak_turu'] == 2){
+            for($i = 1; $i<count($formData); $i++){
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'aracPlaka' => 'required',
+                    'girisGumruk' => 'required',
+                    'varisAntreposu' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+
+
+
+        }elseif($formData[0]['evrak_turu'] == 3){
+            for($i = 1; $i<count($formData); $i++){
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'oncekiVGBOnBildirimNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'girisAntreposu' => 'required',
+                    'varisAntreposu' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+
+
+
+        }elseif($formData[0]['evrak_turu'] == 4){
+            for($i = 1; $i<count($formData); $i++){
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'USKSSertifikaReferansNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'aracPlaka' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+
+
+
+        }elseif($formData[0]['evrak_turu'] == 5){
+            for($i = 1; $i<count($formData); $i++){
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'aracPlaka' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+
+
+
         }
 
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
+
+        dd($formData);
+
+
+        //EĞER TEK SEFERDE GELEN EVRAK SAYISI 1 DEN FAZLA İSE TÜM EVRAKLARI LİMİTE GÖRE BAKIP TEK BİR VETERİNERE ATANMASI GEREKİYOR.
+        $gelen_evrak_sayisi = count($formData);
+
 
 
         try {

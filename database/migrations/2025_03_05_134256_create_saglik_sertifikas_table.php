@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evrak_durums', function (Blueprint $table) {
+        Schema::create('saglik_sertifikas', function (Blueprint $table) {
             $table->id();
 
-            $table->morphs('evrak');
-            $table->boolean('isRead')->default(false);
-            $table->string('evrak_durum')
-            ->default('İşlemde')
-            ->comment('Veterinerin evrağı atanadıktan sonra evrak durumu bilgisi, işlemde->beklemede->onaylandı ');
+            $table->string('ssn');
+            $table->integer('miktar');
 
             $table->timestamps();
         });
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evrak_durums');
+        Schema::dropIfExists('saglik_sertifikas');
     }
 };

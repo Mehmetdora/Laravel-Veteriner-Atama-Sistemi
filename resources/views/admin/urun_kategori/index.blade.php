@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Ürünler</h1>
+                        <h1 class="m-0">Ürün Kategorileri</h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -27,7 +27,7 @@
 
                             <div class="card-header ">
                                 <a href="{{ route('admin.uruns.create') }}" style="margin-right:0px;"><button
-                                        type="button" class="btn btn-primary">Yeni Ürün Ekle</button></a>
+                                        type="button" class="btn btn-primary">Yeni Ürün Kategorisi Ekle</button></a>
                             </div>
                             <!-- /.card-header -->
                             <div class="table-responsive">

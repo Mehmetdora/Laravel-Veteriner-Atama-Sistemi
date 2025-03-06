@@ -54,7 +54,7 @@ class User extends Authenticatable
     }
 
     public function evraks(){
-        return $this->hasMany(Evrak::class,'user_id','id');
+        return $this->morphMany(UserEvrak::class, 'evrak');
     }
 
     public function izins(){

@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evrak_durums', function (Blueprint $table) {
+        Schema::create('urun_evrak', function (Blueprint $table) {
             $table->id();
-
-            $table->morphs('evrak');
-            $table->boolean('isRead')->default(false);
-            $table->string('evrak_durum')
-            ->default('İşlemde')
-            ->comment('Veterinerin evrağı atanadıktan sonra evrak durumu bilgisi, işlemde->beklemede->onaylandı ');
-
+            $table->foreignId('urun_id')->constrained()->onDelete('cascade');
+            $table->morphs('evrak'); // Evrak modeli için polymorphic ilişki
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evrak_durums');
+        Schema::dropIfExists('urun_evrak');
     }
 };
