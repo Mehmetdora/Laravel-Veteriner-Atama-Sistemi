@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvrakAntrepoVaris extends Model
 {
+
+    public function evrak_adi(){
+        return "Antrepo Varış";
+    }
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');
@@ -17,7 +21,7 @@ class EvrakAntrepoVaris extends Model
     }
     public function urun()
     {
-        return $this->morphToMany(Urun::class, 'evrak', 'evrak_urun')->withPivot('adet');
+        return $this->morphToMany(Urun::class, 'evrak', 'urun_evrak');
     }
 
     public function saglikSertifikalari()

@@ -120,44 +120,28 @@
                                             <th>Tarih</th>
                                             <th>İşlem Türü</th>
                                             <th>Evrak Kayıt No</th>
-                                            <th>VGB Ön Bildirim Numarası</th>
-
-                                            <th>Sağlık Sertifikası Numarası</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
                                             <th>Ürünün Kategorisi</th>
                                             <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
-                                            <th>Sevk Eden Ülke</th>
-                                            <th>Orjin Ülke</th>
-                                            <th>Araç Plaka veya Konteyner No</th>
-                                            <th>Giriş Gümrüğü</th>
-                                            <th>Çıkış Gümrüğü</th>
                                             <th>Veteriner Hekim</th>
                                             <th>İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if (isset($evraklar))
-                                            @foreach ($evraklar as $evrak)
+                                        @if (isset($evraks_all))
+                                            @foreach ($evraks_all as $evrak)
                                                 <tr>
-                                                    <td>{{ $evrak->tarih }}</td>
-                                                    <td>{{ $evrak->evrak_tur->name }}</td>
-                                                    <td>{{ $evrak->siraNo }}</td>
-                                                    <td>{{ $evrak->vgbOnBildirimNo }}</td>
-
-                                                    <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
+                                                    <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }}</td>
+                                                    <td>{{ $evrak->evrak_adi() }}</td>
+                                                    <td>{{ $evrak->evrakKayitNo }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->urun->name }}</td>
+                                                    <td>{{ $evrak->urun?->first()->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>{{ $evrak->gtipNo }}</td>
                                                     <td>{{ $evrak->urunKG }}</td>
-                                                    <td>{{ $evrak->sevkUlke }}</td>
-                                                    <td>{{ $evrak->orjinUlke }}</td>
-                                                    <td>{{ $evrak->aracPlaka }}</td>
-                                                    <td>{{ $evrak->girisGumruk }}</td>
-                                                    <td>{{ $evrak->cıkısGumruk }}</td>
-                                                    <td>{{ $evrak->vet_adi() }}</td>
+                                                    <td>{{ $evrak->veteriner->user?->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>
                                                         <a href="{{ route('admin.evrak.edit', $evrak->id) }}">
                                                             <button type="button" class="btn btn-warning">Düzenle</button>
@@ -176,19 +160,11 @@
                                             <th>Tarih</th>
                                             <th>İşlem Türü</th>
                                             <th>Evrak Kayıt No</th>
-                                            <th>VGB Ön Bildirim Numarası</th>
-
-                                            <th>Sağlık Sertifikası Numarası</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
                                             <th>Ürünün Kategorisi</th>
                                             <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
-                                            <th>Sevk Eden Ülke</th>
-                                            <th>Orjin Ülke</th>
-                                            <th>Araç Plaka veya Konteyner No</th>
-                                            <th>Giriş Gümrüğü</th>
-                                            <th>Çıkış Gümrüğü</th>
                                             <th>Veteriner Hekim</th>
                                             <th>İşlemler</th>
                                         </tr>

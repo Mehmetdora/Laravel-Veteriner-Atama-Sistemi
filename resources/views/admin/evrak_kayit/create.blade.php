@@ -84,193 +84,18 @@
 
                 <div class="row">
                     <div class="col-12">
-
-
                         <div class="row">
-
-                            {{-- <div class="col-md-6">
-
-                                @include('admin.layouts.messages')
-
-
-                                <form id="dynamicForm" method="post" action="{{ route('admin.evrak.created') }}">
-                                    @csrf
-
-                                    <div class="forms-container">
-
-
-
-
-                                        <div class="form-group">
-                                            <label for="evrak_tur_id" class="control-label">İşlem Türü</label>
-                                            <br>
-                                            <select class="form-control" name="evrak_tur_id" id="evrak_tur_id" required>
-                                                @if (isset($evrak_turs))
-                                                    @foreach ($evrak_turs as $evrak_tur)
-                                                        <option value="{{ $evrak_tur->id }}">{{ $evrak_tur->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo" name="siraNo" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control" required />
-                                        </div>
-
-
-
-                                        <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn">➕</button>
-
-                                            <div id="inputContainer" class="inputs hidden">
-                                                <input type="text" id="input1"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2" placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn">✔️</button>
-                                            </div>
-
-                                            <ul id="dataList" class="list"></ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
-                                                class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
-                                                Kişi
-                                                İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
-                                                required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id" id="urun_kategori_id"
-                                                required>
-                                                @if (isset($uruns))
-                                                    <option selected value="">Ürün Kategorileri</option>
-                                                    @foreach ($uruns as $urun)
-                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
-                                                Miktarı</label>
-                                            <input id="net_miktar" name="urunKG" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner
-                                                No</label>
-                                            <input name="aracPlaka" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk"
-                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="varis_antrepo_input">Varış Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="varis_antrepo_select">
-                                                    <option selected value="">Antrepolar(Seçiniz)</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="varisAntreposu"
-                                                    id="varis_antrepo_input" placeholder="Varış Antreposu" required>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div id="formButtons" style="margin-top: 10px; display: none;">
-                                        <button type="button" id="prevButton" onclick="prevForm()"
-                                            style="display: none;">Önceki</button>
-                                        <button type="button" id="nextButton" onclick="nextForm()">Sonraki</button>
-                                        <button type="submit" class="btn btn-primary" id="submitButton"
-                                            style="display: none;">Kaydet</button>
-                                    </div>
-
-                                </form>
-                            </div>
-                            <div class="col-md-2"></div>
-                            <div class="col-md-4">
-                                <label for="form-count" class="control-label">Aynı Firmadan Gelen Evrak Sayısı:*</label>
-                                <input placeholder="Arka Arkaya Aynı firmadan Gelen Evrakların Sayısı" type="number"
-                                    name="form-count" class="form-control" id="form-count" min="1" required>
-                                <button type="button" class="btn btn-primary mt-3"
-                                    onclick="createForms()">Oluştur</button>
-                            </div> --}}
-
-
                             <div class="col-md-8">
                                 @include('admin.layouts.messages')
 
                                 <form id="dynamicForm" method="post" action="{{ route('admin.evrak.created') }}"
                                     style="display:none">
                                     @csrf
-
                                     <input type="hidden" name="formData" id="formData">
-
 
                                     {{-- Tüm form inputları burada olacak --}}
                                     <div id="formContainer">
-
-
                                     </div>
-
 
 
                                     <div id="formButtons" style="margin-top: 10px; display: none;">
@@ -282,14 +107,8 @@
                                             style="display: none;">Kaydet</button>
                                     </div>
                                 </form>
+                                
                             </div>
-
-
-
-
-
-
-
                         </div>
                         <!-- /.card -->
                     </div>
@@ -426,7 +245,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -549,7 +368,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -674,7 +493,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -707,7 +526,7 @@
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
                                         </div>
 
 
@@ -775,7 +594,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -898,7 +717,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="number" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -1029,7 +848,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value) || 0;
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1041,7 +860,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -1107,7 +926,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value) || 0;
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1119,7 +938,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -1187,7 +1006,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value) || 0;
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1199,7 +1018,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -1263,7 +1082,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value) || 0;
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1275,7 +1094,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -1339,7 +1158,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value) || 0;
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1351,7 +1170,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -1532,6 +1351,21 @@
 
             this.submit();
         });
+    </script>
+
+    <script>
+        function formatNumber(input) {
+            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
+            if (value === "") return input.value = ""; // Boş girişe izin ver
+
+            // Sayıyı ters çevir, üçlü gruplara ayır ve noktalar ekleyerek tekrar çevir
+            value = value.split('').reverse().join('') // Önce ters çevir
+                .match(/\d{1,3}/g) // Üçlü gruplara ayır
+                .join('.') // Grupları noktayla birleştir
+                .split('').reverse().join(''); // Yeniden ters çevir
+
+            input.value = value;
+        }
     </script>
 
     {{--   <script>

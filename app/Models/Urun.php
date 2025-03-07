@@ -14,26 +14,26 @@ class Urun extends Model
     }
     public function evraks_ithalat()
     {
-        return $this->morphToMany(EvrakIthalat::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakIthalat::class, 'evrak', 'urun_evrak');
     }
     public function evraks_transit()
     {
-        return $this->morphToMany(EvrakTransit::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakTransit::class, 'evrak', 'urun_evrak');
     }
     public function evraks_giris()
     {
-        return $this->morphToMany(EvrakAntrepoGiris::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakAntrepoGiris::class, 'evrak', 'urun_evrak');
     }
     public function evraks_varis()
     {
-        return $this->morphToMany(EvrakAntrepoVaris::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakAntrepoVaris::class, 'evrak', 'urun_evrak');
     }
     public function evraks_sertifika()
     {
-        return $this->morphToMany(EvrakAntrepoSertifika::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakAntrepoSertifika::class, 'evrak', 'urun_evrak');
     }
     public function evraks_cikis()
     {
-        return $this->morphToMany(EvrakAntrepoCikis::class, 'evrak', 'evrak_urun');
+        return $this->morphToMany(EvrakAntrepoCikis::class, 'evrak', 'urun_evrak');
     }
 }

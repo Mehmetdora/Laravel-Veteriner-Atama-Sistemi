@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('evrak_antrepo_cikis', function (Blueprint $table) {
             $table->id();
 
-            $table->date('tarih');
             $table->string('evrakKayitNo');
             $table->string('vgbOnBildirimNo');
-            $table->string('vetSaglikSertifikasiNo');
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');

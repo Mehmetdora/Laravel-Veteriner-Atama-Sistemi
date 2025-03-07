@@ -6,5 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserEvrak extends Model
 {
-    
+    public function evrak()
+    {
+        return $this->morphTo();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); // 'user_id' sütunu ilişkili olmalı
+    }
 }
