@@ -143,11 +143,11 @@
                                                     <td>{{ $evrak->urunKG }}</td>
                                                     <td>{{ $evrak->veteriner->user?->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.evrak.edit', $evrak->id) }}">
+                                                        <a href="{{ route('admin.evrak.edit', ['type'=> $evrak->getMorphClass(),'id'=>$evrak->id]) }}">
                                                             <button type="button" class="btn btn-warning">Düzenle</button>
                                                         </a>
                                                         <br>
-                                                        <a href="{{ route('admin.evrak.detail', $evrak->id) }}">
+                                                        <a href="{{ route('admin.evrak.detail', ['type'=> $evrak->getMorphClass(),'id'=>$evrak->id]) }}">
                                                             <button type="button" class="btn btn-info">Detay</button>
                                                         </a>
                                                     </td>
@@ -203,6 +203,7 @@
     <script>
         $(function() {
             $("#example1").DataTable({
+                "paging": false,
                 "scrollX": true,
                 "scrollY": "600px",
                 "responsive": false,
@@ -211,11 +212,9 @@
                 dom: 'Bfrtip',
                 buttons: [{
                         extend: 'pdfHtml5',
-                        text: 'PDF olarak indir(Tüm kolonlar pdf e sığmıyor)',
+                        text: 'PDF',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-                                15
-                            ] // Tüm kolonları export eder
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Tüm kolonları export eder
                         },
                         customize: function(doc) {
                             // Tabloyu genişletmek için sayfa genişliği ayarı
@@ -229,11 +228,9 @@
                     },
                     {
                         extend: 'excelHtml5',
-                        text: 'Excel olarak indir',
+                        text: 'Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
-                                15
-                            ] // Tüm kolonları dahil et
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Tüm kolonları dahil et
                         }
                     }
                 ]

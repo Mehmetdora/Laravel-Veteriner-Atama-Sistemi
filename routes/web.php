@@ -47,9 +47,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Evrak İşlemleri
     Route::controller(EvrakController::class)->group(function(){
         Route::get('/admin/evrak/liste','index')->name('admin.evrak.index');
-        Route::get('/admin/evrak/detay/{id}','detail')->name('admin.evrak.detail');
+        Route::get('/admin/evrak/detay/{type}/{id}','detail')->name('admin.evrak.detail');
 
-        Route::get('/admin/evrak/düzenle/{id}','edit')->name('admin.evrak.edit');
+        Route::get('/admin/evrak/düzenle/{type}/{id}','edit')->name('admin.evrak.edit');
         Route::post('/admin/evrak/düzenlendi','edited')->name('admin.evrak.edited');
 
         Route::get('/admin/evrak/ekle','create')->name('admin.evrak.create');
