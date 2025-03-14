@@ -105,7 +105,8 @@
                                                 @endforeach
                                             </ul>
 
-                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
+                                            <input type="hidden" name="vetSaglikSertifikasiNo"
+                                                value="{{ json_encode($evrak->saglikSertifikalari) }}" id="jsonData"
                                                 class="form-control" required />
                                         </div>
 
@@ -219,7 +220,7 @@
                                             <label for="veterinerId" class="control-label">Evrak Durumu</label>
                                             <select class="form-control" name="evrak_durum" id="evrak_durum" required>
                                                 @if (isset($evrak))
-                                                    <option value="{{ $evrak->evrak_durumu->evrak_durum }}">
+                                                    <option selected value="{{ $evrak->evrak_durumu->evrak_durum }}">
                                                         {{ $evrak->evrak_durumu->evrak_durum }}</option>
                                                     <hr>
                                                     <option value="İşlemde">İşlemde</option>
@@ -234,7 +235,7 @@
                                             <select class="form-control" data-id="{{ $evrak->veteriner->user->id }}"
                                                 name="veterinerId" id="veterinerId" required>
                                                 @if (isset($veteriners))
-                                                    <option value="{{ $evrak->veteriner->user->id }}">
+                                                    <option selected value="{{ $evrak->veteriner->user->id }}">
                                                         {{ $evrak->veteriner->user->name }}
                                                     </option>
                                                     <hr>
@@ -391,7 +392,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="veterinerId" class="control-label">Evrak Durumu</label>
+                                            <label for="evrak_durum" class="control-label">Evrak Durumu</label>
                                             <select class="form-control" name="evrak_durum" id="evrak_durum" required>
                                                 @if (isset($evrak))
                                                     <option value="{{ $evrak->evrak_durumu->evrak_durum }}">
@@ -409,7 +410,7 @@
                                             <select class="form-control" data-id="{{ $evrak->veteriner->user->id }}"
                                                 name="veterinerId" id="veterinerId" required>
                                                 @if (isset($veteriners))
-                                                    <option value="{{ $evrak->veteriner->user->id }}">
+                                                    <option selected value="{{ $evrak->veteriner->user->id }}">
                                                         {{ $evrak->veteriner->user->name }}
                                                     </option>
                                                     <hr>
@@ -622,7 +623,8 @@
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
+                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }}
+                                                        KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
                                                 @endforeach
@@ -979,8 +981,6 @@
 
 
 @section('admin.customJS')
-
-
     @if ($evrak_type == 'EvrakIthalat' || $evrak_type == 'EvrakTransit')
         <script>
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
@@ -1130,7 +1130,7 @@
         let netMiktar = 0;
 
         @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-            const item = {
+            var item = {
                 ssn: {{ $saglik_sertifika->ssn }},
                 miktar: {{ $saglik_sertifika->miktar }}
             }
@@ -1162,7 +1162,7 @@
         });
 
         confirmBtn.addEventListener("click", function() {
-            let val1 = input1.value.trim();
+            let val1 = parseInt(input1.value.trim());
             let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
             if (val1 && val2) {

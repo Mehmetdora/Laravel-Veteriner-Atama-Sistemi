@@ -107,7 +107,7 @@
                                             style="display: none;">Kaydet</button>
                                     </div>
                                 </form>
-                                
+
                             </div>
                         </div>
                         <!-- /.card -->
@@ -333,8 +333,8 @@
                                                 <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
                                                     <option selected value="">Gümrükler(Seç)</option>
                                                     <hr>
-                                                    <option value="Mersin">Habur</option>
-                                                    <option value="Taşucu">Cilvegözü</option>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
@@ -682,8 +682,8 @@
                                                 <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
                                                     <option selected value="">Gümrükler(Seç)</option>
                                                     <hr>
-                                                    <option value="Mersin">Habur</option>
-                                                    <option value="Taşucu">Cilvegözü</option>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
@@ -805,8 +805,8 @@
                                                 <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
                                                     <option selected value="">Gümrükler(Seç)</option>
                                                     <hr>
-                                                    <option value="Mersin">Habur</option>
-                                                    <option value="Taşucu">Cilvegözü</option>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
 
                                                 </select>
                                                 <div class="col-sm-1"></div>

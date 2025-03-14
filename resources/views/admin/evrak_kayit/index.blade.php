@@ -122,7 +122,6 @@
                                             <th>Evrak Kayıt No</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
-                                            <th>Ürünün Kategorisi</th>
                                             <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
                                             <th>Veteriner Hekim</th>
@@ -138,16 +137,17 @@
                                                     <td>{{ $evrak->evrakKayitNo }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->urun?->first()->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>{{ $evrak->gtipNo }}</td>
                                                     <td>{{ $evrak->urunKG }}</td>
                                                     <td>{{ $evrak->veteriner->user?->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>
-                                                        <a href="{{ route('admin.evrak.edit', ['type'=> $evrak->getMorphClass(),'id'=>$evrak->id]) }}">
+                                                        <a
+                                                            href="{{ route('admin.evrak.edit', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
                                                             <button type="button" class="btn btn-warning">Düzenle</button>
                                                         </a>
                                                         <br>
-                                                        <a href="{{ route('admin.evrak.detail', ['type'=> $evrak->getMorphClass(),'id'=>$evrak->id]) }}">
+                                                        <a
+                                                            href="{{ route('admin.evrak.detail', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
                                                             <button type="button" class="btn btn-info">Detay</button>
                                                         </a>
                                                     </td>
@@ -162,7 +162,6 @@
                                             <th>Evrak Kayıt No</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
-                                            <th>Ürünün Kategorisi</th>
                                             <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
                                             <th>Veteriner Hekim</th>
@@ -203,6 +202,7 @@
     <script>
         $(function() {
             $("#example1").DataTable({
+                "order" : [[1,"desc"]],
                 "paging": false,
                 "scrollX": true,
                 "scrollY": "600px",
@@ -214,7 +214,7 @@
                         extend: 'pdfHtml5',
                         text: 'PDF',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Tüm kolonları export eder
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Tüm kolonları export eder
                         },
                         customize: function(doc) {
                             // Tabloyu genişletmek için sayfa genişliği ayarı
@@ -230,7 +230,7 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] // Tüm kolonları dahil et
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Tüm kolonları dahil et
                         }
                     }
                 ]
