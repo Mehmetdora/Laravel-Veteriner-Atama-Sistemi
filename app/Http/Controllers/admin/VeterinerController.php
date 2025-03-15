@@ -8,13 +8,20 @@ use App\Models\Evrak;
 use App\Models\EvrakTur;
 use App\Models\EvrakDurum;
 use App\Models\NobetHafta;
+use App\Models\EvrakIthalat;
+use App\Models\EvrakTransit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use App\Models\SaglikSertifika;
+
 use function PHPSTORM_META\map;
 use Illuminate\Validation\Rule;
+use App\Models\EvrakAntrepoCikis;
+use App\Models\EvrakAntrepoGiris;
+use App\Models\EvrakAntrepoVaris;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\Hash;
+use App\Models\EvrakAntrepoSertifika;
 use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,8 +37,10 @@ class VeterinerController extends Controller
         // Tüm veterinerler ilişkileri ile
         $veterinerler = User::role('veteriner')
             ->where("status", 1)
-            ->with(['evraks.evrak_durumu', 'nobets', 'izins'])
+            ->with(['evraks.evrak.evrak_durumu', 'nobets', 'izins'])
             ->get();
+        // Her user ın UserEvrak kayıtlarını her kaydın evrak kaydı ile ve her evrak
+        //kaydını da evrak_durum kaydı ile birlikte getirme sorgusu
 
 
         // izinli veterinerleri ve nobetçi veterinerleri bulma
@@ -53,13 +62,12 @@ class VeterinerController extends Controller
         // EVRAK BİTİRME YÜZDESİ HESAPLAMA
         $ortalamalar = [];
         foreach ($veterinerler as $user) {
-
             if ($user->evraks()->exists()) {
                 $islemde = 0;
                 $onaylandi = 0;
 
-                foreach ($user->evraks as $evrak) {
-                    $durum = $evrak->evrak_durumu->evrak_durum;
+                foreach ($user->evraks as $kayit) {
+                    $durum = $kayit->evrak->evrak_durumu->evrak_durum;
                     if (isset($durum)) {
                         if ($durum == "İşlemde") {
                             $islemde += 1;
@@ -165,7 +173,12 @@ class VeterinerController extends Controller
 
     public function evraks_list($id)
     {
-        $data['veteriner'] = User::with('evraks')->find($id);
+        $data['veteriner'] = User::with([
+                'evraks' => function($query){
+                    $query->orderBy('created_at','desc');
+                },
+                'evraks.evrak.evrak_durumu'
+            ])->find($id);
 
         return view('admin.veteriners.veteriner.evraks.index', $data);
     }
@@ -226,88 +239,485 @@ class VeterinerController extends Controller
     }
 
 
-    public function evrak_edit($id)
+    public function evrak_edit($type,$evrak_id)
     {
+
+        $type = explode("\\", $type);
+        $type = end($type);
+
+        if ($type == "EvrakIthalat") {
+            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakTransit") {
+            $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoGiris") {
+            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoVaris") {
+            $data['evrak'] = EvrakAntrepoVaris::with([ 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoSertifika") {
+            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoCikis") {
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        }
+
+
+        $data['evrak_type'] = $type;
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         $data['uruns'] = Urun::all();
-        $data['evrak_turs'] = EvrakTur::where('status', true)->get();
-        $data['evrak'] = Evrak::with(['urun', 'evrak_tur', 'veteriner'])->find($id);
 
         return view('admin.veteriners.veteriner.evraks.edit', $data);
     }
 
     public function evrak_edited(Request $request)
     {
+        $errors = [];
 
-        $validator = Validator::make($request->all(), [
-            'siraNo' => 'required',
-            'vgbOnBildirimNo' => 'required',
-            'evrak_tur_id' => 'required',
-            'vetSaglikSertifikasiNo' => 'required',
-            'vekaletFirmaKisiAdi' => 'required',
-            'urunAdi' => 'required',
-            'urun_kategori_id' => 'required',
-            'gtipNo' => 'required',
-            'urunKG' => 'required',
-            'sevkUlke' => 'required',
-            'orjinUlke' => 'required',
-            'aracPlaka' => 'required',
-            'girisGumruk' => 'required',
-            'cıkısGumruk' => 'required',
-            'veterinerId' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
-            return redirect()->back()->with('error', $errors);
+        // Validation
+        if ($request->type == "EvrakIthalat" || $request->type == "EvrakTransit") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'vgbOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
+                'aracPlaka' => 'required',
+                'girisGumruk' => 'required',
+                'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakAntrepoGiris") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'vgbOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
+                'aracPlaka' => 'required',
+                'girisGumruk' => 'required',
+                'varisAntreposu' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakAntrepoVaris") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'oncekiVGBOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'girisAntreposu' => 'required',
+                'varisAntreposu' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakAntrepoSertifika") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'USKSSertifikaReferansNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
+                'aracPlaka' => 'required',
+                'girisGumruk' => 'required',
+                'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakAntrepoCikis") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'vgbOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
+                'aracPlaka' => 'required',
+                'girisGumruk' => 'required',
+                'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
         }
 
-        $evrak = Evrak::find($request->id);
-
-        $evrak->siraNo = $request->siraNo;
-        $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
-        $evrak->vetSaglikSertifikasiNo = $request->vetSaglikSertifikasiNo;
-        $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
-        $evrak->urunAdi = $request->urunAdi;
-        $evrak->gtipNo = $request->gtipNo;
-        $evrak->urunKG = $request->urunKG;
-        $evrak->sevkUlke = $request->sevkUlke;
-        $evrak->orjinUlke = $request->orjinUlke;
-        $evrak->aracPlaka = $request->aracPlaka;
-        $evrak->girisGumruk = $request->girisGumruk;
-        $evrak->cıkısGumruk = $request->cıkısGumruk;
-        $evrak->tarih = Carbon::now();
+        // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
+        if (!empty($errors)) {
+            return redirect()->back()->withErrors($errors)->with('error', $errors);
+        }
 
 
-        $urun = Urun::find($request->urun_kategori_id);
-        $evrak->urun()->associate($urun);
+        try {
 
-        $evrak_tur = EvrakTur::find($request->evrak_tur_id);
-        $evrak->evrak_tur()->associate($evrak_tur);
+            if ($request->type == "EvrakIthalat") {
 
-        $veteriner = User::find($request->veterinerId);
-        $saved = $veteriner->evraks()->save($evrak);
+                $evrak = EvrakIthalat::find($request->input('id'));
 
-        $isRead = $evrak->evrak_durumu->isRead;
-        $evrak->evrak_durumu()->delete();
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->aracPlaka = $request->aracPlaka;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->save();
 
-        $evrak_durum = new EvrakDurum;  // Evrak Durumu güncelleme
-        $evrak_durum->isRead = $isRead;
-        $evrak_durum->evrak_durum = $request->evrak_durum;
-        $evrak->evrak_durumu()->save($evrak_durum);
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
 
 
-        if ($saved) {
-            return redirect()->route('admin.veteriners.veteriner.evraks', $veteriner->id)->with('success', 'Evrak Başarıyla Düzenlendi.');
-        } else {
-            return redirect()->back()->with('error', 'Evrak Düzenleme Sırasında Hata Oluştu! Lütfen Bilgilerinizi Kontrol Ediniz.');
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+            } elseif ($request->type == "EvrakTransit") {
+                $evrak = EvrakTransit::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->aracPlaka = $request->aracPlaka;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+
+
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+            } elseif ($request->type == "EvrakAntrepoGiris") {
+                $evrak = EvrakAntrepoGiris::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->aracPlaka = $request->aracPlaka;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+
+
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+            } elseif ($request->type == "EvrakAntrepoVaris") {
+                $evrak = EvrakAntrepoVaris::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->oncekiVGBOnBildirimNo = $request->oncekiVGBOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->girisAntreposu = $request->girisAntreposu;
+                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->save();
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+            } elseif ($request->type == "EvrakAntrepoSertifika") {
+                $evrak = EvrakAntrepoSertifika::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->USKSSertifikaReferansNo = $request->USKSSertifikaReferansNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->aracPlaka = $request->aracPlaka;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+
+
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+            } elseif ($request->type == "EvrakAntrepoCikis") {
+                $evrak = EvrakAntrepoCikis::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->aracPlaka = $request->aracPlaka;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+
+
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo);
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $sertifika->ssn;
+                    $saglik_sertfika->miktar = $sertifika->miktar;
+                    $saglik_sertfika->save();
+                    $sertifika_ids[] = $saglik_sertfika->id;
+                }
+                $evrak->saglikSertifikalari()->sync($sertifika_ids);
+
+            }
+
+            return redirect()->route('admin.veteriners.veteriner.evraks',$request->veterinerId)->with('success', "Evrak başarıyla düzenlendi.");
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
     }
 
-    public function evrak_detail($id)
+    public function evrak_detail($type,$evrak_id)
     {
-        $data['evrak'] = Evrak::find($id);
+        $type = explode("\\", $type);
+        $type = end($type);
+
+        if ($type == "EvrakIthalat") {
+            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakTransit") {
+            $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoGiris") {
+            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoVaris") {
+            $data['evrak'] = EvrakAntrepoVaris::with([ 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoSertifika") {
+            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoCikis") {
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        }
 
         return view('admin.veteriners.veteriner.evraks.detail', $data);
     }

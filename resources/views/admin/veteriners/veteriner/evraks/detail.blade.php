@@ -34,25 +34,34 @@
                                 <table class="table">
                                     <tbody>
                                         <tr>
-                                            <th style="width:50%">Tarih:</th>
-                                            <td>{{ $evrak->tarih }}</td>
+                                            <th>İşlem Türü:</th>
+                                            <td>{{ $evrak->evrak_adi() }}</td>
                                         </tr>
                                         <tr>
-                                            <th>İşlem Türü:</th>
-                                            <td>{{ $evrak->evrak_tur->name }}</td>
+                                            <th style="width:30%">Oluşturulma Tarihi:</th>
+                                            <td>{{ $evrak->created_at->format('d-m-y') }}</td>
                                         </tr>
                                         <tr>
                                             <th>Evrak Kayıt No:</th>
-                                            <td>{{ $evrak->siraNo }}</td>
+                                            <td>{{ $evrak->evrakKayitNo }}</td>
                                         </tr>
                                         <tr>
                                             <th>VGB Ön Bildirim Numarası:</th>
-                                            <td>{{ $evrak->vgbOnBildirimNo }}</td>
+                                            <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnBildirimNo ?: $evrak->USKSSertifikaReferansNo}}</td>
                                         </tr>
-
                                         <tr>
-                                            <th>Veteriner Sağlık Sertifikası Türü:</th>
-                                            <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
+                                            <th>Veteriner Sağlık Sertifikaları:</th>
+                                            <td>
+                                                <ul id="dataList" class="list">
+                                                    @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                        <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                            data-miktar="{{ $saglik_sertifika->miktar }}">
+                                                            {{ $saglik_sertifika->ssn }} → {{ $saglik_sertifika->miktar }}
+                                                            KG
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Vekalet Sahibi Firma/Kişi Adı:</th>
@@ -62,41 +71,66 @@
                                             <th>Ürünün Açık İsmi:</th>
                                             <td>{{ $evrak->urunAdi }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Ürünün Kategorisi:</th>
-                                            <td>{{ $evrak->urun->name }}</td>
-                                        </tr>
+                                        @if (isset($evrak->urun))
+                                            <tr>
+                                                <th>Ürünün Kategorisi:</th>
+                                                <td>{{ $evrak->urun->first()->name }}</td>
+                                            </tr>
+                                        @endif
                                         <tr>
                                             <th>G.T.İ.P. No İlk 4 Rakamı:</th>
                                             <td>{{ $evrak->gtipNo }}</td>
                                         </tr>
                                         <tr>
                                             <th>Ürünün KG Cinsinden Net Miktarı:</th>
-                                            <td>{{ $evrak->urunKG }}</td>
+                                            <td>{{ $evrak->urunKG }} KG</td>
                                         </tr>
-                                        <tr>
-                                            <th>Sevk Eden Ülke:</th>
-                                            <td>{{ $evrak->sevkUlke }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Orjin Ülke:</th>
-                                            <td>{{ $evrak->orjinUlke }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Araç Plaka veya Konteyner No:</th>
-                                            <td>{{ $evrak->aracPlaka }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Giriş Gümrüğü:</th>
-                                            <td>{{ $evrak->girisGumruk }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Çıkış Gümrüğü:</th>
-                                            <td>{{ $evrak->cıkısGumruk }}</td>
-                                        </tr>
+                                        @if (isset($evrak->sevkUlke))
+                                            <tr>
+                                                <th>Sevk Eden Ülke:</th>
+                                                <td>{{ $evrak->sevkUlke }}</td>
+                                            </tr>
+                                        @endif
+                                        @if (isset($evrak->orjinUlke))
+                                            <tr>
+                                                <th>Orjin Ülke:</th>
+                                                <td>{{ $evrak->orjinUlke }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->aracPlaka)
+                                            <tr>
+                                                <th>Araç Plaka veya Konteyner No:</th>
+                                                <td>{{ $evrak->aracPlaka }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->girisAntreposu)
+                                            <tr>
+                                                <th>Giriş Antreposu:</th>
+                                                <td>{{ $evrak->girisAntreposu }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->cikisAntreposu)
+                                            <tr>
+                                                <th>Giriş Antreposu:</th>
+                                                <td>{{ $evrak->cikisAntreposu }}</td>
+                                            </tr>
+                                        @endif
+                                        @if (isset($evrak->girisGumruk))
+                                            <tr>
+                                                <th>Giriş Gümrüğü:</th>
+                                                <td>{{ $evrak->girisGumruk }}</td>
+                                            </tr>
+                                        @endif
+                                        @if (isset($evrak->cikisGumruk))
+                                            <tr>
+                                                <th>Çıkış Gümrüğü:</th>
+                                                <td>{{ $evrak->cikisGumruk }}</td>
+                                            </tr>
+                                        @endif
+
                                         <tr>
                                             <th>Veteriner Hekim Adı:</th>
-                                            <td>{{ $evrak->veteriner->name }}</td>
+                                            <td>{{ $evrak->veteriner->user->name }}</td>
                                         </tr>
 
                                     </tbody>

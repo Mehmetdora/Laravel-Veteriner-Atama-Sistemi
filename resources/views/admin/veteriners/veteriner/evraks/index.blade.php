@@ -23,17 +23,14 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Tüm Evrakları</h3>
-                    {{-- <div style="display:flex; justify-content: end;">
-                        <a href="{{ route('admin.veteriners.create') }}"><button type="button" class="btn btn-primary">Yeni
-                                Veteriner Ekle</button></a>
-                    </div> --}}
+
                 </div>
                 @include('admin.layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>
                             <tr>
-                                <th style="width: 10%">
+                                <th style="width: 15%">
                                     Kayıt Tarihi
                                 </th>
                                 <th style="width: 15%" class="text-center">
@@ -47,46 +44,46 @@
                                     Evrak Durumu
                                 </th>
 
-                                <th style="width: 45%" class="text-center">
+                                <th style="width: 40%" class="text-center">
                                     İşlemler
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             @if (isset($veteriner))
-                                @foreach ($veteriner->evraks as $evrak)
+                                @foreach ($veteriner->evraks as $kayit)
                                     <tr>
                                         <td>
-                                            {{ $evrak->tarih }}
+                                            {{ $kayit->evrak->created_at->format('d-m-y') }}
                                         </td>
                                         <td class="text-center">
-                                            {{ $evrak->evrak_tur->name }}
+                                            {{ $kayit->evrak->evrak_adi() }}
                                         </td>
                                         <td>
-                                            {{ $evrak->vgbOnBildirimNo }}
+                                            {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->USKSSertifikaReferansNo }}
                                         </td>
                                         <td class="project-state ">
-                                            @if ($evrak->evrak_durumu->evrak_durum == 'İşlemde')
+                                            @if ($kayit->evrak->evrak_durumu->evrak_durum == 'İşlemde')
                                                 <span
-                                                    class="badge badge-danger">{{ $evrak->evrak_durumu->evrak_durum }}</span>
-                                            @elseif ($evrak->evrak_durumu->evrak_durum == 'Beklemede')
+                                                    class="badge badge-danger">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
+                                            @elseif ($kayit->evrak->evrak_durumu->evrak_durum == 'Beklemede')
                                                 <span
-                                                    class="badge badge-warning">{{ $evrak->evrak_durumu->evrak_durum }}</span>
-                                            @elseif ($evrak->evrak_durumu->evrak_durum == 'Onaylandı')
+                                                    class="badge badge-warning">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
+                                            @elseif ($kayit->evrak->evrak_durumu->evrak_durum == 'Onaylandı')
                                                 <span
-                                                    class="badge badge-success">{{ $evrak->evrak_durumu->evrak_durum }}</span>
+                                                    class="badge badge-success">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
                                             @endif
                                         </td>
 
                                         <td class="project-actions text-center">
                                             <a class="btn btn-primary btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.evrak.detail', $evrak->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.evrak.detail', ['type' => $kayit->evrak->getMorphClass(), 'id' => $kayit->evrak->id]) }}">
                                                 <i class="fas fa-folder">
                                                 </i>
                                                 İncele
                                             </a>
                                             <a class="btn btn-info btn-sm"
-                                                href="{{ route('admin.veteriners.veteriner.evrak.edit', $evrak->id) }}">
+                                                href="{{ route('admin.veteriners.veteriner.evrak.edit', ['type' => $kayit->evrak->getMorphClass(), 'id' => $kayit->evrak->id]) }}">
                                                 <i class="fas fa-pencil-alt">
                                                 </i>
                                                 Düzenle

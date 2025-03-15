@@ -1131,7 +1131,7 @@
 
         @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
             var item = {
-                ssn: {{ $saglik_sertifika->ssn }},
+                ssn: "{{ $saglik_sertifika->ssn }}",
                 miktar: {{ $saglik_sertifika->miktar }}
             }
             data.push(item);
@@ -1149,7 +1149,7 @@
         list_item.forEach(item => {
             item.addEventListener("click", function() {
                 const val = parseInt(item.getAttribute('data-miktar'));
-                const ssn = parseInt(item.getAttribute('data-ssn'));
+                const ssn = item.getAttribute('data-ssn');
 
                 data = data.filter(item => item.ssn !== ssn || item.miktar !== val);
                 netMiktar -= val;
@@ -1162,7 +1162,7 @@
         });
 
         confirmBtn.addEventListener("click", function() {
-            let val1 = parseInt(input1.value.trim());
+            let val1 = input1.value.trim();
             let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
             if (val1 && val2) {

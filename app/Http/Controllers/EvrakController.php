@@ -32,9 +32,9 @@ class EvrakController extends Controller
             ->merge(EvrakIthalat::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakTransit::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoVaris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
             ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'evrak_durumu'])->get());
+            ->merge(EvrakAntrepoCikis::with(['veteriner.user','urun', 'evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama
         $evraks_all = $evraks_all->sortByDesc('created_at');
@@ -60,13 +60,13 @@ class EvrakController extends Controller
             $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
-            $data['evrak'] = EvrakAntrepoVaris::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVaris::with([ 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
-            $data['evrak'] = EvrakAntrepoCikis::with([ 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 
@@ -249,7 +249,7 @@ class EvrakController extends Controller
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                     }
 
-                    $yeni_evrak->urun()->attach($urun->id);
+                    $yeni_evrak->setUrun($urun);
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -302,7 +302,7 @@ class EvrakController extends Controller
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                     }
 
-                    $yeni_evrak->urun()->attach($urun->id);
+                    $yeni_evrak->setUrun($urun);
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -356,7 +356,7 @@ class EvrakController extends Controller
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                     }
 
-                    $yeni_evrak->urun()->attach($urun->id);
+                    $yeni_evrak->setUrun($urun);
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -455,7 +455,7 @@ class EvrakController extends Controller
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                     }
 
-                    $yeni_evrak->urun()->attach($urun->id);
+                    $yeni_evrak->setUrun($urun);
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -508,7 +508,7 @@ class EvrakController extends Controller
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                     }
 
-                    $yeni_evrak->urun()->attach($urun->id);
+                    $yeni_evrak->setUrun($urun);
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -560,13 +560,13 @@ class EvrakController extends Controller
             $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
-            $data['evrak'] = EvrakAntrepoVaris::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+            $data['evrak'] = EvrakAntrepoVaris::with([ 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
-            $data['evrak'] = EvrakAntrepoCikis::with([ 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         }
 
@@ -709,7 +709,7 @@ class EvrakController extends Controller
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
 
-                $evrak->urun()->sync([$urun->id]);  // Burada Kaldın
+                $evrak->urun()->sync([$urun->id]);
 
 
 
@@ -764,7 +764,7 @@ class EvrakController extends Controller
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
 
-                $evrak->urun()->attach($urun->id);
+                $evrak->urun()->sync([$urun->id]);
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
@@ -817,7 +817,7 @@ class EvrakController extends Controller
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
 
-                $evrak->urun()->attach($urun->id);
+                $evrak->urun()->sync([$urun->id]);
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
@@ -910,7 +910,7 @@ class EvrakController extends Controller
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
 
-                $evrak->urun()->attach($urun->id);
+                $evrak->urun()->sync([$urun->id]);
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
@@ -963,7 +963,7 @@ class EvrakController extends Controller
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
 
-                $evrak->urun()->attach($urun->id);
+                $evrak->urun()->sync([$urun->id]);
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;

@@ -10,6 +10,9 @@ class EvrakAntrepoVaris extends Model
     public function evrak_adi(){
         return "Antrepo Varış";
     }
+
+
+
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');
@@ -19,10 +22,7 @@ class EvrakAntrepoVaris extends Model
     {
         return $this->morphOne(EvrakDurum::class, 'evrak');
     }
-    public function urun()
-    {
-        return $this->morphToMany(Urun::class, 'evrak', 'urun_evrak');
-    }
+    
 
     public function saglikSertifikalari()
     {

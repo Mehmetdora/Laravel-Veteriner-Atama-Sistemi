@@ -12,6 +12,15 @@ class EvrakIthalat extends Model
         return "İthalat";
     }
 
+    public function setUrun(Urun $urun)
+    {
+        // Önce eski ürünü siliyoruz
+        $this->urun()->detach();
+
+        // Yeni ürünü ekliyoruz
+        $this->urun()->attach($urun->id);
+    }
+
 
     public function veteriner()
     {

@@ -10,6 +10,17 @@ class EvrakAntrepoGiris extends Model
     public function evrak_adi(){
         return "Antrepo Giriş";
     }
+
+    public function setUrun(Urun $urun)
+    {
+        // Önce eski ürünü siliyoruz
+        $this->urun()->detach();
+
+        // Yeni ürünü ekliyoruz
+        $this->urun()->attach($urun->id);
+    }
+
+    
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');

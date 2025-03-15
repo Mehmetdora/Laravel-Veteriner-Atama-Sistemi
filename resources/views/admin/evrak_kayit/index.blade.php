@@ -202,7 +202,7 @@
     <script>
         $(function() {
             $("#example1").DataTable({
-                "order" : [[1,"desc"]],
+                "order" : [[0,"desc"]],
                 "paging": false,
                 "scrollX": true,
                 "scrollY": "600px",
