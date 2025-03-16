@@ -35,52 +35,48 @@
                                 <table class="table table-hover table-head-fixed ">
                                     <thead>
                                         <tr>
-                                            <th>Tarih</th>
+                                            <th style="width: 15%">Tarih</th>
+                                            <th>Evrak İşlem Durumu</th>
                                             <th>Sıra No</th>
                                             <th>VGB Ön Bildirim Numarası</th>
                                             <th>İşlem Türü</th>
-                                            <th>Sağlık Sertifikası Numarası</th>
                                             <th>Vekalet Sahibi Firma/Kişi Adı</th>
                                             <th>Ürünün Açık İsmi</th>
-                                            <th>Ürünün Kategorisi</th>
-                                            <th>G.T.İ.P. No İlk 4 Rakamı</th>
                                             <th>Ürünün KG Cinsinden Net Miktarı</th>
-                                            <th>Sevk Edilen Ülke</th>
-                                            <th>Orjin Ülke</th>
-                                            <th>Araç Plaka veya Konteyner No</th>
-                                            <th>Giriş Gümrüğü</th>
-                                            <th>Çıkış Gümrüğü</th>
-                                            <th>Veteriner Hekim</th>
-                                            <th>İşlemler</th>
+                                            <th style="width: 10%">İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
 
-                                        @if (isset($evraklar))
-                                            @foreach ($evraklar as $evrak)
+                                        @if (isset($kayitlar))
+                                            @foreach ($kayitlar as $kayit)
                                                 <tr>
-                                                    <td>{{ $evrak->tarih }}</td>
-                                                    <td>{{ $evrak->siraNo }}</td>
-                                                    <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->evrak_tur->name }}</td>
-                                                    <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
-                                                    <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
-                                                    <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->kategoriId }}</td>
-                                                    <td>{{ $evrak->gtipNo }}</td>
-                                                    <td>{{ $evrak->urunKG }}</td>
-                                                    <td>{{ $evrak->sevkUlke }}</td>
-                                                    <td>{{ $evrak->orjinUlke }}</td>
-                                                    <td>{{ $evrak->aracPlaka }}</td>
-                                                    <td>{{ $evrak->girisGumruk }}</td>
-                                                    <td>{{ $evrak->cıkısGumruk }}</td>
-                                                    <td>{{ $evrak->vet_adi() }}</td>
+                                                    <td>{{ $kayit->evrak->created_at->format('d-m-y') }}
+                                                    </td>
+                                                    <td>
+                                                        @if ($kayit->evrak->evrak_durumu->evrak_durum == 'Onaylandı')
+                                                            <span
+                                                                class="badge badge-success">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
+                                                        @else
+                                                            <span
+                                                                class="badge badge-warning">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $kayit->evrak->evrakKayitNo }}</td>
+                                                    <td class="text-center">
+                                                        {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->VSKSSertifikaReferansNo }}
+                                                    </td>
+                                                    <td>{{ $kayit->evrak->evrak_adi() }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->vekaletFirmaKisiAdi }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->urunAdi }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->urunKG }}</td>
 
-                                                    <td><a href=""><button
-                                                                type="button"
-                                                                class="btn btn-warning">İşlem Yap</button></a><br><a
-                                                            href="{{route('veteriner.evraks.evrak.index',$evrak->id)}}"><button
-                                                                type="button" class="btn btn-info">İncele</button></a></td>
+                                                    <td>
+                                                        <a
+                                                            href="{{ route('veteriner.evraks.evrak.index', ['type' => $kayit->evrak->getMorphClass(), 'id' => $kayit->evrak->id]) }}">
+                                                            <button type="button" class="btn btn-info">İncele</button>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         @endif

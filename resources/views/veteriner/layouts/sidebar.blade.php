@@ -32,7 +32,7 @@
                             Evraklarım
                             @if (isset($unread_evraks_count))
                                 @if ($unread_evraks_count > 0)
-                                    <span class="right badge badge-danger">{{ $unread_evraks_count }} Yeni</span>
+                                    <span class="right badge badge-danger">{{ $unread_evraks_count }} Yeni Evrak</span>
                                 @endif
                             @endif
                         </p>

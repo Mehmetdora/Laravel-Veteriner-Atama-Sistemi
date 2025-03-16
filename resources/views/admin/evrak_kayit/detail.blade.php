@@ -47,7 +47,8 @@
                                         </tr>
                                         <tr>
                                             <th>VGB Ön Bildirim Numarası:</th>
-                                            <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnbildirimNo ?: $evrak->USKSSertifikaReferansNo}}</td>
+                                            <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnBildirimNo ?: $evrak->USKSSertifikaReferansNo }}
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Veteriner Sağlık Sertifikaları:</th>

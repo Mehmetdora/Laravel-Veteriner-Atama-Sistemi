@@ -160,10 +160,12 @@ Route::middleware(['auth', 'role:veteriner'])->group(function () {
         Route::post('/veteriner/profil/düzenlendi','profile_edited')->name('veteriner.profile.edited');
 
         Route::get('/veteriner/evraklar/liste','evraks_index')->name('veteriner.evraks.index');
-        Route::get('/veteriner/evraklar/{id}/detay','evrak_index')->name('veteriner.evraks.evrak.index');
+        Route::get('/veteriner/evraklar/{type}/{id}/detay','evrak_index')->name('veteriner.evraks.evrak.index');
 
         Route::get('veteriner/nöbetler/liste','nobets_index')->name('veteriner.nobet.index');
         Route::get('veteriner/izinler/liste','izins_index')->name('veteriner.izin.index');
+
+        Route::post('/veteriner/evraks/evrak/onaylandi','onaylandi')->name('veteriner.evraks.evrak.onaylandi');
 
     });
 

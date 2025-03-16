@@ -53,23 +53,30 @@ class User extends Authenticatable
         ];
     }
 
-    public function evraks(){
+    public function evraks()
+    {
         return $this->hasMany(UserEvrak::class, 'user_id');
     }
 
-    public function izins(){
-        return $this->belongsToMany(Izin::class,'user_izin')->withPivot('startDate', 'endDate')
-        ->withTimestamps();;
+    public function izins()
+    {
+        return $this->belongsToMany(Izin::class, 'user_izin')->withPivot('startDate', 'endDate')
+            ->withTimestamps();;
     }
 
-    public function nobets(){
-        return $this->hasMany(Nobet::class,'user_id');
+    public function nobets()
+    {
+        return $this->hasMany(Nobet::class, 'user_id');
     }
 
-    public function unread_evraks_count(){
+    public function unread_evraks_count()
+    {
         return $this->evraks()
-        ->whereHas('evrak_durumu', function ($query) {
-            $query->where('isRead', 0);
-        })->count();
+            ->whereHas('evrak', function ($query) {
+                $query->whereHas('evrak_durumu', function ($subQuery) {
+                    $subQuery->where('isRead', 0);
+                });
+            })
+            ->count();
     }
 }
