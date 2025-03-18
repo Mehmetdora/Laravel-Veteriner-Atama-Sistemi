@@ -23,84 +23,11 @@
 
         <!-- Main content -->
         <section class="content">
-            <div class="container-fluid">
 
+            <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
-                        {{-- <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Evrak Listesi</h3>
 
-                                <div style="display:flex; justify-content: end;">
-                                    <a href="{{ route('admin.evrak.create') }}"><button type="button"
-                                            class="btn btn-primary">Yeni Evrak</button></a>
-                                </div>
-
-
-                            </div>
-                            <!-- /.card-header -->
-
-                            @include('admin.layouts.messages')
-
-                            <div class="card-body table-responsive p-0">
-                                <table class="table table-hover table-head-fixed ">
-                                    <thead>
-                                        <tr>
-                                            <th>Tarih</th>
-                                            <th>Evrak Kayıt No</th>
-                                            <th>VGB Ön Bildirim Numarası</th>
-                                            <th>Evrak Türü</th>
-                                            <th>Sağlık Sertifikası Numarası</th>
-                                            <th>Vekalet Sahibi Firma/Kişi Adı</th>
-                                            <th>Ürünün Açık İsmi</th>
-                                            <th>Ürünün Kategorisi</th>
-                                            <th>G.T.İ.P. No İlk 4 Rakamı</th>
-                                            <th>Ürünün KG Cinsinden Net Miktarı</th>
-                                            <th>Sevk Eden Ülke</th>
-                                            <th>Orjin Ülke</th>
-                                            <th>Araç Plaka veya Konteyner No</th>
-                                            <th>Giriş Gümrüğü</th>
-                                            <th>Çıkış Gümrüğü</th>
-                                            <th>Veteriner Hekim</th>
-                                            <th>İşlemler</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @if (isset($evraklar))
-                                            @foreach ($evraklar as $evrak)
-                                                <tr>
-                                                    <td>{{ $evrak->tarih }}</td>
-                                                    <td>{{ $evrak->siraNo }}</td>
-                                                    <td>{{ $evrak->vgbOnBildirimNo }}</td>
-                                                    <td>{{ $evrak->evrak_tur->name }}</td>
-                                                    <td>{{ $evrak->vetSaglikSertifikasiNo }}</td>
-                                                    <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
-                                                    <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->urun->name }}</td>
-                                                    <td>{{ $evrak->gtipNo }}</td>
-                                                    <td>{{ $evrak->urunKG }}</td>
-                                                    <td>{{ $evrak->sevkUlke }}</td>
-                                                    <td>{{ $evrak->orjinUlke }}</td>
-                                                    <td>{{ $evrak->aracPlaka }}</td>
-                                                    <td>{{ $evrak->girisGumruk }}</td>
-                                                    <td>{{ $evrak->cıkısGumruk }}</td>
-                                                    <td>{{ $evrak->vet_adi() }}</td>
-
-                                                    <td><a href="{{ route('admin.evrak.edit', $evrak->id) }}"><button
-                                                                type="button"
-                                                                class="btn btn-warning">Düzenle</button></a><br><a
-                                                            href="{{ route('admin.evrak.detail', $evrak->id) }}"><button
-                                                                type="button" class="btn btn-info">Detay</button></a></td>
-                                                </tr>
-                                            @endforeach
-                                        @endif
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!-- /.card-body -->
-                        </div> --}}
-                        <!-- /.card -->
 
                         <div class="card">
                             <div class="card-header">
@@ -114,9 +41,9 @@
                             @include('admin.layouts.messages')
                             <!-- /.card-header -->
                             <div class="card-body">
-                                <table id="example1" class="table table-bordered table-striped">
+                                <table id="example1" class="table table-bordered table-hover">
                                     <thead>
-                                        <tr>
+                                        <tr class="text-center">
                                             <th>Tarih</th>
                                             <th>İşlem Türü</th>
                                             <th>Evrak Kayıt No</th>
@@ -156,7 +83,7 @@
                                         @endif
                                     </tbody>
                                     <tfoot>
-                                        <tr>
+                                        <tr class="text-center">
                                             <th>Tarih</th>
                                             <th>İşlem Türü</th>
                                             <th>Evrak Kayıt No</th>
@@ -168,13 +95,17 @@
                                             <th>İşlemler</th>
                                         </tr>
                                     </tfoot>
+
                                 </table>
                             </div>
                             <!-- /.card-body -->
                         </div>
+
+
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
+
         </section>
         <!-- /.content -->
     </div>
@@ -202,13 +133,19 @@
     <script>
         $(function() {
             $("#example1").DataTable({
-                "order" : [[0,"desc"]],
-                "paging": false,
+                "order": [
+                    [0, "desc"]
+                ],
                 "scrollX": true,
                 "scrollY": "600px",
-                "responsive": false,
+
+                "paging": true,
                 "lengthChange": false,
-                "autoWidth": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
                 dom: 'Bfrtip',
                 buttons: [{
                         extend: 'pdfHtml5',
@@ -234,6 +171,7 @@
                         }
                     }
                 ]
+
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
     </script>

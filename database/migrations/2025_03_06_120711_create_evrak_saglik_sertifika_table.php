@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('evrak_saglik_sertifika', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('saglik_sertifika_id')->references('id')->on('saglik_sertifikas')->cascadeOnDelete();
+            $table->foreignId('saglik_sertifika_id')->constrained('saglik_sertifikas')->onDelete('cascade');
             $table->morphs('evrak'); // evrak_id ve evrak_type için
 
             $table->timestamps();

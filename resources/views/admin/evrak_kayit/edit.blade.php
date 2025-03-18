@@ -981,6 +981,7 @@
 
 
 @section('admin.customJS')
+
     @if ($evrak_type == 'EvrakIthalat' || $evrak_type == 'EvrakTransit')
         <script>
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
@@ -1131,6 +1132,7 @@
 
         @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
             var item = {
+                id: "{{ $saglik_sertifika->id }}",
                 ssn: "{{ $saglik_sertifika->ssn }}",
                 miktar: {{ $saglik_sertifika->miktar }}
             }
@@ -1167,6 +1169,7 @@
 
             if (val1 && val2) {
                 let newItem = {
+                    id: "-1",   // yeni oluşan ss için -1 id sini kullan
                     ssn: val1,
                     miktar: val2
                 };

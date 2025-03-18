@@ -1131,6 +1131,7 @@
 
         @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
             var item = {
+                id: "{{ $saglik_sertifika->id }}",
                 ssn: "{{ $saglik_sertifika->ssn }}",
                 miktar: {{ $saglik_sertifika->miktar }}
             }
@@ -1167,6 +1168,7 @@
 
             if (val1 && val2) {
                 let newItem = {
+                    id: "-1",
                     ssn: val1,
                     miktar: val2
                 };

@@ -13,6 +13,7 @@ use App\Http\Controllers\admin\izin\VeterinerIzinController;
 use App\Http\Controllers\admin\MemurController as AdminMemurController;
 use App\Http\Controllers\admin\nobet\MemurNobetController;
 use App\Http\Controllers\admin\nobet\VeterinerNobetController;
+use App\Http\Controllers\admin\StokTakipController;
 use App\Http\Controllers\admin\UrunController;
 use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
@@ -56,16 +57,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/evrak/eklendi','created')->name('admin.evrak.created');
     });
 
-    // Evrak Türleri İşlemleri
-    Route::controller(EvrakTurController::class)->group(function(){
-        Route::get('/admin/evrak-tur/liste','index')->name('admin.evrak_tur.index');
-        Route::get('/admin/evrak-tur/sil/{id}','delete')->name('admin.evrak_tur.delete');
+    // Stok Takip İşlemleri
+    Route::controller(StokTakipController::class)->group(function(){
 
-        Route::get('/admin/evrak-tur/düzenle/{id}','edit')->name('admin.evrak_tur.edit');
-        Route::post('/admin/evrak-tur/düzenlendi','edited')->name('admin.evrak_tur.edited');
-
-        Route::get('/admin/evrak-tur/ekle','create')->name('admin.evrak_tur.create');
-        Route::post('/admin/evrak-tur/eklendi','created')->name('admin.evrak_tur.created');
+        Route::get('/admin/stok-takip/liste','index')->name('admin.stok_takip.index');
 
     });
 
