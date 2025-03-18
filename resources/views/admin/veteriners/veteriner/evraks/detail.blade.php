@@ -74,7 +74,7 @@
                                         @if (isset($evrak->urun))
                                             <tr>
                                                 <th>Ürünün Kategorisi:</th>
-                                                <td>{{ $evrak->urun->first()->name }}</td>
+                                                <td>{{ $evrak->urun->first()->name ?? 'Ürün Kategorisi Bulunamadı, Lütfen Ürün Kategorisi Ekleyiniz!' }}</td>
                                             </tr>
                                         @endif
                                         <tr>

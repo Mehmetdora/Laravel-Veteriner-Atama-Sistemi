@@ -128,11 +128,15 @@
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id }}"
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
-                                                    <option selected value="{{ $evrak->urun->first()->id }}">
-                                                        {{ $evrak->urun->first()->name }}</option>
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
                                                     <hr>
                                                     @foreach ($uruns as $urun)
                                                         <option value="{{ $urun->id }}">{{ $urun->name }}</option>
@@ -318,11 +322,15 @@
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id }}"
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
-                                                    <option selected value="{{ $evrak->urun->first()->id }}">
-                                                        {{ $evrak->urun->first()->name }}</option>
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
                                                     <hr>
                                                     @foreach ($uruns as $urun)
                                                         <option value="{{ $urun->id }}">{{ $urun->name }}</option>
@@ -651,11 +659,15 @@
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id }}"
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
-                                                    <option selected value="{{ $evrak->urun->first()->id }}">
-                                                        {{ $evrak->urun->first()->name }}</option>
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
                                                     <hr>
                                                     @foreach ($uruns as $urun)
                                                         <option value="{{ $urun->id }}">{{ $urun->name }}
@@ -839,11 +851,15 @@
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id }}"
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
-                                                    <option selected value="{{ $evrak->urun->first()->id }}">
-                                                        {{ $evrak->urun->first()->name }}</option>
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
                                                     <hr>
                                                     @foreach ($uruns as $urun)
                                                         <option value="{{ $urun->id }}">{{ $urun->name }}

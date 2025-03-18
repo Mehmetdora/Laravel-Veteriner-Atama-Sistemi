@@ -51,12 +51,15 @@ class StokTakipController extends Controller
             return [
                 'saglik_sertifika' => $sertifika,
                 'evrak' => $evrak,
-                'evrak_type' => $evrak_type
+                'evrak_type' => $evrak_type,
+                'evrak_morph_class' => $evrak->getMorphClass(),
             ];
         });
 
         // Sağlık sertifikalarını `created_at` alanına göre azalan sırayla sıralama
         $data['saglik_s'] = $saglik_s;
+
+
 
 
         return view('admin.stok_takip.index', $data);

@@ -46,7 +46,7 @@
                                                 Sağlık Sertifikası Numarası
                                             </th>
                                             <th>
-                                                Miktarı
+                                                Miktar(KG)
                                             </th>
 
                                             <th>
@@ -77,10 +77,14 @@
                                                         {{ $kayit['evrak_type'] }}
                                                     </td>
                                                     <td class="project-actions ">
-                                                        <a class="btn btn-primary btn-sm" href="">
+                                                        <a class="btn btn-primary btn-sm"
+                                                            href="{{ route('admin.evrak.detail', [
+                                                                'type' => $kayit['evrak_morph_class'],
+                                                                'id' => $kayit['evrak']->id,
+                                                            ]) }}">
                                                             <i class="fas fa-folder">
                                                             </i>
-                                                            Evrağı
+                                                            İlgili Evrak
                                                         </a>
 
                                                     </td>
@@ -186,6 +190,4 @@
             });
         });
     </script>
-
-
 @endsection
