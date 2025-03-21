@@ -69,6 +69,10 @@ class User extends Authenticatable
         return $this->hasMany(Nobet::class, 'user_id');
     }
 
+    public function workload(){
+        return $this->hasOne(WorkLoad::class,'vet_id');
+    }
+
     public function unread_evraks_count()
     {
         return $this->evraks()

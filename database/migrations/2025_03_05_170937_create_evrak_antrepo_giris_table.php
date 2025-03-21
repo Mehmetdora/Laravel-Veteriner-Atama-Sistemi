@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('aracPlaka');
             $table->string('girisGumruk');
             $table->string('varisAntreposu');
+            $table->integer('difficulty_coefficient')->default(3);
 
             $table->timestamps();
         });

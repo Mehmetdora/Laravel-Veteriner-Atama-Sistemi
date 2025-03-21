@@ -17,6 +17,7 @@ use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
 use App\Models\EvrakTur;
 use App\Models\Urun;
+use EvrakAtamaSistemi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -25,6 +26,15 @@ use function Termwind\parse;
 
 class EvrakController extends Controller
 {
+
+    /* protected $evrakAtamaServisi;
+    function __construct(EvrakAtamaSistemi $evrakAtamaSistemi) {
+
+        $this->evrakAtamaServisi = $evrakAtamaSistemi;
+
+    } */
+
+
     public function index()
     {
 
@@ -243,6 +253,8 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
+
+
                     $veteriner = User::with('evraks')->role('veteriner')->first();
 
                     if (!$urun || !$veteriner) {
