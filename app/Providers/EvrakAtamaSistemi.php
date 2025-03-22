@@ -52,85 +52,118 @@ class EvrakAtamaSistemi
         $weights = $this->generateWeights($activeVets);
         $vet = $this->selectVet($weights);
 
-        $this->updateWorkload($vet, $evrak->difficulty);
-        $this->adjustCompensation($vet, $evrak->difficulty);
+        $this->updateWorkload($vet, $evrak->difficulty_coefficient);
+        $this->adjustCompensation($vet, $evrak->difficulty_coefficient);
 
         return $vet;
     }
 
-    private function getActiveVets($date)
+    private function getActiveVets(Carbon $date)
     {
-        return User::whereDoesntHave('izins', function ($query) use ($date) {
-            $query->where('startDate', '<=', $date)
-                ->where('endDate', '>=', $date);
-        })->get();
+    return User::whereDoesntHave('izins', function ($query) use ($date) {
+        $query->where('startDate', '<=', $date)
+            ->where('endDate', '>=', $date);
+    })->role('veteriner')->get();
     }
 
     private function calculateCompensation($vets, $date)
     {
         foreach ($vets as $vet) {
-            $sonİzin = $vet->izins()->latest()->first();
-
-            if ($sonİzin && $sonİzin->endDate->diffInDays($date) <= 14) {
-                $this->compensationPool[$vet->id] = $this->getCompensationData($vet, $sonİzin);
+            $sonİzin = $vet->izins()->latest();
+    
+            if ($sonİzin) {
+                // İzin süresini hesapla
+                $izinSuresi = $sonİzin->endDate->diffInDays($sonİzin->startDate);
+                
+                // Telafi süresini izin süresinin 2 katı olarak belirle
+                $telafiSuresi = $izinSuresi * 2;
+    
+                // İzin bitişinden sonraki telafi süresi içinde mi?
+                if ($sonİzin->endDate->diffInDays($date) <= $telafiSuresi) {
+                    $this->compensationPool[$vet->id] = $this->getCompensationData($vet, $sonİzin, $telafiSuresi);
+                }
             }
         }
     }
 
     private function generateWeights($vets)
     {
-        $weights = [];
-        foreach ($vets as $vet) {
-            $base = 1 / (1 + $vet->workloads()->current()->value('total_difficulty'));
-            $comp = $this->compensationPool[$vet->id]['remaining'] ?? 0;
-            $weights[$vet->id] = $base + ($comp * 0.5);
-        }
-        return $weights;
+    $weights = [];
+    foreach ($vets as $vet) {
+        $workload = $vet->workloads()->current()->value('total_difficulty') ?? 0;
+        
+        // İş yükü sıfırsa, temel ağırlığı 1 yap
+        $baseWeight = ($workload == 0) ? 1 : 1 / ($workload + 1);
+        
+        $comp = $this->compensationPool[$vet->id]['remaining'] ?? 0;
+        $weights[$vet->id] = $baseWeight + ($comp * 0.5);
     }
-
+    return $weights;
+    }
     private function selectVet($weights)
     {
-        $total = array_sum($weights);
-        $random = mt_rand() / mt_getrandmax() * $total;
-
-        foreach ($weights as $id => $weight) {
-            $random -= $weight;
-            if ($random <= 0) return User::find($id);
-        }
+    // En düşük ağırlığı bul
+    $minWeight = min($weights);
+    
+    // En düşük ağırlığa sahip tüm veterinerleri seç
+    $candidates = array_filter($weights, fn($w) => $w == $minWeight);
+    
+    // Rastgele bir veteriner seç
+    return user::find(array_rand($candidates));
     }
 
 
-    private function getCompensationData($vet, $leave)
-    {
-        $daysMissed = $leave->end_date->diffInDays($leave->start_date);
-        $avgWorkload = WorkLoad::whereBetween('created_at', [
-            $leave->start_date->subDays(7),
-            $leave->start_date
-        ])->avg('total_difficulty');
+    private function getCompensationData($vet, $izin, $telafiSuresi)
+{
+    // İzin süresini hesapla
+    $izinSuresi = $izin->endDate->diffInDays($izin->startDate);
 
-        return [
-            'total' => $avgWorkload * $daysMissed,
-            'daily_quota' => ceil(($avgWorkload * $daysMissed) / 7),
-            'remaining' => $avgWorkload * $daysMissed
-        ];
-    }
+    // İzin öncesi 7 günlük ortalama iş yükünü al
+    $avgWorkload = Workload::whereBetween('created_at', [
+        $izin->startDate->subDays(7),
+        $izin->startDate
+    ])->avg('total_difficulty');
+
+    // Toplam kaçırılan iş yükü
+    $totalMissedWorkload = $avgWorkload * $izinSuresi;
+
+    // Günlük telafi kotası
+    $dailyQuota = ceil($totalMissedWorkload / $telafiSuresi);
+
+    return [
+        'total' => $totalMissedWorkload,
+        'daily_quota' => $dailyQuota,
+        'remaining' => $totalMissedWorkload,
+        'telafi_suresi' => $telafiSuresi
+    ];
+}
 
 
-    private function updateWorkload($vet, $difficulty)
+    private function updateWorkload($vet, $difficulty_coefficient)
     {
         $vet->workloads()->updateOrCreate(
             ['is_current' => true],
-            ['total_difficulty' => DB::raw("total_difficulty + $difficulty")]
+            ['total_difficulty' => DB::raw("total_difficulty + $difficulty_coefficient")]
         );
     }
 
-    private function adjustCompensation($vet, $difficulty)
-    {
-        if (isset($this->compensationPool[$vet->id])) {
-            $this->compensationPool[$vet->id]['remaining'] = max(
-                0,
-                $this->compensationPool[$vet->id]['remaining'] - $difficulty
-            );
+    private function adjustCompensation($vet, $difficulty_coefficient)
+{
+    if (isset($this->compensationPool[$vet->id])) {
+        // Kalan iş yükünü azalt
+        $this->compensationPool[$vet->id]['remaining'] = max(
+            0,
+            $this->compensationPool[$vet->id]['remaining'] - $difficulty_coefficient
+        );
+
+        // Telafi süresi doldu mu?
+        $telafiSuresi = $this->compensationPool[$vet->id]['telafi_suresi'];
+        $gecenGun = Carbon::now()->diffInDays($vet->izins()->latest()->first()->endDate);
+
+        if ($gecenGun >= $telafiSuresi) {
+            // Telafi süresi doldu, havuzdan çıkar
+            unset($this->compensationPool[$vet->id]);
         }
     }
+}
 }
