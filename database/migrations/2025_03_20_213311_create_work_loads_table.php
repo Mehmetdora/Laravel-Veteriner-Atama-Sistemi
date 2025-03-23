@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('vet_id')->constrained('users')->onDelete('cascade');
-            $table->integer('month_workload')->default(0);
+            $table->integer('year');
             $table->integer('year_workload')->default(0);
             $table->integer('total_workload')->default(0);
 

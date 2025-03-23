@@ -3,36 +3,31 @@
 namespace App\Http\Controllers;
 
 
-use App\Models\SaglikSertifika;
-use App\Models\UserEvrak;
+use App\Providers\AtamaServisi;
 use Carbon\Carbon;
+use App\Models\Urun;
 use App\Models\User;
-use App\Models\Evrak;
-use App\Models\EvrakAntrepoCikis;
-use App\Models\EvrakAntrepoGiris;
-use App\Models\EvrakAntrepoSertifika;
-use App\Models\EvrakAntrepoVaris;
+use App\Models\UserEvrak;
 use App\Models\EvrakDurum;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
-use App\Models\EvrakTur;
-use App\Models\Urun;
-use EvrakAtamaSistemi;
 use Illuminate\Http\Request;
+use App\Models\SaglikSertifika;
+use App\Models\EvrakAntrepoCikis;
+use App\Models\EvrakAntrepoGiris;
+use App\Models\EvrakAntrepoVaris;
+use App\Models\EvrakAntrepoSertifika;
 use Illuminate\Support\Facades\Validator;
-
-use function PHPSTORM_META\type;
-use function Termwind\parse;
 
 class EvrakController extends Controller
 {
 
-    /* protected $evrakAtamaServisi;
-    function __construct(EvrakAtamaSistemi $evrakAtamaSistemi) {
+    protected $atamaServisi;
+    function __construct(AtamaServisi $atamaServisi)
+    {
 
-        $this->evrakAtamaServisi = $evrakAtamaSistemi;
-
-    } */
+        $this->atamaServisi = $atamaServisi;
+    }
 
 
     public function index()
@@ -94,6 +89,10 @@ class EvrakController extends Controller
 
     public function created(Request $request)
     {
+
+
+
+
 
         // $formData[0]['evrak_turu'] değeri gelen evraklarını türünü sayısal olarak verir.
         // 0-> ithalat
@@ -255,7 +254,8 @@ class EvrakController extends Controller
                     // Veterineri sistem limite göre atayacak
 
 
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('ithalat');
+
 
                     if (!$urun || !$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -308,7 +308,7 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('transit');
 
                     if (!$urun || !$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -362,7 +362,7 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('antrepo_giris');
 
                     if (!$urun || !$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -409,7 +409,7 @@ class EvrakController extends Controller
                     $yeni_evrak->save();
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('antrepo_varis');
 
                     if (!$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -461,7 +461,7 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
 
                     if (!$urun || !$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -514,7 +514,7 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = User::with('evraks')->role('veteriner')->first();
+                    $veteriner = $this->atamaServisi->assignVet('antrepo_cikis');
 
                     if (!$urun || !$veteriner) {
                         throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
@@ -768,7 +768,6 @@ class EvrakController extends Controller
                         'miktar' => $sertifika->miktar,
                     ]);
                 }
-
             } elseif ($request->type == "EvrakTransit") {
                 $evrak = EvrakTransit::find($request->input('id'));
 
@@ -837,7 +836,6 @@ class EvrakController extends Controller
                         'miktar' => $sertifika->miktar,
                     ]);
                 }
-
             } elseif ($request->type == "EvrakAntrepoGiris") {
                 $evrak = EvrakAntrepoGiris::find($request->input('id'));
 
@@ -880,7 +878,7 @@ class EvrakController extends Controller
                 $evrak->evrak_durumu()->save($evrak_durum);
 
                 //Sağlık sertifikalarını kaydetme
-               // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
+                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
 
                 // Gelen sağlık sertifikalarının ID'lerini al
                 $yeni_sertifikalar = [];

@@ -69,8 +69,9 @@ class User extends Authenticatable
         return $this->hasMany(Nobet::class, 'user_id');
     }
 
-    public function workload(){
-        return $this->hasOne(WorkLoad::class,'vet_id');
+    public function workloads()
+    {
+        return $this->hasMany(WorkLoad::class, 'vet_id');
     }
 
     public function unread_evraks_count()
@@ -82,5 +83,24 @@ class User extends Authenticatable
                 });
             })
             ->count();
+    }
+
+    public function veterinerinBuYilkiWorkloadi()
+    {
+
+        // yıl bilgisi bu yıl olan veterinerin workloadi var mı bak varsa dön yoksa yeni bir tane oluştur
+
+        $workload = $this->workloads()->firstOrCreate(
+            ['year' => date('Y')],
+            [
+                'year' => date('Y'),
+                'year_workload' => 0,
+                'total_workload' => 0
+            ]
+        );
+
+
+
+        return $workload->refresh();
     }
 }
