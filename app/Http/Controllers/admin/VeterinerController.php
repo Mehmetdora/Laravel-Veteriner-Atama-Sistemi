@@ -821,6 +821,7 @@ class VeterinerController extends Controller
         $veteriner->status = 0;
         $veteriner->izins()->detach();
         $veteriner->nobets()->delete();
+        $veteriner->workloads()->delete();
 
 
         $veteriner->save();

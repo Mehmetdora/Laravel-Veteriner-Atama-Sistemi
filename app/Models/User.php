@@ -87,20 +87,30 @@ class User extends Authenticatable
 
     public function veterinerinBuYilkiWorkloadi()
     {
-
         // yıl bilgisi bu yıl olan veterinerin workloadi var mı bak varsa dön yoksa yeni bir tane oluştur
+        $year = date('Y');
 
-        $workload = $this->workloads()->firstOrCreate(
-            ['year' => date('Y')],
-            [
-                'year' => date('Y'),
+        // Önce mevcut kaydı bulmaya çalış
+        $workload = $this->workloads()
+            ->where('year', $year)
+            ->first();
+
+        // Yoksa YENİ OLUŞTUR ve refresh et
+        if (!$workload) {
+            $workload = $this->workloads()->create([
+                'year' => $year,
                 'year_workload' => 0,
                 'total_workload' => 0
-            ]
-        );
+            ]);
+
+            // İlişkinin tamamlandığından emin ol
+            $this->load('workloads');
+            $workload->refresh();
+        }
 
 
+        $workload->refresh();
 
-        return $workload->refresh();
+        return $workload;
     }
 }

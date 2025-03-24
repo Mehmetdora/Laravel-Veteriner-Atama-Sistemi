@@ -90,10 +90,6 @@ class EvrakController extends Controller
     public function created(Request $request)
     {
 
-
-
-
-
         // $formData[0]['evrak_turu'] değeri gelen evraklarını türünü sayısal olarak verir.
         // 0-> ithalat
         // 1-> transit

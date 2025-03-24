@@ -20,16 +20,42 @@ class AtamaServisi
     public function assignVet(string $documentType)
     {
         // 1. Aktif veterinerleri al
-        $veterinerler = User::role('veteriner')->with('workloads')->get();
+        $now = now()->setTimezone('Europe/Istanbul'); // tam saat
+
+        if ($now->hour >= 17) {  // sabah kaçta normal saate dönülecek?
+
+            // 17 den sonra izinli olmayıp nöbetçi olan veterinerler
+            $veterinerler = User::role('veteriner')->with(['workloads', 'izins', 'nobets'])
+                ->where('status', 1)
+                ->whereDoesntHave('izins', function ($query) use ($now) {
+                    $query->where('startDate', '<=', $now)
+                        ->where('endDate', '>=', $now);
+                })->whereHas('nobets', function ($sorgu) use ($now) {
+                    $sorgu->where('date', $now->format('Y-m-d'));
+                })->get();
+        } else {
+
+            // Normal bir şekilde gün içindeki saatler için tüm izinde olmayan veterinerler
+            $veterinerler = User::role('veteriner')->with(['workloads', 'izins', 'nobets'])
+                ->where('status', 1)
+                ->whereDoesntHave('izins', function ($query) use ($now) {
+                    $query->where('startDate', '<=', $now)
+                        ->where('endDate', '>=', $now);
+                })->get();
+        }
+
+
+
 
         // 2. En düşük iş yüklü veteriner(ler)i bul
         $minWorkload = PHP_INT_MAX;
         $adayVeterinerler = collect();
 
 
-        // Her veterinerin toplam aldığı işler karşılaştırılarak en düşük olan(lar) adayVeterinerler arasında eklenir
+        // Her veterinerin bu yıl için aldığı işler karşılaştırılarak en düşük olan(lar) adayVeterinerler arasında eklenir
         foreach ($veterinerler as $vet) {
 
+            // veterinerinBuYilkiWorkloadi fonksiyonu ile veterinerin bu yıl için bir workload modeli varsa getirir, yoksa bu yıl için yeni bir tane oluşturur.
             $currentWorkload = $vet->veterinerinBuYilkiWorkloadi()->year_workload;
 
             if ($currentWorkload < $minWorkload) {
@@ -40,12 +66,11 @@ class AtamaServisi
             }
         }
 
-        // 3. Rastgele bir veteriner seç
+        // 3. Rastgele bir veterineri seç
         $seciliVeteriner = $adayVeterinerler->random();
 
-        //dd($seciliVeteriner,$seciliVeteriner->workloads);
 
-        // 4. İş yükünü güncelle
+        // 4. Veterinerin iş yükünü güncelle
         $this->updateWorkload(
             $seciliVeteriner,
             $this->workloadCoefficients[$documentType]
@@ -58,25 +83,11 @@ class AtamaServisi
     {
         $today = Carbon::now();
 
-
-
-        // Bu fonksiyona gelmeden önce assignVet fonksiyonunda tüm veterinerlere bu yıl için bir workload atanmış oluyor zaten
-
-        //dd($vet->workloads);
+        // Bu fonksiyona gelmeden önce assignVet fonksiyonunda tüm veterinerlere bu yıl için kesin bir tane workload atanmış oluyor.
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();
-        //dd($veteriner_bu_yilki_workloadi);
-
-
-        // veterinere öncesinde bir evrak atanmış mı diye kontrol ederek ona göre yeni bir tane oluştur yada düzenle
-
-
-
 
         $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
         $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
         $veteriner_bu_yilki_workloadi->save();
-
-
-
     }
 }
