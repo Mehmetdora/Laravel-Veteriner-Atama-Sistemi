@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('sevkUlke')->default("Türkiye");
             $table->string('orjinUlke');
             $table->string('aracPlaka');
-            $table->string('girisGumruk');
             $table->string('cikisGumruk');
             $table->integer('difficulty_coefficient')->default(5);
 

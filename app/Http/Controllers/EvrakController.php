@@ -213,7 +213,6 @@ class EvrakController extends Controller
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
-                    'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
                 ]);
                 if ($validator->fails()) {
@@ -530,7 +529,6 @@ class EvrakController extends Controller
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
-                    $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
                     $yeni_evrak->save();
 
@@ -762,7 +760,6 @@ class EvrakController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
             ]);
             if ($validator->fails()) {
@@ -1135,7 +1132,6 @@ class EvrakController extends Controller
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
-                $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->save();
 

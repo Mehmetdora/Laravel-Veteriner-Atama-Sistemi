@@ -1073,25 +1073,7 @@
                                                 value="{{ $evrak->aracPlaka }}" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select">
-                                                    <option selected value="{{ $evrak->girisGumruk }}">
-                                                        {{ $evrak->girisGumruk }}</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
-                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
+                                      
 
                                         <div class="form-group">
                                             <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
@@ -1302,13 +1284,7 @@
                 }
             });
 
-            let inputBox_g = document.querySelector(`#giris_g_input`);
-            let selectBox_g = document.querySelector(`#giris_g_select`);
-            selectBox_g.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox_g.value = this.value;
-                }
-            });
+
         </script>
     @endif
 

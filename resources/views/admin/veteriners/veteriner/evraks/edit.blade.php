@@ -712,7 +712,8 @@
                                             <label>Ürünlerin Bulunduğu Antrepo(Seç yada yeni bir tane
                                                 oluştur):*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control " id="urunlerinBulunduguAntrepo_select">
+                                                <select class="col-sm-6 form-control "
+                                                    id="urunlerinBulunduguAntrepo_select">
                                                     <option selected value="{{ $evrak->urunlerinBulunduguAntrepo }}">
                                                         {{ $evrak->urunlerinBulunduguAntrepo }}</option>
                                                     <hr>
@@ -723,8 +724,9 @@
                                                 </select>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control "
-                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}" id="urunlerinBulunduguAntrepo_input"
-                                                    type="text" name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
+                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}"
+                                                    id="urunlerinBulunduguAntrepo_input" type="text"
+                                                    name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
                                                     required>
 
                                             </div>
@@ -1076,25 +1078,7 @@
                                                 value="{{ $evrak->aracPlaka }}" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select">
-                                                    <option selected value="{{ $evrak->girisGumruk }}">
-                                                        {{ $evrak->girisGumruk }}</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
-                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
@@ -1199,6 +1183,33 @@
                 }
             });
         </script>
+    @elseif ($evrak_type == 'EvrakCanliHayvan')
+        <script>
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let inputBox_c = document.querySelector(`#cikis_g_input`);
+            let selectBox_c = document.querySelector(`#cikis_g_select`);
+            selectBox_c.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_c.value = this.value;
+                }
+            });
+
+            let inputBox_g = document.querySelector(`#giris_g_input`);
+            let selectBox_g = document.querySelector(`#giris_g_select`);
+            selectBox_g.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_g.value = this.value;
+                }
+            });
+        </script>
     @elseif ($evrak_type == 'EvrakAntrepoGiris')
         <script>
             let inputBox_varis_ant = document.querySelector(`#varis_antrepo_input`);
@@ -1227,7 +1238,6 @@
                     inputBox_urunlerinBulunduguAntrepo.value = this.value;
                 }
             });
-
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoSertifika')
         <script>
@@ -1272,14 +1282,6 @@
             selectBox_c.addEventListener("change", function() {
                 if (this.value !== "") {
                     inputBox_c.value = this.value;
-                }
-            });
-
-            let inputBox_g = document.querySelector(`#giris_g_input`);
-            let selectBox_g = document.querySelector(`#giris_g_select`);
-            selectBox_g.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox_g.value = this.value;
                 }
             });
         </script>

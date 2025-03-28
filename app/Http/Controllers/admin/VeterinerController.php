@@ -366,7 +366,6 @@ class VeterinerController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
             ]);
             if ($validator->fails()) {
@@ -740,7 +739,6 @@ class VeterinerController extends Controller
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
-                $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->save();
 

@@ -768,23 +768,7 @@
                                             <input name="aracPlaka_${i}" class="form-control" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
@@ -1237,8 +1221,6 @@
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
-                let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
-                let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
@@ -1291,12 +1273,7 @@
                     }
                 });
 
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_g.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_g.value = this.value;
-                    }
-                });
+
             });
         }
 
@@ -1502,7 +1479,6 @@
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
                         cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
                     };
                     allFormData.push(formData);
