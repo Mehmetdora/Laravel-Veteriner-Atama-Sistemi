@@ -11,21 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('evrak_ithalats', function (Blueprint $table) {
+        Schema::create('evrak_canli_hayvans', function (Blueprint $table) {
             $table->id();
+
 
             $table->string('evrakKayitNo');
             $table->string('vgbOnBildirimNo');
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');
-            $table->integer('urunKG');
+            $table->integer('hayvanSayisi');
             $table->string('sevkUlke');
             $table->string('orjinUlke');
-            $table->string('aracPlaka');
             $table->string('girisGumruk');
             $table->string('cikisGumruk');
-            $table->integer('difficulty_coefficient')->default(20);
+            $table->integer('difficulty_coefficient')->default(10);
+
 
             $table->timestamps();
         });
@@ -36,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('evrak_ithalats');
+        Schema::dropIfExists('evrak_canli_hayvans');
     }
 };

@@ -8,6 +8,10 @@ class SaglikSertifika extends Model
 {
     protected $fillable = ['ssn','miktar'];
 
+    public function evraks_canli_hayvan()
+    {
+        return $this->morphedByMany(EvrakCanliHayvan::class, 'evrak', 'evrak_saglik_sertifika');
+    }
     public function evraks_transit()
     {
         return $this->morphedByMany(EvrakTransit::class, 'evrak', 'evrak_saglik_sertifika');

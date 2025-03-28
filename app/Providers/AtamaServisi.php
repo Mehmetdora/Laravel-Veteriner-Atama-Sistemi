@@ -9,43 +9,30 @@ use Carbon\Carbon;
 class AtamaServisi
 {
     private $workloadCoefficients = [
-        'ithalat' => 1,
-        'transit' => 1,
-        'antrepo_giris' => 4,
-        'antrepo_varis' => 2,
-        'antrepo_sertifika' => 3,
-        'antrepo_cikis' => 5
+        'ithalat' => 20,
+        'transit' => 5,
+        'antrepo_giris' => 5,
+        'antrepo_varis' => 1,
+        'antrepo_sertifika' => 2,
+        'antrepo_cikis' => 5,
+        'canli_hayvan' => 10,
     ];
+
+    private $telafiSuresi = 60;
 
     public function assignVet(string $documentType)
     {
-        // 1. Aktif veterinerleri al
+
         $now = now()->setTimezone('Europe/Istanbul'); // tam saat
 
-        if ($now->hour >= 17) {  // sabah kaçta normal saate dönülecek?
-
-            // 17 den sonra izinli olmayıp nöbetçi olan veterinerler
-            $veterinerler = User::role('veteriner')->with(['workloads', 'izins', 'nobets'])
-                ->where('status', 1)
-                ->whereDoesntHave('izins', function ($query) use ($now) {
-                    $query->where('startDate', '<=', $now)
-                        ->where('endDate', '>=', $now);
-                })->whereHas('nobets', function ($sorgu) use ($now) {
-                    $sorgu->where('date', $now->format('Y-m-d'));
-                })->get();
-        } else {
-
-            // Normal bir şekilde gün içindeki saatler için tüm izinde olmayan veterinerler
-            $veterinerler = User::role('veteriner')->with(['workloads', 'izins', 'nobets'])
-                ->where('status', 1)
-                ->whereDoesntHave('izins', function ($query) use ($now) {
-                    $query->where('startDate', '<=', $now)
-                        ->where('endDate', '>=', $now);
-                })->get();
-        }
+        // 1. Aktif Veterinerleri Alma
+        $veterinerler = $this->aktifVeterinerleriGetir($now);
 
 
-
+        // 2. Her Veteriner İçin Telafi Hesapla
+        /* foreach ($veterinerler as $veteriner) {
+            $this->telafiHesapla($veteriner, $now);
+        } */
 
         // 2. En düşük iş yüklü veteriner(ler)i bul
         $minWorkload = PHP_INT_MAX;
@@ -79,6 +66,49 @@ class AtamaServisi
         return $seciliVeteriner;
     }
 
+    private function telafiHesapla(User $veteriner, Carbon $simdikiZaman)
+    {
+        // 10. Veterinerin Yük Kaydını Al
+        $yukKaydi = $veteriner->veterinerinBuYilkiWorkloadi();
+
+        // 11. Süresi Dolmuş Telafileri Temizle
+        if ($yukKaydi->telafi_bitis_tarihi && $simdikiZaman->gt($yukKaydi->telafi_bitis_tarihi)) {
+            $yukKaydi->update([
+                'telafi_yuku' => 0,
+                'telafi_bitis_tarihi' => null,
+                'telafi_baslangic_tarihi' => null
+            ]);
+            return;
+        }
+
+        // 12. Yeni Telafi Gerekiyor mu Kontrol Et
+        $sonIzin = $veteriner->izins()
+            ->where('endDate', '<', $simdikiZaman)
+            ->latest('endDate')
+            ->first();
+
+        if (!$sonIzin || $yukKaydi->telafi_bitis_tarihi) return;
+
+        // 13. İzin Süresi Hesaplama
+        $izinBaslangic = Carbon::parse($sonIzin->startDate);
+        $izinBitis = Carbon::parse($sonIzin->endDate);
+        $izinGunSayisi = $izinBitis->diffInDays($izinBaslangic) + 1;
+
+        // 14. İzin Yılındaki Ortalama Yük
+        $yil = $izinBaslangic->year;
+        $yilToplamYuk = Workload::where('year', $yil)->sum('year_workload');
+        $yilGunSayisi = $izinBitis->diffInDays(Carbon::create($yil, 1, 1)) + 1;
+        $ortalamaGunlukYuk = $yilToplamYuk / max($yilGunSayisi, 1);
+
+        // 15. Telafi Parametrelerini Kaydet
+        $yukKaydi->update([
+            'telafi_yuku' => ($ortalamaGunlukYuk * $izinGunSayisi) / $this->telafiSuresi,
+            'telafi_baslangic_tarihi' => $simdikiZaman,
+            'telafi_bitis_tarihi' => $simdikiZaman->copy()->addDays($this->telafiSuresi),
+            'izin_baslangic_yili' => $yil
+        ]);
+    }
+
     private function updateWorkload(User $vet, int $coefficient)
     {
         $today = Carbon::now();
@@ -89,5 +119,35 @@ class AtamaServisi
         $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
         $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
         $veteriner_bu_yilki_workloadi->save();
+    }
+
+
+    /**
+     * Aktif Veterinerleri Getirir
+     * - İzinli olmayanlar
+     * - Saat 16'den sonra sadece nöbetçiler
+     */
+    private function aktifVeterinerleriGetir(Carbon $simdikiZaman)
+    {
+        // 8. Nöbet Kontrolü (17:00 sonrası)
+        if ($simdikiZaman->hour >= 16) {
+            return User::role('veteriner')
+                ->where('status', 1)
+                ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
+                    $sorgu->where('startDate', '<=', $simdikiZaman)
+                          ->where('endDate', '>=', $simdikiZaman);
+                })
+                ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
+                    $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+                })->get();
+        }
+
+        // 9. Normal Çalışma Saatleri
+        return User::role('veteriner')
+            ->where('status', 1)
+            ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
+                $sorgu->where('startDate', '<=', $simdikiZaman)
+                      ->where('endDate', '>=', $simdikiZaman);
+            })->get();
     }
 }

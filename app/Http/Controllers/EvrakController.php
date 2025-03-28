@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\EvrakCanliHayvan;
 use App\Providers\AtamaServisi;
 use Carbon\Carbon;
 use App\Models\Urun;
@@ -36,6 +37,7 @@ class EvrakController extends Controller
         $evraks_all = collect()
             ->merge(EvrakIthalat::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakTransit::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakCanliHayvan::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
             ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
@@ -73,6 +75,9 @@ class EvrakController extends Controller
         } else if ($type == "EvrakAntrepoCikis") {
             $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvan") {
+            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
         }
 
 
@@ -97,8 +102,10 @@ class EvrakController extends Controller
         // 3-> Atrepo varış
         // 4-> Atrepo sertifika
         // 5-> Atrepo çıkış
+        // 6-> Canlı Hayvan
 
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
+
 
         if (!$formData) {
             return redirect()->back()->with('error', 'Geçersiz veri formatı!');
@@ -204,6 +211,26 @@ class EvrakController extends Controller
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+        } elseif ($formData[0]['evrak_turu'] == 6) {
+            for ($i = 1; $i < count($formData); $i++) {
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'vetSaglikSertifikasiNo' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'hayvanSayisi' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
                     'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
                 ]);
@@ -542,6 +569,59 @@ class EvrakController extends Controller
                     }
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
+            } elseif ($formData[0]['evrak_turu'] == 6) {
+                for ($i = 1; $i < count($formData); $i++) {
+
+                    $yeni_evrak = new EvrakCanliHayvan;
+
+                    $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
+                    $yeni_evrak->vgbOnBildirimNo = $formData[$i]["vgbOnBildirimNo"];
+                    $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
+                    $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
+                    $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
+                    $yeni_evrak->hayvanSayisi = $formData[$i]["hayvanSayisi"];
+                    $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
+                    $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
+                    $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
+                    $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
+                    $yeni_evrak->save();
+
+                    // İlişkili modelleri bağlama
+                    $urun = Urun::find($formData[$i]["urun_kategori_id"]);
+
+                    // Veterineri sistem limite göre atayacak
+                    $veteriner = $this->atamaServisi->assignVet('canli_hayvan');
+
+                    if (!$urun || !$veteriner) {
+                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    }
+
+                    $yeni_evrak->setUrun($urun);
+
+                    // Veteriner ile evrak kaydetme
+                    $user_evrak = new UserEvrak;
+                    $user_evrak->user_id = $veteriner->id;
+                    $user_evrak->evrak()->associate($yeni_evrak);
+
+                    $saved = $user_evrak->save();
+                    if (!$saved) {
+                        throw new \Exception("Evrak kaydedilemedi!");
+                    }
+
+                    // Evrak durumunu kaydetme
+                    $evrak_durum = new EvrakDurum;
+                    $yeni_evrak->evrak_durumu()->save($evrak_durum);
+
+                    //Sağlık sertifikalarını kaydetme
+                    foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
+                        $saglik_sertfika = new SaglikSertifika;
+                        $saglik_sertfika->ssn = $value['ssn'];
+                        $saglik_sertfika->miktar = $value['miktar'];
+                        $saglik_sertfika->save();
+                        $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
+                    }
+                    $saved_count++; // Başarıyla eklenen evrak sayısını artır
+                }
             }
 
 
@@ -575,6 +655,9 @@ class EvrakController extends Controller
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
             $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvan") {
+            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         }
 
@@ -679,6 +762,24 @@ class EvrakController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
+                'girisGumruk' => 'required',
+                'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakCanliHayvan") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'vgbOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'hayvanSayisi' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
             ]);
@@ -1048,6 +1149,74 @@ class EvrakController extends Controller
                 }
 
                 $evrak->urun()->sync([$urun->id]);
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
+
+                // Gelen sağlık sertifikalarının ID'lerini al
+                $yeni_sertifikalar = [];
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+                    if (!isset($sertifika->id) || $sertifika->id == -1) {
+                        $yeni_sertifikalar[] = $sertifika;
+                    } else {
+                        $sertifika_ids[] = $sertifika->id;
+                    }
+                }
+
+                // Silinmesi gerekenleri silme
+                $evrak->saglikSertifikalari()
+                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
+                    ->delete();
+
+                foreach ($yeni_sertifikalar as $sertifika) {
+
+                    $evrak->saglikSertifikalari()->create([
+                        'ssn' => $sertifika->ssn,
+                        'miktar' => $sertifika->miktar,
+                    ]);
+                }
+            } elseif ($request->type == "EvrakCanliHayvan") {
+
+                $evrak = EvrakCanliHayvan::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->hayvanSayisi = $request->hayvanSayisi;
+                $evrak->sevkUlke = $request->sevkUlke;
+                $evrak->orjinUlke = $request->orjinUlke;
+                $evrak->girisGumruk = $request->girisGumruk;
+                $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+                $urun = Urun::find($request->urun_kategori_id);
+                if (!$urun) {
+                    throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                }
+
+                $evrak->urun()->sync([$urun->id]);
+
+
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;

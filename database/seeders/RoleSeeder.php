@@ -77,10 +77,6 @@ class RoleSeeder extends Seeder
             'password' => bcrypt('123123')
         ])->assignRole('admin');
 
-        EvrakTur::create(['name' => 'İthalat']);
-        EvrakTur::create(['name' => 'Transit']);
-        EvrakTur::create(['name' => 'Antrepo']);
-
         Urun::create(['name' => 'Tavuk']);
         Urun::create(['name' => 'Balık']);
         Urun::create(['name' => 'Süt']);

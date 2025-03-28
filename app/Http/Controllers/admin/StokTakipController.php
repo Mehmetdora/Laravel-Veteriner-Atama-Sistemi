@@ -18,7 +18,7 @@ class StokTakipController extends Controller
          her düzenlemede tüm sağlık sertifikaları silinip baştan kaydedilmesi(sync) , bunu düzeltmek
          için ise hepsini silmeden sadece silinenleri silip yenileri ekleyerek düzeltilecek. */
         $saglik_s = SaglikSertifika::with(
-            ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_sertifika', 'evraks_cikis']
+            ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_sertifika', 'evraks_cikis','evraks_canli_hayvan']
         )->orderBy('created_at', 'desc')->get(); // Veritabanında sıralama yapılmadı, map ile sıralanacak
 
         // Sağlık sertifikalarının bağlı olduğu tek evrağı bulma ve sıralama işlemi
@@ -45,6 +45,9 @@ class StokTakipController extends Controller
             } elseif ($sertifika->evraks_cikis->isNotEmpty()) {
                 $evrak = $sertifika->evraks_cikis->first();
                 $evrak_type = 'Antrepo Çıkış';
+            } elseif ($sertifika->evraks_canli_hayvan->isNotEmpty()) {
+                $evrak = $sertifika->evraks_canli_hayvan->first();
+                $evrak_type = 'Canlı Hayvan';
             }
 
             // Her sertifikaya ait evrak türü ile birlikte döndürülen veri

@@ -83,10 +83,19 @@
                                             <th>G.T.İ.P. No İlk 4 Rakamı:</th>
                                             <td>{{ $evrak->gtipNo }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Ürünün KG Cinsinden Net Miktarı:</th>
-                                            <td>{{ $evrak->urunKG }} KG</td>
-                                        </tr>
+                                        @if (isset($evrak->hayvanSayisi))
+                                            <tr>
+                                                <th>Başvuru Yapılan Hayvan Sayısı(Baş Sayısı):</th>
+                                                <td>{{ $evrak->hayvanSayisi }}</td>
+                                            </tr>
+                                        @endif
+                                        @if (isset($evrak->urunKG))
+                                            <tr>
+                                                <th>Ürünün KG Cinsinden Net Miktarı:</th>
+                                                <td>{{ $evrak->urunKG }} KG</td>
+                                            </tr>
+                                        @endif
+
                                         @if (isset($evrak->sevkUlke))
                                             <tr>
                                                 <th>Sevk Eden Ülke:</th>

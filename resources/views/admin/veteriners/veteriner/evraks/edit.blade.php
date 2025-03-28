@@ -256,6 +256,199 @@
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
                                         </div>
                                     </form>
+                                @elseif ($evrak_type == 'EvrakCanliHayvan')
+                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo"
+                                                value="{{ json_encode($evrak->saglikSertifikalari) }}" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo" class="form-control"
+                                                value="{{ $evrak->gtipNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="hayvanSayisi" class="control-label">Başvuru Yapılan Hayvan
+                                                Sayısı(Baş Sayısı)</label>
+                                            <input name="hayvanSayisi" id="hayvanSayisi" class="form-control"
+                                                value="{{ $evrak->hayvanSayisi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control" value="{{ $evrak->orjinUlke }}"
+                                                required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select">
+                                                    <option selected value="{{ $evrak->girisGumruk }}">
+                                                        {{ $evrak->girisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
+                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select">
+                                                    <option selected value="{{ $evrak->cikisGumruk }}">
+                                                        {{ $evrak->cikisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
+                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="veterinerId" class="control-label">Evrak Durumu</label>
+                                            <select class="form-control" name="evrak_durum" id="evrak_durum" required>
+                                                @if (isset($evrak))
+                                                    <option selected value="{{ $evrak->evrak_durumu->evrak_durum }}">
+                                                        {{ $evrak->evrak_durumu->evrak_durum }}</option>
+                                                    <hr>
+                                                    <option value="İşlemde">İşlemde</option>
+                                                    <option value="Beklemede">Beklemede</option>
+                                                    <option value="Onaylandı">Onaylandı</option>
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="veterinerId" class="control-label">Veteriner</label>
+                                            <select class="form-control" data-id="{{ $evrak->veteriner->user->id }}"
+                                                name="veterinerId" id="veterinerId" required>
+                                                @if (isset($veteriners))
+                                                    <option selected value="{{ $evrak->veteriner->user->id }}">
+                                                        {{ $evrak->veteriner->user->name }}
+                                                    </option>
+                                                    <hr>
+                                                    @foreach ($veteriners as $veteriner)
+                                                        <option value="{{ $veteriner->id }}">
+                                                            {{ $veteriner->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                        </div>
+                                    </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoGiris')
                                     <form class="form" method="post"
                                         action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
@@ -436,7 +629,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoVaris')
-                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -473,7 +667,8 @@
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
+                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }}
+                                                        KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
                                                 @endforeach
@@ -595,7 +790,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoSertifika')
-                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -1170,10 +1366,11 @@
 
                 data = data.filter(item => item.ssn !== ssn || item.miktar !== val);
                 netMiktar -= val;
-                netMiktarInput.value = netMiktar;
+                if (netMiktarInput) {
+                    netMiktarInput.value = netMiktar;
+                }
                 item.remove();
                 jsonDataInput.value = JSON.stringify(data);
-                console.log(jsonDataInput.value, val, ssn);
 
             });
         });
@@ -1190,7 +1387,9 @@
                 };
                 data.push(newItem);
                 netMiktar += val2;
-                netMiktarInput.value = netMiktar;
+                if (netMiktarInput) {
+                    netMiktarInput.value = netMiktar;
+                }
 
                 let listItem = document.createElement("li");
                 listItem.innerHTML =
@@ -1199,14 +1398,18 @@
                 listItem.querySelector(".delete-btn").addEventListener("click", function() {
                     data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
                     netMiktar -= val2;
-                    netMiktarInput.value = netMiktar;
+                    if (netMiktarInput) {
+                        netMiktarInput.value = netMiktar;
+                    }
                     listItem.remove();
                     jsonDataInput.value = JSON.stringify(data);
                 });
 
                 dataList.appendChild(listItem);
                 jsonDataInput.value = JSON.stringify(data);
-                netMiktarInput.value = netMiktar;
+                if (netMiktarInput) {
+                    netMiktarInput.value = netMiktar;
+                }
                 inputContainer.classList.add("hidden");
             } else {
                 alert("Lütfen her iki alanı da doldurun!");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\veteriner;
 
+use App\Models\EvrakCanliHayvan;
 use App\Models\User;
 use App\Models\Evrak;
 use App\Models\NobetHafta;
@@ -123,6 +124,9 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakAntrepoCikis") {
             $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvan") {
+            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
         }
 
 
@@ -176,6 +180,9 @@ class VeterinerController extends Controller
                     ->find($id);
             } else if ($type == "EvrakAntrepoCikis") {
                 $evrak = EvrakAntrepoCikis::with('evrak_durumu')
+                    ->find($id);
+            } else if ($type == "EvrakCanliHayvan") {
+                $evrak = EvrakCanliHayvan::with('evrak_durumu')
                     ->find($id);
             }else{
                 $evrak = "bulunamadı";

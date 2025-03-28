@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EvrakAntrepoSertifika extends Model
+class EvrakCanliHayvan extends Model
 {
-
     public function evrak_adi(){
-        return "Antrepo Sertifika";
+        return "Canlı Hayvan";
     }
 
     public function setUrun(Urun $urun)
@@ -19,7 +18,6 @@ class EvrakAntrepoSertifika extends Model
         // Yeni ürünü ekliyoruz
         $this->urun()->attach($urun->id);
     }
-
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');
