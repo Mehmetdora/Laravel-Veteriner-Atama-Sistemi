@@ -329,8 +329,7 @@ class VeterinerController extends Controller
                 'urunAdi' => 'required',
                 'gtipNo' => 'required',
                 'urunKG' => 'required',
-                'girisAntreposu' => 'required',
-                'varisAntreposu' => 'required',
+                'urunlerinBulunduguAntrepo' => 'required',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -615,8 +614,8 @@ class VeterinerController extends Controller
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
                 $evrak->urunKG = $request->urunKG;
-                $evrak->girisAntreposu = $request->girisAntreposu;
-                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->urunlerinBulunduguAntrepo = $request->urunlerinBulunduguAntrepo;
+
                 $evrak->save();
 
                 // Veteriner ile evrak kaydetme
@@ -901,6 +900,8 @@ class VeterinerController extends Controller
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
+
+        $data['type'] = $type;
 
         return view('admin.veteriners.veteriner.evraks.detail', $data);
     }

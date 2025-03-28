@@ -643,8 +643,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
                                             <input name="oncekiVGBOnBildirimNo" type="number" class="form-control"
                                                 value="{{ $evrak->oncekiVGBOnBildirimNo }}" required />
                                         </div>
@@ -710,12 +709,12 @@
 
 
                                         <div class="form-group">
-                                            <label>Giriş Antrepo(Seç yada yeni bir tane
+                                            <label>Ürünlerin Bulunduğu Antrepo(Seç yada yeni bir tane
                                                 oluştur):*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control " id="giris_antrepo_select">
-                                                    <option selected value="{{ $evrak->girisAntreposu }}">
-                                                        {{ $evrak->girisAntreposu }}</option>
+                                                <select class="col-sm-6 form-control " id="urunlerinBulunduguAntrepo_select">
+                                                    <option selected value="{{ $evrak->urunlerinBulunduguAntrepo }}">
+                                                        {{ $evrak->urunlerinBulunduguAntrepo }}</option>
                                                     <hr>
                                                     <option value="Antrepo 1">Antrepo 1</option>
                                                     <option value="Antrepo 2">Antrepo 2</option>
@@ -724,34 +723,14 @@
                                                 </select>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control "
-                                                    value="{{ $evrak->girisAntreposu }}" id="giris_antrepo_input"
-                                                    type="text" name="girisAntreposu" placeholder="Giriş Antreposu"
+                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}" id="urunlerinBulunduguAntrepo_input"
+                                                    type="text" name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
                                                     required>
 
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label>Varış Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control " id="varis_antrepo_select">
-                                                    <option selected value="{{ $evrak->varisAntreposu }}">
-                                                        {{ $evrak->varisAntreposu }}</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control "
-                                                    value="{{ $evrak->girisAntreposu }}" id="varis_antrepo_input"
-                                                    type="text" name="varisAntreposu" placeholder="Varış Antreposu"
-                                                    required>
-
-                                            </div>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="veterinerId" class="control-label">Evrak Durumu</label>
@@ -1241,21 +1220,14 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVaris')
         <script>
-            let inputBox_varis_ant = document.querySelector(`#varis_antrepo_input`);
-            let selectBox_varis_ant = document.querySelector(`#varis_antrepo_select`);
-            selectBox_varis_ant.addEventListener("change", function() {
+            let inputBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_input`);
+            let selectBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_select`);
+            selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
                 if (this.value !== "") {
-                    inputBox_varis_ant.value = this.value;
+                    inputBox_urunlerinBulunduguAntrepo.value = this.value;
                 }
             });
 
-            let inputBox_giris_ant = document.querySelector(`#giris_antrepo_input`);
-            let selectBox_giris_ant = document.querySelector(`#giris_antrepo_select`);
-            selectBox_giris_ant.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox_giris_ant.value = this.value;
-                }
-            });
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoSertifika')
         <script>

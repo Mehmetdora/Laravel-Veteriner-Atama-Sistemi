@@ -80,6 +80,8 @@ class EvrakController extends Controller
                 ->find($evrak_id);
         }
 
+        $data['type'] = $type;
+
 
         return view('admin.evrak_kayit.detail', $data);
     }
@@ -94,6 +96,7 @@ class EvrakController extends Controller
 
     public function created(Request $request)
     {
+
 
         // $formData[0]['evrak_turu'] değeri gelen evraklarını türünü sayısal olarak verir.
         // 0-> ithalat
@@ -169,8 +172,7 @@ class EvrakController extends Controller
                     'urunAdi' => 'required',
                     'gtipNo' => 'required',
                     'urunKG' => 'required',
-                    'girisAntreposu' => 'required',
-                    'varisAntreposu' => 'required',
+                    'urunlerinBulunduguAntrepo' => 'required',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -427,8 +429,7 @@ class EvrakController extends Controller
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
-                    $yeni_evrak->girisAntreposu = $formData[$i]["girisAntreposu"];
-                    $yeni_evrak->varisAntreposu = $formData[$i]["varisAntreposu"];
+                    $yeni_evrak->urunlerinBulunduguAntrepo = $formData[$i]["urunlerinBulunduguAntrepo"];
                     $yeni_evrak->save();
 
                     // Veterineri sistem limite göre atayacak
@@ -724,8 +725,7 @@ class EvrakController extends Controller
                 'urunAdi' => 'required',
                 'gtipNo' => 'required',
                 'urunKG' => 'required',
-                'girisAntreposu' => 'required',
-                'varisAntreposu' => 'required',
+                'urunlerinBulunduguAntrepo' => 'required',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1010,8 +1010,7 @@ class EvrakController extends Controller
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
                 $evrak->urunKG = $request->urunKG;
-                $evrak->girisAntreposu = $request->girisAntreposu;
-                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->urunlerinBulunduguAntrepo = $request->urunlerinBulunduguAntrepo;
                 $evrak->save();
 
                 // Veteriner ile evrak kaydetme

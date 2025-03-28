@@ -21,8 +21,7 @@ return new class extends Migration
             $table->string('urunAdi');
             $table->string('gtipNo');
             $table->integer('urunKG');
-            $table->string('girisAntreposu');
-            $table->string('varisAntreposu');
+            $table->string('urunlerinBulunduguAntrepo');
             $table->integer('difficulty_coefficient')->default(1);
 
 

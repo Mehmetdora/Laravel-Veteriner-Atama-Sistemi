@@ -62,7 +62,11 @@
                                             <td>{{ $evrak->evrakKayitNo }}</td>
                                         </tr>
                                         <tr>
-                                            <th>VGB Ön Bildirim Numarası:</th>
+                                            @if ($type == 'EvrakAntrepoVaris')
+                                                <th>VGB Numarası:</th>
+                                            @else
+                                                <th>VGB Ön Bildirim Numarası:</th>
+                                            @endif
                                             <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnBildirimNo ?: $evrak->USKSSertifikaReferansNo }}
                                             </td>
                                         </tr>
@@ -127,6 +131,12 @@
                                             <tr>
                                                 <th>Araç Plaka veya Konteyner No:</th>
                                                 <td>{{ $evrak->aracPlaka }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->urunlerinBulunduguAntrepo)
+                                            <tr>
+                                                <th>Ürünlerin Bulunduğu Antrepo:</th>
+                                                <td>{{ $evrak->urunlerinBulunduguAntrepo }}</td>
                                             </tr>
                                         @endif
                                         @if ($evrak->girisAntreposu)

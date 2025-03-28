@@ -129,6 +129,8 @@ class VeterinerController extends Controller
                 ->find($evrak_id);
         }
 
+        $data['type'] = $type;
+
 
         $data['unread_evraks_count'] = Auth::user()->unread_evraks_count();
 

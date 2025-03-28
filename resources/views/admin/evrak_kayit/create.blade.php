@@ -484,8 +484,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Ön Bildirim
-                                                Numarası</label>
+                                            <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
                                             <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="number" class="form-control" required />
                                         </div>
 
@@ -540,10 +539,10 @@
 
 
                                         <div class="form-group">
-                                            <label for="giris_antrepo_input_${i}">Giriş Antrepo(Seç yada yeni bir tane
+                                            <label for="urunlerinBulunduguAntrepo_input${i}">Giriş Antrepo(Seç yada yeni bir tane
                                                 oluştur):*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_antrepo_select_${i}">
+                                                <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select${i}">
                                                     <option selected value="">Antrepolar(Seç)</option>
                                                     <hr>
                                                     <option value="Antrepo 1">Antrepo 1</option>
@@ -552,30 +551,13 @@
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisAntreposu_${i}"
-                                                    id="giris_antrepo_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+                                                <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}"
+                                                    id="urunlerinBulunduguAntrepo_input${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="varis_antrepo_input_${i}">Varış Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="varis_antrepo_select_${i}">
-                                                    <option selected value="">Antrepolar(Seçiniz)</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="varisAntreposu_${i}"
-                                                    id="varis_antrepo_input_${i}" placeholder="Varış Antreposu" required>
-
-                                            </div>
-                                        </div>
         `;
             } else if (type == 4) {
                 return `
@@ -1109,12 +1091,9 @@
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
 
 
-                let inputBox_giris_ant = formStep.querySelector(`#giris_antrepo_input_${index}`);
-                let selectBox_giris_ant = formStep.querySelector(`#giris_antrepo_select_${index}`);
+                let inputBox_urunlerinBulunduguAntrepo = formStep.querySelector(`#urunlerinBulunduguAntrepo_input${index}`);
+                let selectBox_urunlerinBulunduguAntrepo = formStep.querySelector(`#urunlerinBulunduguAntrepo_select${index}`);
 
-
-                let inputBox_varis_ant = formStep.querySelector(`#varis_antrepo_input_${index}`);
-                let selectBox_varis_ant = formStep.querySelector(`#varis_antrepo_select_${index}`);
 
                 let data = [];
                 let netMiktar = 0;
@@ -1159,18 +1138,13 @@
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_varis_ant.addEventListener("change", function() {
+                selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
                     if (this.value !== "") {
-                        inputBox_varis_ant.value = this.value;
+                        inputBox_urunlerinBulunduguAntrepo.value = this.value;
                     }
                 });
 
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_giris_ant.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_giris_ant.value = this.value;
-                    }
-                });
+
             });
         }
 
@@ -1489,8 +1463,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
                         urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
-                        girisAntreposu: document.querySelector(`[name="girisAntreposu_${i}"]`).value,
-                        varisAntreposu: document.querySelector(`[name="varisAntreposu_${i}"]`).value
+                        urunlerinBulunduguAntrepo: document.querySelector(`[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
                     allFormData.push(formData);
                 }
@@ -1579,31 +1552,5 @@
         }
     </script>
 
-    {{--   <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let inputBox = document.getElementById("giris_g_input");
-            let selectBox = document.getElementById("giris_g_select");
 
-            // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-            selectBox.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox.value = this.value;
-                }
-            });
-
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            let inputBox = document.getElementById("cikis_g_input");
-            let selectBox = document.getElementById("cikis_g_select");
-
-            // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-            selectBox.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox.value = this.value;
-                }
-            });
-
-        });
-    </script> --}}
 @endsection
