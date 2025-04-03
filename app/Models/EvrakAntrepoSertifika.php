@@ -20,6 +20,11 @@ class EvrakAntrepoSertifika extends Model
         $this->urun()->attach($urun->id);
     }
 
+
+    public function usks(){
+        return $this->hasOne(UsksNo::class,'evrak_antrepo_sertifika_id');
+    }
+
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');

@@ -152,7 +152,7 @@
     <script>
         $(function() {
             $("#example1").DataTable({
-                "order": [
+               "order": [
                     [0, "desc"]
                 ],
                 "paging": true,

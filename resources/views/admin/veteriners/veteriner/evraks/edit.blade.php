@@ -1156,6 +1156,7 @@
 
 
 @section('admin.customJS')
+
     @if ($evrak_type == 'EvrakIthalat' || $evrak_type == 'EvrakTransit')
         <script>
             const urun_kategori_id = document.querySelector('#urun_kategori_id');

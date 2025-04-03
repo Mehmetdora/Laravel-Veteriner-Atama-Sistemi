@@ -8,6 +8,15 @@ use Carbon\Carbon;
 
 class AtamaServisi
 {
+
+
+    protected $veteriner_evrak_durumu_kontrolu;
+
+    function __construct(VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu){
+
+        $this->veteriner_evrak_durumu_kontrolu = $veterinerEvrakDurumularıKontrolu;
+    }
+
     private $workloadCoefficients = [
         'ithalat' => 20,
         'transit' => 5,
@@ -29,6 +38,7 @@ class AtamaServisi
         $veterinerler = $this->aktifVeterinerleriGetir($now);
 
 
+
         // 2. Her Veteriner İçin Telafi Hesapla
         /* foreach ($veterinerler as $veteriner) {
             $this->telafiHesapla($veteriner, $now);
@@ -41,6 +51,11 @@ class AtamaServisi
 
         // Her veterinerin bu yıl için aldığı işler karşılaştırılarak en düşük olan(lar) adayVeterinerler arasında eklenir
         foreach ($veterinerler as $vet) {
+
+            // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
+            if($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)){
+                continue;
+            }
 
             // veterinerinBuYilkiWorkloadi fonksiyonu ile veterinerin bu yıl için bir workload modeli varsa getirir, yoksa bu yıl için yeni bir tane oluşturur.
             $currentWorkload = $vet->veterinerinBuYilkiWorkloadi()->year_workload;

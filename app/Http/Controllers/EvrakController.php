@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\EvrakCanliHayvan;
+use App\Models\UsksNo;
 use App\Providers\AtamaServisi;
 use Carbon\Carbon;
 use App\Models\Urun;
@@ -18,15 +19,21 @@ use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use App\Models\EvrakAntrepoSertifika;
+use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
+use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use Illuminate\Support\Facades\Validator;
 
 class EvrakController extends Controller
 {
 
+    protected $ssn_ile_antrepo_giris_vet_bulma_servisi;
+    protected $veteriner_evrak_durum_kontrol_servisi;
     protected $atamaServisi;
-    function __construct(AtamaServisi $atamaServisi)
+    function __construct(AtamaServisi $atamaServisi, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
 
+        $this->veteriner_evrak_durum_kontrol_servisi = $veterinerEvrakDurumularıKontrolu;
+        $this->ssn_ile_antrepo_giris_vet_bulma_servisi = $ssn_kullanarak_antrepo_gveterinerini_bulma;
         $this->atamaServisi = $atamaServisi;
     }
 
@@ -106,6 +113,7 @@ class EvrakController extends Controller
         // 4-> Atrepo sertifika
         // 5-> Atrepo çıkış
         // 6-> Canlı Hayvan
+        $today = Carbon::now();
 
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
 
@@ -254,6 +262,7 @@ class EvrakController extends Controller
 
         try {
             $saved_count = 0; // Başarıyla kaydedilen evrak sayısı
+            $today = Carbon::now();
 
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
@@ -420,8 +429,16 @@ class EvrakController extends Controller
                 }
             } elseif ($formData[0]['evrak_turu'] == 3) {
                 for ($i = 1; $i < count($formData); $i++) {
-                    $yeni_evrak = new EvrakAntrepoVaris;
 
+
+
+
+                    // Evrağın atanacağı veteriner sağlık sertifikası üzerinden Antrepo Giriş türü evrağının atandığı veterineri bulma
+                    $veteriner = $this->ssn_ile_antrepo_giris_vet_bulma_servisi
+                        ->ssn_ile_antrepo_giris_vet_bul($formData, $i);
+
+
+                    $yeni_evrak = new EvrakAntrepoVaris;
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
                     $yeni_evrak->oncekiVGBOnBildirimNo = $formData[$i]["oncekiVGBOnBildirimNo"];
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
@@ -431,19 +448,35 @@ class EvrakController extends Controller
                     $yeni_evrak->urunlerinBulunduguAntrepo = $formData[$i]["urunlerinBulunduguAntrepo"];
                     $yeni_evrak->save();
 
-                    // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('antrepo_varis');
 
-                    if (!$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+
+                    // Eğer bu veterinerin elinde daha bitmemiş bir evrak varsa sistem random başka bir veterinere atama yapacak
+                    $isi_var_mi = $veteriner->evraks->contains(fn($data) => $data->evrak->evrak_durumu->evrak_durum === 'İşlemde');
+                    if ($isi_var_mi) {
+                        $veteriner = $this->atamaServisi->assignVet('antrepo_varis');
+                    } else {
+
+
+                        // Eğer veterinere evrak sistem tarafından atanmıyorsa manuel olarak workload değerini güncelle
+                        $workload = $veteriner->workloads->where('year', $today->year)->first();
+                        if (isset($workload)) {
+                            $workload->year_workload += 1;
+                            $workload->total_workload += 1;
+                            $workload->save();
+                        }
                     }
+
+
+
+
+
+
 
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
                     $user_evrak->user_id = $veteriner->id;
                     $user_evrak->evrak()->associate($yeni_evrak);
-
                     $saved = $user_evrak->save();
                     if (!$saved) {
                         throw new \Exception("Evrak kaydedilemedi!");
@@ -465,6 +498,94 @@ class EvrakController extends Controller
                 }
             } elseif ($formData[0]['evrak_turu'] == 4) {
                 for ($i = 1; $i < count($formData); $i++) {
+
+
+                    $saglik_sertifikalari = $formData[$i]['vetSaglikSertifikasiNo'];
+
+                    $veterinerSayilari = [];
+                    $veterinerSertifikaMiktarlari = [];
+                    $veterinerId = 0;
+
+                    // Her sağlık sertifikasının hangi veterinere ait olduğunu belirle
+                    foreach ($saglik_sertifikalari as $saglik_sertifika) {
+                        $ss_saved = SaglikSertifika::where('ssn', $saglik_sertifika['ssn'])
+                            ->where('miktar', $saglik_sertifika['miktar'])
+                            ->with(['evraks_giris.veteriner.user'])
+                            ->first();
+
+                        // Gelen sağlık sertifikasının ait olduğu antp giriş evrağının veterinerini al
+                        $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
+
+
+                        // Veterinerleri kaşılaştırmak için miktar ve ss sayısını tut
+                        if ($veteriner) {
+                            $vetId = $veteriner->id;
+
+                            // Veterinerin sahip olduğu sertifika sayısını artır
+                            $veterinerSayilari[$vetId] = ($veterinerSayilari[$vetId] ?? 0) + 1;
+
+                            // Veterinerin toplam sağlık sertifikası miktarını artır
+                            $veterinerSertifikaMiktarlari[$vetId] = ($veterinerSertifikaMiktarlari[$vetId] ?? 0) + $saglik_sertifika['miktar'];
+                        } else {
+                            throw new \Exception("Sağlık Sertifikası Numarası Bulunamadı, Sistemde Kayıtlı Olduğundan Emin Olduktan Sonra Tekrar Deneyiniz!");
+                        }
+                    }
+
+
+                    if (empty($veterinerSayilari)) {
+                        throw new \Exception("Hiçbir veteriner için sağlık sertifikası bulunamadı!");
+                    }
+
+                    // En çok sağlık sertifikasına sahip veterinerleri bul
+                    $maxSertifikaSayisi = max($veterinerSayilari);
+                    $enCokSertifikaSahipleri = array_keys($veterinerSayilari, $maxSertifikaSayisi);
+
+
+
+                    // Eğer en çok sertifika sayısına sahip tek veteriner varsa
+                    if (count($enCokSertifikaSahipleri) === 1) {
+                        $veterinerId = $enCokSertifikaSahipleri[0];
+
+
+                        // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa
+                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+
+                            $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                            $veterinerId = $veteriner->id;
+                        }
+
+
+                        // Eğer birden fazla veteriner eşitse, miktar toplamına göre karar ver
+                    } else {
+
+                        // en fazla ss'da miktara sahip olan veterineri bulma
+                        $veterinerId = collect($enCokSertifikaSahipleri)
+                            ->sortByDesc(fn($vetId) => $veterinerSertifikaMiktarlari[$vetId])
+                            ->first();
+
+
+                        // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa 2. sıradakini seç
+                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+
+                            $veterinerId = $enCokSertifikaSahipleri[1];
+
+                            // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa sistem atama yapsın
+                            if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+
+                                $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                                $veterinerId = $veteriner->id;
+                            }
+                        }
+                    }
+
+                    $veteriner = User::find($veterinerId);
+
+                    if (!$veteriner) {
+                        throw new \Exception("Seçilen veteriner sistemde bulunamadı!");
+                    }
+
+
+
                     $yeni_evrak = new EvrakAntrepoSertifika;
 
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
@@ -478,21 +599,30 @@ class EvrakController extends Controller
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
-                    $yeni_evrak->save();
+                    $evrak_saved = $yeni_evrak->save();
+                    if (!$evrak_saved) {
+                        throw new \Exception("Evrak Bilgileri Yanlış Yada Hatalı! Lüsfen Bilgileri Kontrol Edip Tekrar Deneyiniz.");
+                    }
+
+
+                    // Antrepo sertifika oluşturulduğunda en son kayıtlı usks numarasın güncelleyerek(yıl ve sondakil sayıyı) bu sertifika ile ilişkilendir.
+                    $yil = $today->year; // Değişecek kısım
+                    $son_kayitli_usks = UsksNo::latest()->first()->usks_no; //"33VSKN01.USKS.2025-0475"
+                    $parcalar = explode('-', $son_kayitli_usks);
+                    $numara = (int)end($parcalar); // Son parçayı al
+                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);
+                    // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
+                    $usks = new UsksNo;
+                    $usks->usks_no =  $sonuc;
+                    $usks->miktar = $yeni_evrak->urunKG;
+                    $yeni_evrak->usks()->save($usks);
+
 
                     // İlişkili modelleri bağlama
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
-
-                    // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
-
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
-                    }
-
                     $yeni_evrak->setUrun($urun);
 
-                    // Veteriner ile evrak kaydetme
+                    // Veteriner ile evrağı ilişkilendirme
                     $user_evrak = new UserEvrak;
                     $user_evrak->user_id = $veteriner->id;
                     $user_evrak->evrak()->associate($yeni_evrak);
@@ -515,6 +645,10 @@ class EvrakController extends Controller
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
+
+
+
+
                 }
             } elseif ($formData[0]['evrak_turu'] == 5) {
                 for ($i = 1; $i < count($formData); $i++) {
