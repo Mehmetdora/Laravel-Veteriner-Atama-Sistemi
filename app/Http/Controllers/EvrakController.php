@@ -31,7 +31,7 @@ class EvrakController extends Controller
     protected $atamaServisi;
     function __construct(AtamaServisi $atamaServisi, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
-
+        // deneme
         $this->veteriner_evrak_durum_kontrol_servisi = $veterinerEvrakDurumularıKontrolu;
         $this->ssn_ile_antrepo_giris_vet_bulma_servisi = $ssn_kullanarak_antrepo_gveterinerini_bulma;
         $this->atamaServisi = $atamaServisi;
