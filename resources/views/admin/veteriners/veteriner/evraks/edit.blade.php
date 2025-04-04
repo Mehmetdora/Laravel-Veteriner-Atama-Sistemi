@@ -784,12 +784,7 @@
                                                 value="{{ $evrak->evrakKayitNo }}" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
-                                            <input name="USKSSertifikaReferansNo" type="number" class="form-control"
-                                                value="{{ $evrak->USKSSertifikaReferansNo }}" required />
-                                        </div>
+                                     
 
                                         <div class="form-group">
                                             <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
@@ -984,31 +979,18 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn">➕</button>
+                                            <label for="usks_no">USKS Sertifika Referans Numarası ve
+                                                Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $usks->usks_no }}" name="usks_no" id="usks_no"
+                                                    placeholder="USKS Numarası" required>
 
-                                            <div id="inputContainer" class="inputs hidden">
-                                                <input type="text" id="input1"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2"
-                                                    placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn">✔️</button>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $usks->miktar }}" name="usks_miktar" id="usks_miktar"
+                                                    placeholder="Miktarı" required>
                                             </div>
-
-                                            <ul id="dataList" class="list">
-                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }}
-                                                        KG
-                                                        <button type="button" class="delete-btn">✖️</button>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
-                                                class="form-control" required />
                                         </div>
 
 
@@ -1156,7 +1138,6 @@
 
 
 @section('admin.customJS')
-
     @if ($evrak_type == 'EvrakIthalat' || $evrak_type == 'EvrakTransit')
         <script>
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
@@ -1299,97 +1280,101 @@
         });
 
 
+        @if ($evrak_type != 'EvrakAntrepoCikis')
 
 
 
-        let addBtn = document.querySelector(`#addBtn`);
-        let inputContainer = document.querySelector(`#inputContainer`);
-        let input1 = document.querySelector(`#input1`);
-        let input2 = document.querySelector(`#input2`);
-        let confirmBtn = document.querySelector(`#confirmBtn`);
-        let dataList = document.querySelector(`#dataList`);
-        let jsonDataInput = document.querySelector(`#jsonData`);
-        let netMiktarInput = document.querySelector(`#net_miktar`);
+
+            let addBtn = document.querySelector(`#addBtn`);
+            let inputContainer = document.querySelector(`#inputContainer`);
+            let input1 = document.querySelector(`#input1`);
+            let input2 = document.querySelector(`#input2`);
+            let confirmBtn = document.querySelector(`#confirmBtn`);
+            let dataList = document.querySelector(`#dataList`);
+            let jsonDataInput = document.querySelector(`#jsonData`);
+            let netMiktarInput = document.querySelector(`#net_miktar`);
 
 
-        // Sağlık Sertifikalarının Düzenlenmesi
-        let data = [];
-        let netMiktar = 0;
+            // Sağlık Sertifikalarının Düzenlenmesi
+            let data = [];
+            let netMiktar = 0;
 
-        @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-            var item = {
-                id: "{{ $saglik_sertifika->id }}",
-                ssn: "{{ $saglik_sertifika->ssn }}",
-                miktar: {{ $saglik_sertifika->miktar }}
-            }
-            data.push(item);
-            netMiktar += {{ $saglik_sertifika->miktar }};
-            jsonDataInput.value = JSON.stringify(data);
-        @endforeach
-
-        addBtn.addEventListener("click", function() {
-            inputContainer.classList.toggle("hidden");
-            input1.value = "";
-            input2.value = "";
-        });
-
-        const list_item = document.querySelectorAll('.setted-sertifika');
-        list_item.forEach(item => {
-            item.addEventListener("click", function() {
-                const val = parseInt(item.getAttribute('data-miktar'));
-                const ssn = item.getAttribute('data-ssn');
-
-                data = data.filter(item => item.ssn !== ssn || item.miktar !== val);
-                netMiktar -= val;
-                if (netMiktarInput) {
-                    netMiktarInput.value = netMiktar;
+            @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                var item = {
+                    id: "{{ $saglik_sertifika->id }}",
+                    ssn: "{{ $saglik_sertifika->ssn }}",
+                    miktar: {{ $saglik_sertifika->miktar }}
                 }
-                item.remove();
+                data.push(item);
+                netMiktar += {{ $saglik_sertifika->miktar }};
                 jsonDataInput.value = JSON.stringify(data);
+            @endforeach
 
+            addBtn.addEventListener("click", function() {
+                inputContainer.classList.toggle("hidden");
+                input1.value = "";
+                input2.value = "";
             });
-        });
 
-        confirmBtn.addEventListener("click", function() {
-            let val1 = input1.value.trim();
-            let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+            const list_item = document.querySelectorAll('.setted-sertifika');
+            list_item.forEach(item => {
+                item.addEventListener("click", function() {
+                    const val = parseInt(item.getAttribute('data-miktar'));
+                    const ssn = item.getAttribute('data-ssn');
 
-            if (val1 && val2) {
-                let newItem = {
-                    id: "-1",
-                    ssn: val1,
-                    miktar: val2
-                };
-                data.push(newItem);
-                netMiktar += val2;
-                if (netMiktarInput) {
-                    netMiktarInput.value = netMiktar;
-                }
-
-                let listItem = document.createElement("li");
-                listItem.innerHTML =
-                    `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
-
-                listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                    data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                    netMiktar -= val2;
+                    data = data.filter(item => item.ssn !== ssn || item.miktar !== val);
+                    netMiktar -= val;
                     if (netMiktarInput) {
                         netMiktarInput.value = netMiktar;
                     }
-                    listItem.remove();
+                    item.remove();
                     jsonDataInput.value = JSON.stringify(data);
-                });
 
-                dataList.appendChild(listItem);
-                jsonDataInput.value = JSON.stringify(data);
-                if (netMiktarInput) {
-                    netMiktarInput.value = netMiktar;
+                });
+            });
+
+            confirmBtn.addEventListener("click", function() {
+                let val1 = input1.value.trim();
+                let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                if (val1 && val2) {
+                    let newItem = {
+                        id: "-1",
+                        ssn: val1,
+                        miktar: val2
+                    };
+                    data.push(newItem);
+                    netMiktar += val2;
+                    if (netMiktarInput) {
+                        netMiktarInput.value = netMiktar;
+                    }
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                    listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                        data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                        netMiktar -= val2;
+                        if (netMiktarInput) {
+                            netMiktarInput.value = netMiktar;
+                        }
+                        listItem.remove();
+                        jsonDataInput.value = JSON.stringify(data);
+                    });
+
+                    dataList.appendChild(listItem);
+                    jsonDataInput.value = JSON.stringify(data);
+                    if (netMiktarInput) {
+                        netMiktarInput.value = netMiktar;
+                    }
+                    inputContainer.classList.add("hidden");
+                } else {
+                    alert("Lütfen her iki alanı da doldurun!");
                 }
-                inputContainer.classList.add("hidden");
-            } else {
-                alert("Lütfen her iki alanı da doldurun!");
-            }
-        });
+            });
+        @endif
+
     </script>
 
     <script>

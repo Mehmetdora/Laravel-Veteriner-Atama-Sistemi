@@ -45,29 +45,42 @@
                                             <th>Evrak Kayıt No:</th>
                                             <td>{{ $evrak->evrakKayitNo }}</td>
                                         </tr>
-                                        <tr>
-                                            @if ($type == 'EvrakAntrepoVaris')
-                                                <th>VGB Numarası:</th>
-                                            @else
-                                                <th>VGB Ön Bildirim Numarası:</th>
-                                            @endif
-                                            <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnBildirimNo ?: $evrak->USKSSertifikaReferansNo }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Veteriner Sağlık Sertifikaları:</th>
-                                            <td>
-                                                <ul id="dataList" class="list">
-                                                    @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                                                        <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                            data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                            {{ $saglik_sertifika->ssn }} → {{ $saglik_sertifika->miktar }}
-                                                            KG
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            </td>
-                                        </tr>
+                                        @if ($type != 'EvrakAntrepoSertifika')
+                                            <tr>
+                                                @if ($type == 'EvrakAntrepoVaris')
+                                                    <th>VGB Numarası:</th>
+                                                @else
+                                                    <th>VGB Ön Bildirim Numarası:</th>
+                                                @endif
+                                                <td>{{ $evrak->vgbOnBildirimNo ?: $evrak->oncekiVGBOnBildirimNo }}
+                                                </td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->saglikSertifikalari)
+                                            <tr>
+                                                <th>Veteriner Sağlık Sertifikaları:</th>
+                                                <td>
+                                                    <ul id="dataList" class="list">
+                                                        @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                            <li class="setted-sertifika"
+                                                                data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                                data-miktar="{{ $saglik_sertifika->miktar }}">
+                                                                {{ $saglik_sertifika->ssn }} →
+                                                                {{ $saglik_sertifika->miktar }}
+                                                                KG
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                        @if (isset($usks))
+                                            <tr>
+                                                <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
+                                                <td><b>{{ $usks->usks_no }} → {{ $usks->miktar }} KG</b></td>
+                                            </tr>
+                                        @endif
+
                                         <tr>
                                             <th>Vekalet Sahibi Firma/Kişi Adı:</th>
                                             <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>

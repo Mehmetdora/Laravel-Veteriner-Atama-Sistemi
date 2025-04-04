@@ -220,7 +220,7 @@
                 document.getElementById("dynamicForm").style.display = "block";
                 document.getElementById("formButtons").style.display = "block";
                 updateButtonVisibility();
-            }else{
+            } else {
                 alert('Hatalı İşlem! Lütfen yetkili kişi ile iletişime geçiniz!');
             }
 
@@ -567,11 +567,6 @@
                                             <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="USKSSertifikaReferansNo_${i}" class="control-label">USKS Sertifika Referans Numarası</label>
-                                            <input id="USKSSertifikaReferansNo_${i}" name="USKSSertifikaReferansNo_${i}" type="number" class="form-control" required />
-                                        </div>
-
 
 
                                         <div class="form-group">
@@ -698,21 +693,15 @@
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn_${i}">➕</button>
+                                            <label for="usks_${i}">USKS Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
+                                                    id="usks_no_${i}" placeholder="USKS Numarası" required>
+                                                <div class="col-sm-2"></div>
+                                                <input class="col-sm-5 form-control" type="number" name="usks_miktar_${i}"
+                                                    id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
 
-                                            <div id="inputContainer_${i}" class="inputs hidden">
-                                                <input type="text" id="input1_${i}"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
-
-                                            <ul id="dataList_${i}" class="list"></ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -1075,8 +1064,10 @@
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
 
 
-                let inputBox_urunlerinBulunduguAntrepo = formStep.querySelector(`#urunlerinBulunduguAntrepo_input${index}`);
-                let selectBox_urunlerinBulunduguAntrepo = formStep.querySelector(`#urunlerinBulunduguAntrepo_select${index}`);
+                let inputBox_urunlerinBulunduguAntrepo = formStep.querySelector(
+                    `#urunlerinBulunduguAntrepo_input${index}`);
+                let selectBox_urunlerinBulunduguAntrepo = formStep.querySelector(
+                    `#urunlerinBulunduguAntrepo_select${index}`);
 
 
                 let data = [];
@@ -1213,11 +1204,7 @@
             const forms = document.querySelectorAll(".form-step");
             console.log(forms);
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
-                let addBtn = formStep.querySelector(`#addBtn_${index}`);
-                let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
-                let input1 = formStep.querySelector(`#input1_${index}`);
-                let input2 = formStep.querySelector(`#input2_${index}`);
-                let confirmBtn = formStep.querySelector(`#confirmBtn_${index}`);
+
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
@@ -1226,45 +1213,6 @@
 
                 let data = [];
                 let netMiktar = 0;
-
-                addBtn.addEventListener("click", function() {
-                    inputContainer.classList.toggle("hidden");
-                    input1.value = "";
-                    input2.value = "";
-                });
-
-                confirmBtn.addEventListener("click", function() {
-                    let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
-
-                    if (val1 && val2) {
-                        let newItem = {
-                            ssn: val1,
-                            miktar: val2
-                        };
-                        data.push(newItem);
-                        netMiktar += val2;
-
-                        let listItem = document.createElement("li");
-                        listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
-
-                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
-                            listItem.remove();
-                            jsonDataInput.value = JSON.stringify(data);
-                        });
-
-                        dataList.appendChild(listItem);
-                        jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
-                        inputContainer.classList.add("hidden");
-                    } else {
-                        alert("Lütfen her iki alanı da doldurun!");
-                    }
-                });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_c.addEventListener("change", function() {
@@ -1440,7 +1388,8 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
                         urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
-                        urunlerinBulunduguAntrepo: document.querySelector(`[name="urunlerinBulunduguAntrepo_${i}"]`).value,
+                        urunlerinBulunduguAntrepo: document.querySelector(
+                            `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
                     allFormData.push(formData);
                 }
@@ -1448,7 +1397,6 @@
                 for (let i = 0; i < totalForms; i++) {
                     let formData = {
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        USKSSertifikaReferansNo: document.querySelector(`#USKSSertifikaReferansNo_${i}`).value,
                         vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
@@ -1469,8 +1417,8 @@
                     let formData = {
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
+                        usks_no: document.querySelector(`#usks_no_${i}`).value,
+                        usks_miktar: document.querySelector(`#usks_miktar_${i}`).value,
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
@@ -1509,8 +1457,6 @@
 
             this.submit();
         });
-
-
     </script>
 
     <script>
@@ -1527,6 +1473,4 @@
             input.value = value;
         }
     </script>
-
-
 @endsection

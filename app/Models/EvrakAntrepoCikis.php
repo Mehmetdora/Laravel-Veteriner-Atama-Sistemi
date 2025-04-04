@@ -33,8 +33,4 @@ class EvrakAntrepoCikis extends Model
         return $this->morphToMany(Urun::class, 'evrak', 'urun_evrak');
     }
 
-    public function saglikSertifikalari()
-    {
-        return $this->morphToMany(SaglikSertifika::class, 'evrak', 'evrak_saglik_sertifika');
-    }
 }

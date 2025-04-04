@@ -32,9 +32,6 @@ class SaglikSertifika extends Model
     {
         return $this->morphedByMany(EvrakAntrepoSertifika::class, 'evrak', 'evrak_saglik_sertifika');
     }
-    public function evraks_cikis()
-    {
-        return $this->morphedByMany(EvrakAntrepoCikis::class, 'evrak', 'evrak_saglik_sertifika');
-    }
+ 
 
 }
