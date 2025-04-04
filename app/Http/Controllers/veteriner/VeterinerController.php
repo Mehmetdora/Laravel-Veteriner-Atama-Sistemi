@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\veteriner;
 
-use App\Models\EvrakCanliHayvan;
 use App\Models\User;
 use App\Models\Evrak;
+use App\Models\UsksNo;
 use App\Models\NobetHafta;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
 use Illuminate\Http\Request;
+use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
@@ -122,8 +123,10 @@ class VeterinerController extends Controller
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
-            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
+            $data['evrak'] = $evrak;
+            $data['usks'] = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
