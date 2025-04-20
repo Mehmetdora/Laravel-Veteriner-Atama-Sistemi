@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\DailyTotalWorkload;
 use App\Models\EvrakCanliHayvan;
 use App\Models\UsksNo;
 use App\Providers\AtamaServisi;
+use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use Carbon\Carbon;
 use App\Models\Urun;
 use App\Models\User;
@@ -19,6 +20,7 @@ use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use App\Models\EvrakAntrepoSertifika;
+use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use Illuminate\Support\Facades\Validator;
@@ -28,10 +30,13 @@ class EvrakController extends Controller
 
     protected $ssn_ile_antrepo_giris_vet_bulma_servisi;
     protected $veteriner_evrak_durum_kontrol_servisi;
+    protected $daily_total_worklaod_update_create_servisi;
+    protected $ortalama_gunluk_workload_degeri_bulma;
     protected $atamaServisi;
-    function __construct(AtamaServisi $atamaServisi, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
-        // deneme
+        $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
+        $this->daily_total_worklaod_update_create_servisi = $daily_total_workload_update_orcreate_service;
         $this->veteriner_evrak_durum_kontrol_servisi = $veterinerEvrakDurumularıKontrolu;
         $this->ssn_ile_antrepo_giris_vet_bulma_servisi = $ssn_kullanarak_antrepo_gveterinerini_bulma;
         $this->atamaServisi = $atamaServisi;
@@ -115,7 +120,17 @@ class EvrakController extends Controller
         // 4-> Atrepo sertifika
         // 5-> Atrepo çıkış
         // 6-> Canlı Hayvan
-        $today = Carbon::now();
+
+        /*
+        'ithalat' => 20,
+        'transit' => 5,
+        'antrepo_giris' => 5,
+        'antrepo_varis' => 1,
+        'antrepo_sertifika' => 2,
+        'antrepo_cikis' => 5,
+        'canli_hayvan' => 10,
+        */
+        $today = now()->setTimezone('Europe/Istanbul'); // tam saat
 
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
 
@@ -320,6 +335,12 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('ithalat');
+
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 1) {
@@ -373,6 +394,12 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('transit');
+
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
 
                 }
@@ -427,6 +454,12 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_giris');
+
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 3) {
@@ -469,12 +502,6 @@ class EvrakController extends Controller
                     }
 
 
-
-
-
-
-
-
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
                     $user_evrak->user_id = $veteriner->id;
@@ -496,6 +523,10 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_varis');
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 4) {
@@ -609,7 +640,7 @@ class EvrakController extends Controller
                     // Antrepo sertifika oluşturulduğunda en son kayıtlı usks numarasın güncelleyerek(yıl ve sondakil sayıyı) bu sertifika ile ilişkilendir.
                     $yil = $today->year; // Değişecek kısım
                     // hiç yoksa oluştur
-                    $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil,0); //"33VSKN01.USKS.2025-0475"
+                    $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
                     $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);
@@ -646,10 +677,11 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_sertifika');
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
-
-
-
 
                 }
             } elseif ($formData[0]['evrak_turu'] == 5) {
@@ -703,6 +735,8 @@ class EvrakController extends Controller
                     $evrak_durum = new EvrakDurum;
                     $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_cikis');
 
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
@@ -757,6 +791,10 @@ class EvrakController extends Controller
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
+
+                    // Günlük gelen evrakların toplam workload değerini tutma servisi
+                    $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('canli_hayvan');
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             }

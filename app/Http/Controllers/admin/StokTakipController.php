@@ -42,9 +42,6 @@ class StokTakipController extends Controller
             } elseif ($sertifika->evraks_sertifika->isNotEmpty()) {
                 $evrak = $sertifika->evraks_sertifika->first();
                 $evrak_type = 'Antrepo Sertifika';
-            } elseif ($sertifika->evraks_cikis->isNotEmpty()) {
-                $evrak = $sertifika->evraks_cikis->first();
-                $evrak_type = 'Antrepo Çıkış';
             } elseif ($sertifika->evraks_canli_hayvan->isNotEmpty()) {
                 $evrak = $sertifika->evraks_canli_hayvan->first();
                 $evrak_type = 'Canlı Hayvan';

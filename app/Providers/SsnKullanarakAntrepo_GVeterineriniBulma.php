@@ -9,22 +9,32 @@ use App\Models\SaglikSertifika;
 
 class SsnKullanarakAntrepo_GVeterineriniBulma
 {
-    public function ssn_ile_antrepo_giris_vet_bul($formData,$i){
+    public function ssn_ile_antrepo_giris_vet_bul($formData, $i)
+    {
         // Evrağın atanacağı veteriner sağlık sertifikası üzerinden Antrepo Giriş türü evrağının atandığı veterinere atanmalı
         $ss_input = $formData[$i]['vetSaglikSertifikasiNo'][0];
 
-        $ss_saved = SaglikSertifika::where('ssn', $ss_input['miktar'])
-            ->with(['evraks_giris.veteriner.user']) // Gerekli ilişkileri tek sorguda çek
+        $ss_saved = SaglikSertifika::where('ssn', $ss_input['ssn'])
+            ->where('miktar', $ss_input['miktar'])
             ->first();
 
-        $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
 
-        if (!$veteriner) {
-            throw new \Exception("Sağlık Sertifikası Numarası Bulunamadı, Sistemde Kayıtlı Olduğundan Emin Olduktan Sonra Tekrar Deneyiniz!");
+
+        if (!$ss_saved) {
+            throw new \Exception("Sağlık Sertifikası bulunamadı.");
         }
 
+        if (!$ss_saved->evraks_giris) {
+            throw new \Exception("Sağlık Sertifikasına bağlı evrak girişi bulunamadı.");
+        }
+
+        if (!$ss_saved->evraks_giris?->first()?->veteriner?->user) {
+            throw new \Exception("Evrak girişine bağlı veteriner bulunamadı.");
+        }
+
+        $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
         return $veteriner;
 
-
+        
     }
 }

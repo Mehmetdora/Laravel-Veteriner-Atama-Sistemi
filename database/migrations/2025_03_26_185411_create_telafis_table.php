@@ -16,11 +16,10 @@ return new class extends Migration
 
 
             $table->foreignId('workload_id')->references('id')->on('work_loads')->cascadeOnDelete();
-            $table->date('startDate');
-            $table->date('endDate');
-            $table->integer('kalan_telafi_gunleri');
-            $table->integer('gunluk_is_yuku');
-
+            $table->foreignId('izin_id')->references('id')->on('izins')->cascadeOnDelete();
+            $table->integer('total_telafi_workload');
+            $table->integer('remaining_telafi_workload');
+            $table->date('tarih');
 
             $table->timestamps();
         });

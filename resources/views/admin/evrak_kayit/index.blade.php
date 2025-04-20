@@ -65,7 +65,7 @@
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
                                                     <td>{{ $evrak->urunAdi }}</td>
                                                     <td>{{ $evrak->gtipNo }}</td>
-                                                    <td>{{ $evrak->urunKG }}</td>
+                                                    <td>{{ $evrak->urunKG ?? "---" }}</td>
                                                     <td>{{ $evrak->veteriner->user?->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>
                                                         <a

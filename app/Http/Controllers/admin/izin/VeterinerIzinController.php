@@ -2,19 +2,30 @@
 
 namespace App\Http\Controllers\admin\izin;
 
-use App\Http\Controllers\Controller;
 use DateTime;
+use Exception;
 use App\Models\Izin;
 use App\Models\User;
-use Exception;
+use App\Models\Telafi;
 use function Termwind\parse;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use function PHPSTORM_META\map;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
+use PHPUnit\Framework\MockObject\Generator\TemplateLoader;
 
 class VeterinerIzinController extends Controller
 {
+
+    protected $ortalama_gunluk_workload_degeri_bulma;
+
+    function __construct(OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma)
+    {
+        $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
+    }
     public function create()
     {
 
@@ -62,6 +73,76 @@ class VeterinerIzinController extends Controller
             User::find($request->vet_id)
                 ->izins()
                 ->attach($izin->id, ['startDate' => $dateStart, 'endDate' => $dateEnd]);
+
+
+
+
+
+
+            // *****************************************
+
+            //İzin-Telafi Katsayısı
+            $izin_telafi_katsayisi = 6;
+
+            $startDate = Carbon::createFromFormat('d/m/Y H:i A', $start);
+            $endDate = Carbon::createFromFormat('d/m/Y H:i A', $end);
+
+            // Başlangıç tarihini dahil ederek gün farkını hesaplama
+            $izin_suresi = (int)($startDate->diffInDays($endDate)) + 1;
+            $telafi_suresi = $izin_suresi * $izin_telafi_katsayisi;
+
+
+
+            $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
+            $today = $todayWithHour->format('Y-m-d');
+
+            $user = User::find($request->vet_id);
+            $user_workload = $user->veterinerinBuYilkiWorkloadi();
+
+            //Telafi oluşturmada kaldın
+            // Gerekli ilişkilerin çalışıp çalışmadığına bakılacak
+
+
+            $gunluk_ortalama_gelen_workload = $this->ortalama_gunluk_workload_degeri_bulma->ortalamaWorkloadHesapla();
+
+            $total_telafi = $izin_suresi * $gunluk_ortalama_gelen_workload;
+            $gunluk_telafi = (int)($total_telafi / $telafi_suresi);
+
+
+            for ($i = 0; $i < $telafi_suresi; $i++) {
+
+                if ($i == 0) {
+
+                    $startDate = \Carbon\Carbon::parse($dateEnd);
+                    $newDate = (clone $startDate)->addDay();
+
+                    $telafi = new Telafi;
+                    $telafi->izin_id = $izin->id;
+                    $telafi->workload_id = $user_workload->id;
+                    $telafi->tarih = $newDate->format('Y-m-d');
+                    $telafi->total_telafi_workload = $gunluk_telafi;
+                    $telafi->remaining_telafi_workload = $gunluk_telafi;
+                    $telafi->save();
+                } else {
+
+                    $startDate = \Carbon\Carbon::parse($dateEnd);
+                    $newDate = (clone $startDate)->addDays($i + 1); // izinden sonraki günler olduğu için +1
+                    $newDate = $newDate->format('Y-m-d');
+
+                    $telafi = new Telafi;
+                    $telafi->izin_id = $izin->id;
+                    $telafi->workload_id = $user_workload->id;
+                    $telafi->tarih = $newDate;
+                    $telafi->total_telafi_workload = $gunluk_telafi;
+                    $telafi->remaining_telafi_workload = $gunluk_telafi;
+                    $telafi->save();
+                }
+            }
+
+            // *****************************************
+
+
+
 
             return redirect()->route('admin.izin.veteriner.index')->with('success', 'Veteriner izni başarıyla eklendi!');
         } catch (Exception $errors) {

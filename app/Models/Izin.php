@@ -12,4 +12,9 @@ class Izin extends Model
         return $this->belongsToMany(User::class,'user_izin')->withPivot('startDate', 'endDate')
         ->withTimestamps();;
     }
+
+
+    public function telafis(){
+        return $this->hasMany(Telafi::class);
+    }
 }
