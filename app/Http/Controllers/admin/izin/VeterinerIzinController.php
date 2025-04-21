@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use function PHPSTORM_META\map;
 
 use App\Http\Controllers\Controller;
+use App\Providers\BetaDegeriBulma;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use PHPUnit\Framework\MockObject\Generator\TemplateLoader;
@@ -21,9 +22,11 @@ class VeterinerIzinController extends Controller
 {
 
     protected $ortalama_gunluk_workload_degeri_bulma;
+    protected $beta_degeri_bulma;
 
-    function __construct(OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma)
+    function __construct(BetaDegeriBulma $beta_degeri_bulma ,OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma)
     {
+        $this->beta_degeri_bulma = $beta_degeri_bulma;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
     }
     public function create()
@@ -92,21 +95,16 @@ class VeterinerIzinController extends Controller
             $telafi_suresi = $izin_suresi * $izin_telafi_katsayisi;
 
 
-
-            $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
-            $today = $todayWithHour->format('Y-m-d');
-
             $user = User::find($request->vet_id);
             $user_workload = $user->veterinerinBuYilkiWorkloadi();
-
-            //Telafi oluşturmada kaldın
-            // Gerekli ilişkilerin çalışıp çalışmadığına bakılacak
-
 
             $gunluk_ortalama_gelen_workload = $this->ortalama_gunluk_workload_degeri_bulma->ortalamaWorkloadHesapla();
 
             $total_telafi = $izin_suresi * $gunluk_ortalama_gelen_workload;
             $gunluk_telafi = (int)($total_telafi / $telafi_suresi);
+
+
+
 
 
             for ($i = 0; $i < $telafi_suresi; $i++) {
