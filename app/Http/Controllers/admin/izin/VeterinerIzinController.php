@@ -105,37 +105,28 @@ class VeterinerIzinController extends Controller
 
 
 
-
-
-            for ($i = 0; $i < $telafi_suresi; $i++) {
-
-                if ($i == 0) {
-
-                    $startDate = \Carbon\Carbon::parse($dateEnd);
-                    $newDate = (clone $startDate)->addDay();
-
-                    $telafi = new Telafi;
-                    $telafi->izin_id = $izin->id;
-                    $telafi->workload_id = $user_workload->id;
-                    $telafi->tarih = $newDate->format('Y-m-d');
-                    $telafi->total_telafi_workload = $gunluk_telafi;
-                    $telafi->remaining_telafi_workload = $gunluk_telafi;
-                    $telafi->save();
-                } else {
-
-                    $startDate = \Carbon\Carbon::parse($dateEnd);
-                    $newDate = (clone $startDate)->addDays($i + 1); // izinden sonraki günler olduğu için +1
-                    $newDate = $newDate->format('Y-m-d');
-
-                    $telafi = new Telafi;
-                    $telafi->izin_id = $izin->id;
-                    $telafi->workload_id = $user_workload->id;
-                    $telafi->tarih = $newDate;
-                    $telafi->total_telafi_workload = $gunluk_telafi;
-                    $telafi->remaining_telafi_workload = $gunluk_telafi;
-                    $telafi->save();
+            $startDate = \Carbon\Carbon::parse($dateEnd)->addDay(); // İlk telafi tarihi, izinden sonraki gün
+            $i = 0;
+            while ($i < $telafi_suresi) {
+                // Eğer gün Cumartesi veya Pazar ise hafta içi bir güne kadar artır
+                while ($startDate->isWeekend()) {
+                    $startDate->addDay();
                 }
+
+                // Telafi kaydını oluştur
+                $telafi = new Telafi;
+                $telafi->izin_id = $izin->id;
+                $telafi->workload_id = $user_workload->id;
+                $telafi->tarih = $startDate->format('Y-m-d');
+                $telafi->total_telafi_workload = $gunluk_telafi;
+                $telafi->remaining_telafi_workload = $gunluk_telafi;
+                $telafi->save();
+
+                // Bir sonraki günü kontrol et
+                $startDate->addDay();
+                $i++;
             }
+
 
             // *****************************************
 

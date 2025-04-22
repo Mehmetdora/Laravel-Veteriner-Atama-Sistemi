@@ -141,53 +141,13 @@ class AtamaServisi
             $telafi->remaining_telafi_workload -= $this->workloadCoefficients[$documentType];
             $telafi->save();
 
+            return $seciliVeteriner;
+
         }
 
 
     }
 
-    private function telafiHesapla(User $veteriner, Carbon $simdikiZaman)
-    {
-        // 10. Veterinerin Yük Kaydını Al
-        $yukKaydi = $veteriner->veterinerinBuYilkiWorkloadi();
-
-        // 11. Süresi Dolmuş Telafileri Temizle
-        if ($yukKaydi->telafi_bitis_tarihi && $simdikiZaman->gt($yukKaydi->telafi_bitis_tarihi)) {
-            $yukKaydi->update([
-                'telafi_yuku' => 0,
-                'telafi_bitis_tarihi' => null,
-                'telafi_baslangic_tarihi' => null
-            ]);
-            return;
-        }
-
-        // 12. Yeni Telafi Gerekiyor mu Kontrol Et
-        $sonIzin = $veteriner->izins()
-            ->where('endDate', '<', $simdikiZaman)
-            ->latest('endDate')
-            ->first();
-
-        if (!$sonIzin || $yukKaydi->telafi_bitis_tarihi) return;
-
-        // 13. İzin Süresi Hesaplama
-        $izinBaslangic = Carbon::parse($sonIzin->startDate);
-        $izinBitis = Carbon::parse($sonIzin->endDate);
-        $izinGunSayisi = $izinBitis->diffInDays($izinBaslangic) + 1;
-
-        // 14. İzin Yılındaki Ortalama Yük
-        $yil = $izinBaslangic->year;
-        $yilToplamYuk = Workload::where('year', $yil)->sum('year_workload');
-        $yilGunSayisi = $izinBitis->diffInDays(Carbon::create($yil, 1, 1)) + 1;
-        $ortalamaGunlukYuk = $yilToplamYuk / max($yilGunSayisi, 1);
-
-        // 15. Telafi Parametrelerini Kaydet
-        $yukKaydi->update([
-            'telafi_yuku' => ($ortalamaGunlukYuk * $izinGunSayisi) / $this->telafiSuresi,
-            'telafi_baslangic_tarihi' => $simdikiZaman,
-            'telafi_bitis_tarihi' => $simdikiZaman->copy()->addDays($this->telafiSuresi),
-            'izin_baslangic_yili' => $yil
-        ]);
-    }
 
     private function updateWorkload(User $vet, int $coefficient)
     {
