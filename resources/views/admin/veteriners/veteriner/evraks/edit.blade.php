@@ -82,31 +82,15 @@
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn">➕</button>
+                                            <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->ssn}}" name="ss_no"
+                                                    id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->miktar}}" oninput="formatNumber(this)" name="ss_miktar"
+                                                    id="ss_miktar" placeholder="Miktarı" required>
 
-                                            <div id="inputContainer" class="inputs hidden">
-                                                <input type="text" id="input1"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2"
-                                                    placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn">✔️</button>
                                             </div>
-
-                                            <ul id="dataList" class="list">
-                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
-                                                        <button type="button" class="delete-btn">✖️</button>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo"
-                                                value="{{ json_encode($evrak->saglikSertifikalari) }}" id="jsonData"
-                                                class="form-control" required />
                                         </div>
 
 
@@ -155,7 +139,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ $evrak->urunKG }}" required readonly/>
                                         </div>
 
                                         <div class="form-group">
@@ -472,30 +456,15 @@
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn">➕</button>
+                                            <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->ssn}}" name="ss_no"
+                                                    id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->miktar}}" oninput="formatNumber(this)" name="ss_miktar"
+                                                    id="ss_miktar" placeholder="Miktarı" required>
 
-                                            <div id="inputContainer" class="inputs hidden">
-                                                <input type="text" id="input1"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2"
-                                                    placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn">✔️</button>
                                             </div>
-
-                                            <ul id="dataList" class="list">
-                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
-                                                        <button type="button" class="delete-btn">✖️</button>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
-                                                class="form-control" required />
                                         </div>
 
 
@@ -542,7 +511,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ $evrak->urunKG }}" required readonly/>
                                         </div>
 
                                         <div class="form-group">
@@ -784,7 +753,7 @@
                                                 value="{{ $evrak->evrakKayitNo }}" required />
                                         </div>
 
-                                     
+
 
                                         <div class="form-group">
                                             <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
@@ -1164,6 +1133,14 @@
                     inputBox_g.value = this.value;
                 }
             });
+
+            let ss_miktar_input = document.querySelector(`#ss_miktar`);
+            let net_miktar_input = document.querySelector(`#net_miktar`);
+            ss_miktar_input.addEventListener('blur',function(){
+                net_miktar_input.value = ss_miktar_input.value;
+            });
+
+
         </script>
     @elseif ($evrak_type == 'EvrakCanliHayvan')
         <script>
@@ -1210,6 +1187,14 @@
                     element.setAttribute('selected', 'selected');
                 }
             });
+
+            let ss_miktar_input = document.querySelector(`#ss_miktar`);
+            let net_miktar_input = document.querySelector(`#net_miktar`);
+            ss_miktar_input.addEventListener('blur',function(){
+                net_miktar_input.value = ss_miktar_input.value;
+            });
+
+
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVaris')
         <script>
@@ -1280,7 +1265,7 @@
         });
 
 
-        @if ($evrak_type != 'EvrakAntrepoCikis')
+        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika')
 
 
 

@@ -150,7 +150,7 @@ class EvrakController extends Controller
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
                     'vgbOnBildirimNo' => 'required',
-                    'vetSaglikSertifikasiNo' => 'required',
+                    'ss_no' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
@@ -327,14 +327,13 @@ class EvrakController extends Controller
                     $evrak_durum = new EvrakDurum;
                     $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
-                    //Sağlık sertifikalarını kaydetme
-                    foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
-                        $saglik_sertfika = new SaglikSertifika;
-                        $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
-                        $saglik_sertfika->save();
-                        $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
-                    }
+                    //Sağlık sertifikasını kaydetme
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $formData[$i]['ss_no'];
+                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->save();
+                    $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
+
 
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
@@ -387,13 +386,12 @@ class EvrakController extends Controller
                     $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
                     //Sağlık sertifikalarını kaydetme
-                    foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
-                        $saglik_sertfika = new SaglikSertifika;
-                        $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
-                        $saglik_sertfika->save();
-                        $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
-                    }
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $formData[$i]['ss_no'];
+                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->save();
+                    $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
+
 
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
@@ -447,13 +445,12 @@ class EvrakController extends Controller
                     $yeni_evrak->evrak_durumu()->save($evrak_durum);
 
                     //Sağlık sertifikalarını kaydetme
-                    foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
-                        $saglik_sertfika = new SaglikSertifika;
-                        $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
-                        $saglik_sertfika->save();
-                        $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
-                    }
+                    $saglik_sertfika = new SaglikSertifika;
+                    $saglik_sertfika->ssn = $formData[$i]['ss_no'];
+                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->save();
+                    $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
+
 
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
@@ -858,7 +855,7 @@ class EvrakController extends Controller
             $validator = Validator::make($request->all(), [
                 'siraNo' => 'required',
                 'vgbOnBildirimNo' => 'required',
-                'vetSaglikSertifikasiNo' => 'required',
+                'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
@@ -877,7 +874,7 @@ class EvrakController extends Controller
             $validator = Validator::make($request->all(), [
                 'siraNo' => 'required',
                 'vgbOnBildirimNo' => 'required',
-                'vetSaglikSertifikasiNo' => 'required',
+                'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
@@ -1013,33 +1010,15 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
-                //Sağlık sertifikalarını kaydetme
-                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
-
-                // Gelen sağlık sertifikalarının ID'lerini al
-                $yeni_sertifikalar = [];
-                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
-                $sertifika_ids = [];
-                foreach ($sertifikalar as $sertifika) {
-                    if (!isset($sertifika->id) || $sertifika->id == -1) {
-                        $yeni_sertifikalar[] = $sertifika;
-                    } else {
-                        $sertifika_ids[] = $sertifika->id;
-                    }
-                }
 
                 // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()
-                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
-                    ->delete();
+                $evrak->saglikSertifikalari()->delete();
 
-                foreach ($yeni_sertifikalar as $sertifika) {
+                $evrak->saglikSertifikalari()->create([
+                    'ssn' => $request->ss_no,
+                    'miktar' => $request->urunKG,
+                ]);
 
-                    $evrak->saglikSertifikalari()->create([
-                        'ssn' => $sertifika->ssn,
-                        'miktar' => $sertifika->miktar,
-                    ]);
-                }
             } elseif ($request->type == "EvrakTransit") {
                 $evrak = EvrakTransit::find($request->input('id'));
 
@@ -1081,33 +1060,15 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
-                //Sağlık sertifikalarını kaydetme
-                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
-
-                // Gelen sağlık sertifikalarının ID'lerini al
-                $yeni_sertifikalar = [];
-                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
-                $sertifika_ids = [];
-                foreach ($sertifikalar as $sertifika) {
-                    if (!isset($sertifika->id) || $sertifika->id == -1) {
-                        $yeni_sertifikalar[] = $sertifika;
-                    } else {
-                        $sertifika_ids[] = $sertifika->id;
-                    }
-                }
-
                 // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()
-                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
-                    ->delete();
+                $evrak->saglikSertifikalari()->delete();
 
-                foreach ($yeni_sertifikalar as $sertifika) {
+                $evrak->saglikSertifikalari()->create([
+                    'ssn' => $request->ss_no,
+                    'miktar' => $request->urunKG,
+                ]);
 
-                    $evrak->saglikSertifikalari()->create([
-                        'ssn' => $sertifika->ssn,
-                        'miktar' => $sertifika->miktar,
-                    ]);
-                }
+
             } elseif ($request->type == "EvrakAntrepoGiris") {
                 $evrak = EvrakAntrepoGiris::find($request->input('id'));
 
@@ -1149,33 +1110,15 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
-                //Sağlık sertifikalarını kaydetme
-                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
-
-                // Gelen sağlık sertifikalarının ID'lerini al
-                $yeni_sertifikalar = [];
-                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
-                $sertifika_ids = [];
-                foreach ($sertifikalar as $sertifika) {
-                    if (!isset($sertifika->id) || $sertifika->id == -1) {
-                        $yeni_sertifikalar[] = $sertifika;
-                    } else {
-                        $sertifika_ids[] = $sertifika->id;
-                    }
-                }
-
                 // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()
-                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
-                    ->delete();
+                $evrak->saglikSertifikalari()->delete();
 
-                foreach ($yeni_sertifikalar as $sertifika) {
+                $evrak->saglikSertifikalari()->create([
+                    'ssn' => $request->ss_no,
+                    'miktar' => $request->urunKG,
+                ]);
 
-                    $evrak->saglikSertifikalari()->create([
-                        'ssn' => $sertifika->ssn,
-                        'miktar' => $sertifika->miktar,
-                    ]);
-                }
+                
             } elseif ($request->type == "EvrakAntrepoVaris") {
                 $evrak = EvrakAntrepoVaris::find($request->input('id'));
 

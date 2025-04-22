@@ -244,22 +244,19 @@
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn_${i}">➕</button>
+                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
 
-                                            <div id="inputContainer_${i}" class="inputs hidden">
-                                                <input type="text" id="input1_${i}"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
-
-                                            <ul id="dataList_${i}" class="list"></ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
                                         </div>
+
+
+
 
                                         <div class="form-group">
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
@@ -295,7 +292,7 @@
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -366,23 +363,20 @@
 
 
 
+
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn_${i}">➕</button>
+                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
 
-                                            <div id="inputContainer_${i}" class="inputs hidden">
-                                                <input type="text" id="input1_${i}"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
-
-                                            <ul id="dataList_${i}" class="list"></ul>
-
-                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
                                         </div>
+
+
 
                                         <div class="form-group">
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
@@ -900,59 +894,21 @@
 
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
-                let addBtn = formStep.querySelector(`#addBtn_${index}`);
-                let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
-                let input1 = formStep.querySelector(`#input1_${index}`);
-                let input2 = formStep.querySelector(`#input2_${index}`);
-                let confirmBtn = formStep.querySelector(`#confirmBtn_${index}`);
-                let dataList = formStep.querySelector(`#dataList_${index}`);
-                let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
+
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
+                let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
+
                 let data = [];
                 let netMiktar = 0;
 
-                addBtn.addEventListener("click", function() {
-                    inputContainer.classList.toggle("hidden");
-                    input1.value = "";
-                    input2.value = "";
-                });
 
-                confirmBtn.addEventListener("click", function() {
-                    let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
-
-                    if (val1 && val2) {
-                        let newItem = {
-                            ssn: val1,
-                            miktar: val2
-                        };
-                        data.push(newItem);
-                        netMiktar += val2;
-
-                        let listItem = document.createElement("li");
-                        listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
-
-                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
-                            listItem.remove();
-                            jsonDataInput.value = JSON.stringify(data);
-                        });
-
-                        dataList.appendChild(listItem);
-                        jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
-                        inputContainer.classList.add("hidden");
-                    } else {
-                        alert("Lütfen her iki alanı da doldurun!");
-                    }
+                ss_miktari.addEventListener("blur", function(){
+                    netMiktarInput.value = ss_miktari.value;
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
@@ -976,16 +932,13 @@
             const forms = document.querySelectorAll(".form-step");
             console.log(forms);
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
-                let addBtn = formStep.querySelector(`#addBtn_${index}`);
-                let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
-                let input1 = formStep.querySelector(`#input1_${index}`);
-                let input2 = formStep.querySelector(`#input2_${index}`);
-                let confirmBtn = formStep.querySelector(`#confirmBtn_${index}`);
+
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
+                let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
 
 
                 let inputBox_varis_ant = formStep.querySelector(`#varis_antrepo_input_${index}`);
@@ -994,44 +947,11 @@
                 let data = [];
                 let netMiktar = 0;
 
-                addBtn.addEventListener("click", function() {
-                    inputContainer.classList.toggle("hidden");
-                    input1.value = "";
-                    input2.value = "";
+                ss_miktari.addEventListener("blur", function(){
+                    netMiktarInput.value = ss_miktari.value;
                 });
 
-                confirmBtn.addEventListener("click", function() {
-                    let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
 
-                    if (val1 && val2) {
-                        let newItem = {
-                            ssn: val1,
-                            miktar: val2
-                        };
-                        data.push(newItem);
-                        netMiktar += val2;
-
-                        let listItem = document.createElement("li");
-                        listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
-
-                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
-                            listItem.remove();
-                            jsonDataInput.value = JSON.stringify(data);
-                        });
-
-                        dataList.appendChild(listItem);
-                        jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
-                        inputContainer.classList.add("hidden");
-                    } else {
-                        alert("Lütfen her iki alanı da doldurun!");
-                    }
-                });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_varis_ant.addEventListener("change", function() {
@@ -1342,8 +1262,7 @@
                     let formData = {
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
+                        ss_no : document.querySelector(`#ss_no_${i}`).value,
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
@@ -1362,8 +1281,7 @@
                     let formData = {
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
+                        ss_no: document.querySelector(`#ss_no_${i}`).value,
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
