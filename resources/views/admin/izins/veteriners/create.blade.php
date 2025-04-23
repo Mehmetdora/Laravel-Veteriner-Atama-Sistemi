@@ -10,8 +10,10 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+
                     <div class="col-sm-6">
-                        <h1>Yeni İzin Ekle</h1>
+                        <h1><b>Yeni Veteriner İzni Ekleme</b></h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->

@@ -9,8 +9,10 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+
                     <div class="col-sm-6">
-                        <h1 class="m-0">Veteriner Adı: {{Auth::user()->name}}</h1>
+                        <h1 class="m-0"><b>Veteriner Adı: {{Auth::user()->name}}</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -23,6 +25,7 @@
 
                 <div class="row">
                     <div class="col-12">
+                        <hr><br>
                         <div class="row">
                             <div class="col-md-4">
 

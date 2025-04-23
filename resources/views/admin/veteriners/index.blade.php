@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>Veterinerler</h1>
+                        <h1><b>Tüm Veterinerler</b></h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -22,7 +22,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Tüm Veterinerler</h3>
+                    <h3 class="card-title">Tüm Veterinerlerin Listesi</h3>
                     <div style="display:flex; justify-content: end;">
                         <a href="{{ route('admin.veteriners.create') }}"><button type="button" class="btn btn-primary">Yeni
                                 Veteriner Ekle</button></a>

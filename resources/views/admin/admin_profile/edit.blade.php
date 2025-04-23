@@ -9,8 +9,10 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+
                     <div class="col-sm-6">
-                        <h1 class="m-0">Yönetici Adı 1: {{Auth::user()->name}}</h1>
+                        <h1 class="m-0"><b>Yönetici Adı: {{ Auth::user()->name }}</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -33,20 +35,24 @@
 
                                     <div class="form-group">
                                         <label name="name" class="control-label">Adı-Soyadı (*)</label>
-                                        <input id="name" name="name" class="form-control" value="{{Auth::user()->name}}" required />
+                                        <input id="name" name="name" class="form-control"
+                                            value="{{ Auth::user()->name }}" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="username" class="control-label">Kullanıcı Adı (Giriş için
                                             kullanılacaktır) (*)</label>
-                                        <input id="username" name="username" value="{{Auth::user()->username}}" class="form-control" required />
+                                        <input id="username" name="username" value="{{ Auth::user()->username }}"
+                                            class="form-control" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="email" class="control-label">Kullanıcı Email Adresi (*)</label>
-                                        <input id="email" name="email" value="{{Auth::user()->email}}" class="form-control" required />
+                                        <input id="email" name="email" value="{{ Auth::user()->email }}"
+                                            class="form-control" required />
                                     </div>
                                     <div class="form-group">
                                         <label name="phone_number" class="control-label">Telefon Numarası (*)</label>
-                                        <input id="phone_number" name="phone_number" value="{{Auth::user()->phone_number}}" class="form-control" required />
+                                        <input id="phone_number" name="phone_number"
+                                            value="{{ Auth::user()->phone_number }}" class="form-control" required />
                                     </div>
                                     {{-- <div class="form-group">
                                         <label>US phone mask:</label>
@@ -64,17 +70,18 @@
 
                                     <div class="form-group">
                                         <label name="password_old" class="control-label">Kullanıcının Mevcut Şifresi</label>
-                                        <input type="password"  class="form-control"   name="password_old" >
+                                        <input type="password" class="form-control" name="password_old">
                                     </div>
 
                                     <div class="form-group">
                                         <label name="password" class="control-label">Kullanıcının Yeni Şifresi</label>
-                                        <input type="password"  class="form-control"   name="password" >
+                                        <input type="password" class="form-control" name="password">
                                     </div>
 
                                     <div class="form-group">
-                                        <label name="password_confirmation" class="control-label">Kullanıcının Yeni Şifresi(Tekrar)</label>
-                                        <input type="password"  class="form-control"   name="password_confirmation"  >
+                                        <label name="password_confirmation" class="control-label">Kullanıcının Yeni
+                                            Şifresi(Tekrar)</label>
+                                        <input type="password" class="form-control" name="password_confirmation">
                                     </div>
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-primary">KAYDET</button>
@@ -105,8 +112,8 @@
     </script>
 
     <script>
-        const inputs=document.getElementById('tel');
-        inputs.addEventListener('focusout',function(){
+        const inputs = document.getElementById('tel');
+        inputs.addEventListener('focusout', function() {
             console.log(inputs.value.length);
         })
     </script>

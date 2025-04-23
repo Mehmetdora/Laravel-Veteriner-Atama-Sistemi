@@ -8,8 +8,10 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+
                     <div class="col-sm-6">
-                        <h1 class="m-0">Ürün Kategorisi Düzenleme</h1>
+                        <h1 class="m-0"><b>Ürün Kategorisi Düzenleme</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -22,6 +24,7 @@
 
                 <div class="row">
                     <div class="col-4">
+                        <hr><br>
                         @include('admin.layouts.messages')
 
                         <form action="{{ route('admin.uruns.edited') }}" method="post">
@@ -34,9 +37,7 @@
 
                         </form>
                         <hr>
-                        <a href="{{ route('admin.uruns.index') }}">
-                            <button class="col-4 btn btn-primary">Geri Dön</button>
-                        </a>
+
 
                         <!-- /.card -->
                     </div>

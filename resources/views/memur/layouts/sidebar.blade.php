@@ -26,6 +26,26 @@
                 data-accordion="false">
 
 
+
+
+                <li class="nav-item ">
+                    <a href="{{ route('memur.evrak.index') }}" class="nav-link active">
+                        <i class="nav-icon fas fa-layer-group"></i>
+                        <p>
+                            Evrak Kayıt
+                        </p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{route('memur.stok_takip.index')}}" class="nav-link active">
+                        <i class="nav-icon fas fa-file-import"></i>
+                        <p>
+                            Stok Takip
+                        </p>
+                    </a>
+                </li>
+
                 <li class="nav-item ">
                     <a href="{{ route('memur.izin.index') }}" class="nav-link active">
                         <i class="nav-icon fas fa-user"></i>

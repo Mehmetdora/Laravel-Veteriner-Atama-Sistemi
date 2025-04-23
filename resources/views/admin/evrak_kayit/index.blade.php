@@ -14,7 +14,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Evrak Kayıt</h1>
+                        <h1 class="m-0"><b>Evrak Kayıt</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -31,7 +31,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Evrak Listesi</h3>
+                                <h3 class="card-title">Tüm Kayıtlı Evrakların Listesi</h3>
                                 <div style="display:flex; justify-content: end;">
                                     <a href="{{ route('admin.evrak.create') }}"><button type="button"
                                             class="btn btn-primary">Yeni Evrak</button></a>

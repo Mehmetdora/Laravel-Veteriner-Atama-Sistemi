@@ -10,13 +10,14 @@
     </div>
 @endif
 
+
 @if (!empty(session('error')))
     <div class = "alert alert-danger " role="alert">
         @if (is_string(session('error')))
             {{ session('error') }}
         @else
             @foreach (session('error') as $message)
-                {{ $message }} <br>
+                {{ $message[0] }} <br>
             @endforeach
         @endif
     </div>

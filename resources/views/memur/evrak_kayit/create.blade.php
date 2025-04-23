@@ -1,5 +1,5 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('memur.layouts.app')
+@section('memur.customCSS')
     <style>
         .inputs {
             display: flex;
@@ -32,7 +32,7 @@
     </style>
 @endsection
 
-@section('admin.content')
+@section('memur.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -81,6 +81,7 @@
 
 
                 </div><!-- /.row -->
+
                 <div class="row">
                     <div class="col-sm-6"></div>
                     <div class="col-sm-6 d-flex justify-content-center">
@@ -100,9 +101,9 @@
                     <div class="col-12">
                         <div class="row">
                             <div class="col-md-8">
-                                @include('admin.layouts.messages')
+                                @include('memur.layouts.messages')
 
-                                <form id="dynamicForm" method="post" action="{{ route('admin.evrak.created') }}"
+                                <form id="dynamicForm" method="post" action="{{ route('memur.evrak.created') }}"
                                     style="display:none">
                                     @csrf
                                     <input type="hidden" name="formData" id="formData">
@@ -140,7 +141,7 @@
 
 
 
-@section('admin.customJS')
+@section('memur.customJS')
     <script>
         let selectedEvraklar = []; // Seçilen evrak türlerini ve sayılarını saklar
         let currentFormIndex = 0;

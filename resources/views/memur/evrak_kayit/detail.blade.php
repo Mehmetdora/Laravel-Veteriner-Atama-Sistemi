@@ -1,16 +1,15 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('memur.layouts.app')
+@section('memur.customCSS')
 @endsection
 
-@section('admin.content')
+@section('memur.content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
-
-                    <div class="col-sm-6">
+                    <div class="ml-2 col-sm-6">
                         <h1 class="m-0"><b>Evrak Detayları</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
@@ -42,6 +41,7 @@
                                             <th>Evrak Kayıt No:</th>
                                             <td>{{ $evrak->evrakKayitNo }}</td>
                                         </tr>
+
                                         @if ($type != 'EvrakAntrepoSertifika')
                                             <tr>
                                                 @if ($type == 'EvrakAntrepoVaris')
@@ -53,6 +53,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
                                         @if ($evrak->saglikSertifikalari)
                                             <tr>
                                                 <th>Veteriner Sağlık Sertifikaları:</th>
@@ -71,6 +72,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
                                         @if (isset($usks))
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
@@ -109,6 +111,7 @@
                                                 <td>{{ $evrak->urunKG }} KG</td>
                                             </tr>
                                         @endif
+
                                         @if (isset($evrak->sevkUlke))
                                             <tr>
                                                 <th>Sevk Eden Ülke:</th>
@@ -178,5 +181,5 @@
 @endsection
 
 
-@section('admin.customJS')
+@section('memur.customJS')
 @endsection

@@ -35,7 +35,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{route('admin.stok_takip.index')}}" class="nav-link active">
+                    <a href="{{ route('admin.stok_takip.index') }}" class="nav-link active">
                         <i class="nav-icon fas fa-file-import"></i>
                         <p>
                             Stok Takip

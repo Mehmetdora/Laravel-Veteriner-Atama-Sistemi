@@ -9,8 +9,10 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('admin.veteriners.index') }}">Geri dön</a>
+
                     <div class="col-sm-6">
-                        <h1>Veteriner: {{ $veteriner->name }}</h1>
+                        <h1><b>Veterinere Atanmış Tüm Evraklar: {{ $veteriner->name }}</b></h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -22,7 +24,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Tüm Evrakları</h3>
+                    <h3 class="card-title">Atanmış Tüm Evrakları</h3>
 
                 </div>
                 @include('admin.layouts.messages')

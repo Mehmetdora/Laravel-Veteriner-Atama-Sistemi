@@ -1,24 +1,25 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('memur.layouts.app')
+@section('memur.customCSS')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 @endsection
 
-@section('admin.content')
+@section('memur.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
-        <section class="content-header">
+        <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1><b>Stok Takip</b></h1>
-                    </div>
-                </div>
+                        <h1 class="m-0"><b>Evrak Kayıt</b></h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
             </div><!-- /.container-fluid -->
-        </section>
+        </div>
+        <!-- /.content-header -->
 
         <!-- Main content -->
         <section class="content">
@@ -27,92 +28,66 @@
                 <div class="row">
                     <div class="col-12">
 
-                        <!-- Default box -->
+
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Kayıtlı Evraklara Ait Tüm Sağlık Sertifikaları</h3>
+                                <h3 class="card-title">Tüm Evrakların Listesi</h3>
+                                <div style="display:flex; justify-content: end;">
+                                    <a href="{{ route('memur.evrak.create') }}"><button type="button"
+                                            class="btn btn-primary">Yeni Evrak</button></a>
+                                </div>
                             </div>
 
-                            @include('admin.layouts.messages')
+                            @include('memur.layouts.messages')
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
                                         <tr class="text-center">
-                                            <th>
-                                                Tarih
-                                            </th>
-                                            <th>
-                                                Sağlık Sertifikası Numarası
-                                            </th>
-                                            <th>
-                                                Miktar(KG)
-                                            </th>
-
-                                            <th>
-                                                Evrak Türü
-                                            </th>
-                                            <th>
-                                                İşlemler
-                                            </th>
+                                            <th>Tarih</th>
+                                            <th>İşlem Türü</th>
+                                            <th>Evrak Kayıt No</th>
+                                            <th>Vekalet Sahibi Firma/Kişi Adı</th>
+                                            <th>Ürünün Açık İsmi</th>
+                                            <th>G.T.İ.P. No İlk 4 Rakamı</th>
+                                            <th>Ürünün KG Cinsinden Net Miktarı</th>
+                                            <th>Veteriner Hekim</th>
+                                            <th>İşlemler</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
-                                        @if (isset($saglik_s))
-                                            @foreach ($saglik_s as $kayit)
-                                                <tr class="text-center">
+                                        @if (isset($evraks_all))
+                                            @foreach ($evraks_all as $evrak)
+                                                <tr>
+                                                    <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }}</td>
+                                                    <td>{{ $evrak->evrak_adi() }}</td>
+                                                    <td>{{ $evrak->evrakKayitNo }}</td>
+                                                    <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
+                                                    <td>{{ $evrak->urunAdi }}</td>
+                                                    <td>{{ $evrak->gtipNo }}</td>
+                                                    <td>{{ $evrak->urunKG ?? "---" }}</td>
+                                                    <td>{{ $evrak->veteriner->user?->name ?? 'Belirtilmemiş' }}</td>
                                                     <td>
-                                                        {{ $kayit['saglik_sertifika']->created_at->format('d-m-y') }}
-                                                    </td>
-                                                    <td>
-                                                        {{ $kayit['saglik_sertifika']->ssn }}
-                                                    </td>
-
-                                                    <td>
-                                                        {{ $kayit['saglik_sertifika']->miktar }}
-                                                    </td>
-
-                                                    <td>
-                                                        {{ $kayit['evrak_type'] }}
-                                                    </td>
-                                                    <td class="project-actions ">
-                                                        <a class="btn btn-primary btn-sm"
-                                                            href="{{ route('admin.evrak.detail', [
-                                                                'type' => $kayit['evrak_morph_class'],
-                                                                'id' => $kayit['evrak']->id,
-                                                            ]) }}">
-                                                            <i class="fas fa-folder">
-                                                            </i>
-                                                            İlgili Evrak
+                                                        <a
+                                                            href="{{ route('memur.evrak.detail', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
+                                                            <button type="button" class="btn btn-info">Detay</button>
                                                         </a>
-
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         @endif
-
-
                                     </tbody>
-
                                     <tfoot>
                                         <tr class="text-center">
-                                            <th>
-                                                Tarih
-                                            </th>
-                                            <th>
-                                                Sağlık Sertifikası Numarası
-                                            </th>
-                                            <th>
-                                                Miktarı
-                                            </th>
-
-                                            <th>
-                                                Evrak Türü
-                                            </th>
-                                            <th>
-                                                İşlemler
-                                            </th>
+                                            <th>Tarih</th>
+                                            <th>İşlem Türü</th>
+                                            <th>Evrak Kayıt No</th>
+                                            <th>Vekalet Sahibi Firma/Kişi Adı</th>
+                                            <th>Ürünün Açık İsmi</th>
+                                            <th>G.T.İ.P. No İlk 4 Rakamı</th>
+                                            <th>Ürünün KG Cinsinden Net Miktarı</th>
+                                            <th>Veteriner Hekim</th>
+                                            <th>İşlemler</th>
                                         </tr>
                                     </tfoot>
 
@@ -120,7 +95,6 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
-
 
 
                     </div>
@@ -134,8 +108,8 @@
 @endsection
 
 
-@section('admin.customJS')
-    <!-- DataTables  & Plugins --><!-- DataTables  & Plugins -->
+@section('memur.customJS')
+    <!-- DataTables  & Plugins -->
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
@@ -149,12 +123,17 @@
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables-buttons/js/buttons.print.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
+
+
     <script>
         $(function() {
             $("#example1").DataTable({
-               "order": [
+                "order": [
                     [0, "desc"]
                 ],
+                "scrollX": true,
+                "scrollY": "600px",
+
                 "paging": true,
                 "lengthChange": false,
                 "searching": true,
@@ -167,7 +146,7 @@
                         extend: 'pdfHtml5',
                         text: 'PDF',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4] // Tüm kolonları export eder
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Tüm kolonları export eder
                         },
                         customize: function(doc) {
                             // Tabloyu genişletmek için sayfa genişliği ayarı
@@ -183,11 +162,12 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4] // Tüm kolonları dahil et
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8] // Tüm kolonları dahil et
                         }
                     }
                 ]
-            });
+
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
     </script>
 @endsection

@@ -10,7 +10,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Atanmış Evraklar</h1>
+                        <h1 class="m-0"><b>Tüm Atanmış Evraklar</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -25,7 +25,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Tüm Evraklarım</h3>
+                                <h3 class="card-title">Atanmış Tüm Evrakların Listesi</h3>
                             </div>
                             <!-- /.card-header -->
 

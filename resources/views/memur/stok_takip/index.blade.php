@@ -1,12 +1,12 @@
-@extends('admin.layouts.app')
-@section('admin.customCSS')
+@extends('memur.layouts.app')
+@section('memur.customCSS')
     <!-- DataTables -->
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 @endsection
 
-@section('admin.content')
+@section('memur.content')
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -30,10 +30,10 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Kayıtlı Evraklara Ait Tüm Sağlık Sertifikaları</h3>
+                                <h3 class="card-title">Evraklara Ait Tüm Sağlık Sertifikaları</h3>
                             </div>
 
-                            @include('admin.layouts.messages')
+                            @include('memur.layouts.messages')
                             <!-- /.card-header -->
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-hover">
@@ -78,7 +78,7 @@
                                                     </td>
                                                     <td class="project-actions ">
                                                         <a class="btn btn-primary btn-sm"
-                                                            href="{{ route('admin.evrak.detail', [
+                                                            href="{{ route('memur.evrak.detail', [
                                                                 'type' => $kayit['evrak_morph_class'],
                                                                 'id' => $kayit['evrak']->id,
                                                             ]) }}">
@@ -134,7 +134,7 @@
 @endsection
 
 
-@section('admin.customJS')
+@section('memur.customJS')
     <!-- DataTables  & Plugins --><!-- DataTables  & Plugins -->
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -152,7 +152,7 @@
     <script>
         $(function() {
             $("#example1").DataTable({
-               "order": [
+                "order": [
                     [0, "desc"]
                 ],
                 "paging": true,

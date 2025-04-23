@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Memur Adı: {{ Auth::user()->name }}</h1>
+                        <h1 class="m-0"><b>Memur Adı: {{ Auth::user()->name }}</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -25,7 +25,7 @@
                         <div class="card">
                             <div class="card-header ">
                                 <a href="{{ route('memur.profile.edit') }}" style="margin-right:0px;"><button
-                                        type="button" class="btn btn-primary">Memur Bilgilerini Düzenle</button></a>
+                                        type="button" class="btn btn-primary">Kişisel Bilgileri Düzenle</button></a>
                             </div>
                             <!-- /.card-header -->
                             @include('memur.layouts.messages')

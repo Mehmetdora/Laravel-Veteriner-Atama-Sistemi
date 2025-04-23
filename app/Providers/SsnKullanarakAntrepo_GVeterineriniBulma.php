@@ -20,6 +20,12 @@ class SsnKullanarakAntrepo_GVeterineriniBulma
 
 
 
+        $ss_saved->load('evraks_giris.veteriner.user');
+
+
+
+
+
         if (!$ss_saved) {
             throw new \Exception("Sağlık Sertifikası bulunamadı.");
         }
@@ -29,12 +35,11 @@ class SsnKullanarakAntrepo_GVeterineriniBulma
         }
 
         if (!$ss_saved->evraks_giris?->first()?->veteriner?->user) {
+
             throw new \Exception("Evrak girişine bağlı veteriner bulunamadı.");
         }
 
         $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
         return $veteriner;
-
-        
     }
 }

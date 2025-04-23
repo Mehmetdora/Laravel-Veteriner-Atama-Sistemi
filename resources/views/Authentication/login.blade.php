@@ -45,6 +45,7 @@
                 @include('admin.layouts.messages')
 
                 <p class="login-box-msg">Sisteme erişebilmek için lütfen giriş yapınız.</p>
+                <p class="login-box-msg">Giriş bilgilerinde sorun yaşıyorsanız yöneticiniz ile iletişime geçiniz!</p>
 
                 <form action="{{ route('logined') }}" method="post">
                     @csrf
@@ -74,9 +75,9 @@
                     </div>
                 </form>
 
-                <p class="mb-1 ">
+                {{-- <p class="mb-1 ">
                     <a href="#">Şifremi Unuttum</a>
-                </p>
+                </p> --}}
 
             </div>
             <!-- /.card-body -->

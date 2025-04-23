@@ -8,8 +8,10 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('admin_dashboard') }}">Anasayfa</a>
+
                     <div class="col-sm-6">
-                        <h1 class="m-0">Yönetici Adı: {{ Auth::user()->name }}</h1>
+                        <h1 class="m-0"><b>Yönetici Adı: {{ Auth::user()->name }}</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->
@@ -25,7 +27,7 @@
                         <div class="card">
                             <div class="card-header ">
                                 <a href="{{ route('admin_edit') }}" style="margin-right:0px;"><button
-                                        type="button" class="btn btn-primary">Yönetici Bilgilerini Düzenle</button></a>
+                                        type="button" class="btn btn-primary">Kişisel Bilgilerini Düzenle</button></a>
 
                             </div>
                             <!-- /.card-header -->

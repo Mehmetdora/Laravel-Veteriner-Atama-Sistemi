@@ -9,7 +9,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1 class="m-0">Veteriner Adı: {{ Auth::user()->name }}</h1>
+                        <h1 class="m-0"><b>Veteriner Adı: {{ Auth::user()->name }}</b></h1>
                     </div><!-- /.col -->
                 </div><!-- /.row -->
             </div><!-- /.container-fluid -->

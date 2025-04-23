@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\memur;
 
-use App\Models\DailyTotalWorkload;
 use App\Models\EvrakCanliHayvan;
 use App\Models\UsksNo;
 use App\Providers\AtamaServisi;
@@ -24,6 +23,8 @@ use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+
 
 class EvrakController extends Controller
 {
@@ -60,7 +61,7 @@ class EvrakController extends Controller
         $data['evraks_all'] = $evraks_all;
 
 
-        return view('admin.evrak_kayit.index', $data);
+        return view('memur.evrak_kayit.index', $data);
     }
 
     public function detail($type, $evrak_id)
@@ -97,7 +98,7 @@ class EvrakController extends Controller
         $data['type'] = $type;
 
 
-        return view('admin.evrak_kayit.detail', $data);
+        return view('memur.evrak_kayit.detail', $data);
     }
 
 
@@ -105,7 +106,7 @@ class EvrakController extends Controller
     {
 
         $data['uruns'] = Urun::all();
-        return view('admin.evrak_kayit.create', $data);
+        return view('memur.evrak_kayit.create', $data);
     }
 
     public function created(Request $request)
@@ -798,13 +799,13 @@ class EvrakController extends Controller
 
 
 
-            return redirect()->route('admin.evrak.index')->with('success', "$saved_count evrak başarıyla eklendi.");
+            return redirect()->route('memur.evrak.index')->with('success', "$saved_count evrak başarıyla eklendi.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
     }
 
-    public function edit($type, $evrak_id)
+/*     public function edit($type, $evrak_id)
     {
 
         $type = explode("\\", $type);
@@ -1357,5 +1358,5 @@ class EvrakController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
-    }
+    } */
 }
