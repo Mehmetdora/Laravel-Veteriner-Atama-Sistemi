@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\memur;
 
-use App\Models\EvrakCanliHayvan;
-use App\Models\UsksNo;
-use App\Providers\AtamaServisi;
-use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use Carbon\Carbon;
 use App\Models\Urun;
 use App\Models\User;
+use App\Models\UsksNo;
 use App\Models\UserEvrak;
 use App\Models\EvrakDurum;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
 use Illuminate\Http\Request;
 use App\Models\SaglikSertifika;
+use App\Providers\AtamaServisi;
+use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
+use App\Http\Controllers\Controller;
 use App\Models\EvrakAntrepoSertifika;
+use Illuminate\Support\Facades\Validator;
+use App\Providers\YeniYilWorkloadsGuncelleme;
+use App\Providers\VeterinerEvrakDurumularıKontrolu;
+use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
-use App\Providers\VeterinerEvrakDurumularıKontrolu;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller;
 
 
 class EvrakController extends Controller
@@ -34,8 +35,11 @@ class EvrakController extends Controller
     protected $daily_total_worklaod_update_create_servisi;
     protected $ortalama_gunluk_workload_degeri_bulma;
     protected $atamaServisi;
-    function __construct(AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    protected $yeni_yil_workloads_guncelleme;
+    function __construct( YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme , AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
+
+        $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
         $this->daily_total_worklaod_update_create_servisi = $daily_total_workload_update_orcreate_service;
         $this->veteriner_evrak_durum_kontrol_servisi = $veterinerEvrakDurumularıKontrolu;
@@ -131,6 +135,13 @@ class EvrakController extends Controller
         'antrepo_cikis' => 5,
         'canli_hayvan' => 10,
         */
+
+
+
+        //Evrak Kaydından önce yeni yıl kontrolü yapılarak workloadları duruma göre güncelleme
+        $this->yeni_yil_workloads_guncelleme->YeniYilWorkloadsGuncelleme();
+
+
         $today = now()->setTimezone('Europe/Istanbul'); // tam saat
 
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz

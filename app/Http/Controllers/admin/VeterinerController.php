@@ -189,7 +189,7 @@ class VeterinerController extends Controller
             $workload = $user_old->workloads()->create([
                 'year' => $today->year,
                 'year_workload' => $avarage_vets_workload_value,
-                'total_workload' => $avarage_vets_workload_value
+                'total_workload' => 0
             ]);
 
             return redirect()->route('admin.veteriners.index')->with('success', 'Veteriner Başarıyla Ekledi!');
@@ -208,7 +208,7 @@ class VeterinerController extends Controller
         $workload = $vet->workloads()->create([
             'year' => $today->year,
             'year_workload' => $avarage_vets_workload_value,
-            'total_workload' => $avarage_vets_workload_value
+            'total_workload' => 0
         ]);
 
         return redirect()->route('admin.veteriners.index')->with('success', 'Veteriner Başarıyla Ekledi!');
