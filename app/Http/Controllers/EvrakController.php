@@ -56,7 +56,7 @@ class EvrakController extends Controller
             ->merge(EvrakCanliHayvan::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakAntrepoSertifika::with(['veteriner.user','usks', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama
@@ -651,7 +651,7 @@ class EvrakController extends Controller
                     $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
-                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);
+                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);// sondaki numarayı 1 arttırma
                     // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;

@@ -167,7 +167,7 @@
                         extend: 'pdfHtml5',
                         text: 'PDF',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4] // Tüm kolonları export eder
+                            columns: [0, 1, 2, 3] // Tüm kolonları export eder
                         },
                         customize: function(doc) {
                             // Tabloyu genişletmek için sayfa genişliği ayarı
@@ -183,7 +183,7 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4] // Tüm kolonları dahil et
+                            columns: [0, 1, 2, 3] // Tüm kolonları dahil et
                         }
                     }
                 ]

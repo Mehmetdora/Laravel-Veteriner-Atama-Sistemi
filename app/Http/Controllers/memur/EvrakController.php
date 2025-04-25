@@ -57,7 +57,7 @@ class EvrakController extends Controller
             ->merge(EvrakCanliHayvan::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama

@@ -14,11 +14,11 @@ class StokTakipController extends Controller
     public function index()
     {
 
-         /* sorun sağlık sertifikaları listelenirken sıralanamaması, nedeni ise evrak düzenlenirken
+        /* sorun sağlık sertifikaları listelenirken sıralanamaması, nedeni ise evrak düzenlenirken
          her düzenlemede tüm sağlık sertifikaları silinip baştan kaydedilmesi(sync) , bunu düzeltmek
          için ise hepsini silmeden sadece silinenleri silip yenileri ekleyerek düzeltilecek. */
         $saglik_s = SaglikSertifika::with(
-            ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_sertifika','evraks_canli_hayvan']
+            ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_sertifika', 'evraks_canli_hayvan']
         )->orderBy('created_at', 'desc')->get(); // Veritabanında sıralama yapılmadı, map ile sıralanacak
 
         // Sağlık sertifikalarının bağlı olduğu tek evrağı bulma ve sıralama işlemi
@@ -62,7 +62,6 @@ class StokTakipController extends Controller
 
 
 
-        return view('admin.stok_takip.index', $data);
+        return view('memur.stok_takip.index', $data);
     }
-
 }
