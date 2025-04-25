@@ -705,7 +705,7 @@
                                                 <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
                                                     id="usks_no_${i}" placeholder="USKS Numarası" required>
                                                 <div class="col-sm-2"></div>
-                                                <input class="col-sm-5 form-control" type="number" name="usks_miktar_${i}"
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
                                                     id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
 
                                             </div>
@@ -1144,8 +1144,14 @@
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
+                let usks_miktari = formStep.querySelector(`#usks_miktar_${index}`);
+
                 let data = [];
                 let netMiktar = 0;
+
+                usks_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = usks_miktari.value;
+                });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_c.addEventListener("change", function() {

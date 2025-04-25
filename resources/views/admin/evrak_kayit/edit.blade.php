@@ -88,11 +88,14 @@
                                         <div class="form-group">
                                             <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-6 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->ssn}}" name="ss_no"
+                                                <input class="col-sm-6 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->ssn }}" name="ss_no"
                                                     id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->miktar}}" oninput="formatNumber(this)" name="ss_miktar"
-                                                    id="ss_miktar" placeholder="Miktarı" required>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->miktar }}"
+                                                    oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
+                                                    placeholder="Miktarı" required>
 
                                             </div>
                                         </div>
@@ -145,7 +148,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required readonly/>
+                                                value="{{ $evrak->urunKG }}" required readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -463,11 +466,15 @@
                                         <div class="form-group">
                                             <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-6 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->ssn}}" name="ss_no"
-                                                    id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                                                <input class="col-sm-6 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->ssn }}"
+                                                    name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası"
+                                                    required>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" value="{{$evrak->saglikSertifikalari->first()->miktar}}" oninput="formatNumber(this)" name="ss_miktar"
-                                                    id="ss_miktar" placeholder="Miktarı" required>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->miktar }}"
+                                                    oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
+                                                    placeholder="Miktarı" required>
 
                                             </div>
                                         </div>
@@ -517,7 +524,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required readonly/>
+                                                value="{{ $evrak->urunKG }}" required readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -960,7 +967,7 @@
 
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $usks->miktar }}" name="usks_miktar" id="usks_miktar"
+                                                    value="{{ $usks->miktar }}" name="usks_miktar" oninput="formatNumber(this)" id="usks_miktar"
                                                     placeholder="Miktarı" required>
                                             </div>
                                         </div>
@@ -1140,12 +1147,9 @@
 
             let ss_miktar_input = document.querySelector(`#ss_miktar`);
             let net_miktar_input = document.querySelector(`#net_miktar`);
-            ss_miktar_input.addEventListener('blur',function(){
+            ss_miktar_input.addEventListener('blur', function() {
                 net_miktar_input.value = ss_miktar_input.value;
             });
-
-
-
         </script>
     @elseif ($evrak_type == 'EvrakCanliHayvan')
         <script>
@@ -1195,11 +1199,9 @@
 
             let ss_miktar_input = document.querySelector(`#ss_miktar`);
             let net_miktar_input = document.querySelector(`#net_miktar`);
-            ss_miktar_input.addEventListener('blur',function(){
+            ss_miktar_input.addEventListener('blur', function() {
                 net_miktar_input.value = ss_miktar_input.value;
             });
-
-
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVaris')
         <script>
@@ -1249,6 +1251,12 @@
                 }
             });
 
+            let usks_miktari = document.querySelector(`#usks_miktar`);
+            let netMiktarInput = document.querySelector(`#net_miktar`);
+            usks_miktari.addEventListener("blur", function() {
+                netMiktarInput.value = usks_miktari.value;
+            });
+
             let inputBox_c = document.querySelector(`#cikis_g_input`);
             let selectBox_c = document.querySelector(`#cikis_g_select`);
             selectBox_c.addEventListener("change", function() {
@@ -1273,7 +1281,7 @@
 
 
         // Antrepo çıkış türünde sağlık Sertifikaları kullanılmıyor
-        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika')
+        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika' || $evrak_type == 'EvrakCanliHayvan')
 
 
             let addBtn = document.querySelector(`#addBtn`);

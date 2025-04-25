@@ -325,6 +325,7 @@ class VeterinerController extends Controller
     {
         $errors = [];
 
+
         // Validation
         if ($request->type == "EvrakIthalat" || $request->type == "EvrakTransit") {
             $validator = Validator::make($request->all(), [
@@ -452,7 +453,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.','',$request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
@@ -495,7 +496,7 @@ class VeterinerController extends Controller
 
                 $evrak->saglikSertifikalari()->create([
                     'ssn' => $request->ss_no,
-                    'miktar' => $request->urunKG,
+                    'miktar' => (int)str_replace('.','',$request->urunKG),
                 ]);
 
 
@@ -508,7 +509,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.','',$request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
@@ -551,7 +552,7 @@ class VeterinerController extends Controller
 
                 $evrak->saglikSertifikalari()->create([
                     'ssn' => $request->ss_no,
-                    'miktar' => $request->urunKG,
+                    'miktar' => (int)str_replace('.','',$request->urunKG),
                 ]);
 
 
@@ -564,7 +565,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.','',$request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
@@ -607,11 +608,11 @@ class VeterinerController extends Controller
 
                 $evrak->saglikSertifikalari()->create([
                     'ssn' => $request->ss_no,
-                    'miktar' => $request->urunKG,
+                    'miktar' => (int)str_replace('.','',$request->urunKG),
                 ]);
 
 
-                
+
             } elseif ($request->type == "EvrakAntrepoVaris") {
                 $evrak = EvrakAntrepoVaris::find($request->input('id'));
 
@@ -739,7 +740,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.','',$request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
@@ -750,7 +751,7 @@ class VeterinerController extends Controller
                 // evrağın usks numarasını düzenleme
                 $usks = UsksNo::find($evrak->usks_id);
                 $usks->usks_no = $request->usks_no;
-                $usks->miktar = $request->usks_miktar;
+                $usks->miktar = (int)str_replace('.','',$request->usks_miktar);
                 $usks->save();
 
                 // İlişkili modelleri bağlama

@@ -20,7 +20,7 @@ class SsnKullanarakAntrepo_GVeterineriniBulma
 
 
 
-        $ss_saved->load('evraks_giris.veteriner.user');
+        //$ss_saved->load('evraks_giris.veteriner.user');
 
 
 

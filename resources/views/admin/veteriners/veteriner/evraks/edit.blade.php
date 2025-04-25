@@ -960,7 +960,7 @@
 
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $usks->miktar }}" name="usks_miktar" id="usks_miktar"
+                                                    value="{{ $usks->miktar }}" name="usks_miktar" oninput="formatNumber(this)" id="usks_miktar"
                                                     placeholder="Miktarı" required>
                                             </div>
                                         </div>
@@ -1247,6 +1247,12 @@
                 }
             });
 
+            let usks_miktari = document.querySelector(`#usks_miktar`);
+            let netMiktarInput = document.querySelector(`#net_miktar`);
+            usks_miktari.addEventListener("blur", function() {
+                netMiktarInput.value = usks_miktari.value;
+            });
+
             let inputBox_c = document.querySelector(`#cikis_g_input`);
             let selectBox_c = document.querySelector(`#cikis_g_select`);
             selectBox_c.addEventListener("change", function() {
@@ -1268,7 +1274,7 @@
         });
 
 
-        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika')
+        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika' || $evrak_type == 'EvrakCanliHayvan')
 
 
 
