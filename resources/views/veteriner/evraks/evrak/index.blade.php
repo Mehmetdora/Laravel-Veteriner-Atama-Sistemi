@@ -150,6 +150,22 @@
                                                 <td>{{ $evrak->aracPlaka }}</td>
                                             </tr>
                                         @endif
+                                        @if ($evrak->aracPlakaKgs)
+                                            <tr>
+                                                <th>Araç Plakaları ve Miktarları::</th>
+                                                <td>
+                                                    <ul id="dataList" class="list">
+                                                        @foreach ($evrak->aracPlakaKgs as $plaka_kg)
+                                                            <li class="setted-sertifika">
+                                                                {{ $plaka_kg->arac_plaka }} →
+                                                                {{ $plaka_kg->miktar }}
+                                                                KG
+                                                            </li>
+                                                        @endforeach
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        @endif
                                         @if ($evrak->urunlerinBulunduguAntrepo)
                                             <tr>
                                                 <th>Ürünlerin Bulunduğu Antrepo:</th>

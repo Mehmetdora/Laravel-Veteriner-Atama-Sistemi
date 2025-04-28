@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AracPlakaKg;
 use App\Models\DailyTotalWorkload;
 use App\Models\EvrakCanliHayvan;
 use App\Models\UsksNo;
@@ -74,7 +75,7 @@ class EvrakController extends Controller
         $type = end($type);
 
         if ($type == "EvrakIthalat") {
-            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakIthalat::with(['urun','aracPlakaKgs', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakTransit") {
             $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu'])
@@ -140,6 +141,7 @@ class EvrakController extends Controller
         $this->yeni_yil_workloads_guncelleme->YeniYilWorkloadsGuncelleme();
 
 
+
         $today = now()->setTimezone('Europe/Istanbul'); // tam saat
 
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
@@ -150,13 +152,33 @@ class EvrakController extends Controller
         }
 
 
-
         // İlk gelen formdaki evrağın türü ne ise diğerleride aynı türde olduğunu
         // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı
         $errors = [];
 
         // Validation
-        if ($formData[0]['evrak_turu'] == 0 || $formData[0]['evrak_turu'] == 1) {
+        if ($formData[0]['evrak_turu'] == 0) {
+            for ($i = 1; $i < count($formData); $i++) {
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'ss_no' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'arac_plaka_kg' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+        } elseif ($formData[0]['evrak_turu'] == 1){
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
@@ -294,6 +316,7 @@ class EvrakController extends Controller
 
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
+
                     $yeni_evrak = new EvrakIthalat;
 
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
@@ -304,7 +327,6 @@ class EvrakController extends Controller
                     $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
-                    $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
                     $yeni_evrak->save();
@@ -312,9 +334,15 @@ class EvrakController extends Controller
                     // İlişkili modelleri bağlama
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
+                    foreach ($formData[$i]["arac_plaka_kg"] as $plaka_kg) {
+                        $new_arac_plaka_kg = new AracPlakaKg;
+                        $new_arac_plaka_kg->miktar = $plaka_kg["miktar"];
+                        $new_arac_plaka_kg->arac_plaka = $plaka_kg["plaka"];
+                        $new_arac_plaka_kg->evrak_ithalat_id = $yeni_evrak->id;
+                        $new_arac_plaka_kg->save();
+                     }
+
                     // Veterineri sistem limite göre atayacak
-
-
                     $veteriner = $this->atamaServisi->assignVet('ithalat');
 
 
@@ -822,7 +850,7 @@ class EvrakController extends Controller
         $type = end($type);
 
         if ($type == "EvrakIthalat") {
-            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+            $data['evrak'] = EvrakIthalat::with(['urun','aracPlakaKgs', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
         } else if ($type == "EvrakTransit") {
             $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
@@ -857,13 +885,29 @@ class EvrakController extends Controller
 
     public function edited(Request $request)
     {
-
-
         $errors = [];
 
-
         // Validation
-        if ($request->type == "EvrakIthalat" || $request->type == "EvrakTransit") {
+        if ($request->type == "EvrakIthalat") {
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'vgbOnBildirimNo' => 'required',
+                'ss_no' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'urun_kategori_id' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'sevkUlke' => 'required',
+                'orjinUlke' => 'required',
+                'arac_plaka_kg' => 'required',
+                'girisGumruk' => 'required',
+                'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        }elseif($request->type == 'EvrakTransit'){
             $validator = Validator::make($request->all(), [
                 'siraNo' => 'required',
                 'vgbOnBildirimNo' => 'required',
@@ -992,7 +1036,6 @@ class EvrakController extends Controller
                 $evrak->urunKG = (int)str_replace('.','',$request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
-                $evrak->aracPlaka = $request->aracPlaka;
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->save();
@@ -1022,6 +1065,30 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
+                // Gelen plaka ID'lerini al
+                $yeni_plakalar = [];
+                $plakalar = json_decode($request->arac_plaka_kg) ?? [];
+                $plaka_ids = [];
+                foreach ($plakalar as $plaka) {
+                    if (!isset($plaka->id) || $plaka->id == -1) {
+                        $yeni_plakalar[] = $plaka;
+                    } else {
+                        $plaka_ids[] = $plaka->id;
+                    }
+                }
+
+                // Silinmesi gerekenleri silme
+                $evrak->aracPlakaKgs()
+                    ->whereNotIn('arac_plaka_kgs.id', $plaka_ids)
+                    ->delete();
+
+                foreach ($yeni_plakalar as $plaka) {
+                    AracPlakaKg::create([
+                        'arac_plaka' => $plaka->plaka,
+                        'miktar' => $plaka->miktar,
+                        'evrak_ithalat_id' => $evrak->id
+                    ]);
+                }
 
                 // Silinmesi gerekenleri silme
                 $evrak->saglikSertifikalari()->delete();

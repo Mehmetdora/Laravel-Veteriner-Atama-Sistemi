@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\AracPlakaKg;
 use Illuminate\Database\Eloquent\Model;
 
 class EvrakIthalat extends Model
@@ -19,6 +20,10 @@ class EvrakIthalat extends Model
 
         // Yeni ürünü ekliyoruz
         $this->urun()->attach($urun->id);
+    }
+
+    public function aracPlakaKgs(){
+        return $this->hasMany(AracPlakaKg::class,'evrak_ithalat_id');
     }
 
 

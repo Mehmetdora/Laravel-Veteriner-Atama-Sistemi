@@ -137,9 +137,9 @@ class EvrakController extends Controller
         */
 
 
-
         //Evrak Kaydından önce yeni yıl kontrolü yapılarak workloadları duruma göre güncelleme
         $this->yeni_yil_workloads_guncelleme->YeniYilWorkloadsGuncelleme();
+
 
 
         $today = now()->setTimezone('Europe/Istanbul'); // tam saat
@@ -157,7 +157,28 @@ class EvrakController extends Controller
         $errors = [];
 
         // Validation
-        if ($formData[0]['evrak_turu'] == 0 || $formData[0]['evrak_turu'] == 1) {
+        if ($formData[0]['evrak_turu'] == 0) {
+            for ($i = 1; $i < count($formData); $i++) {
+                $validator = Validator::make($formData[$i], [
+                    'siraNo' => 'required',
+                    'vgbOnBildirimNo' => 'required',
+                    'ss_no' => 'required',
+                    'vekaletFirmaKisiAdi' => 'required',
+                    'urunAdi' => 'required',
+                    'urun_kategori_id' => 'required',
+                    'gtipNo' => 'required',
+                    'urunKG' => 'required',
+                    'sevkUlke' => 'required',
+                    'orjinUlke' => 'required',
+                    'arac_plaka_kg' => 'required',
+                    'girisGumruk' => 'required',
+                    'cıkısGumruk' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
+        } elseif ($formData[0]['evrak_turu'] == 1){
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
@@ -295,6 +316,7 @@ class EvrakController extends Controller
 
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
+
                     $yeni_evrak = new EvrakIthalat;
 
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
@@ -302,10 +324,9 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = $formData[$i]["urunKG"];
+                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
-                    $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
                     $yeni_evrak->save();
@@ -313,9 +334,15 @@ class EvrakController extends Controller
                     // İlişkili modelleri bağlama
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
+                    foreach ($formData[$i]["arac_plaka_kg"] as $plaka_kg) {
+                        $new_arac_plaka_kg = new AracPlakaKg;
+                        $new_arac_plaka_kg->miktar = $plaka_kg["miktar"];
+                        $new_arac_plaka_kg->arac_plaka = $plaka_kg["plaka"];
+                        $new_arac_plaka_kg->evrak_ithalat_id = $yeni_evrak->id;
+                        $new_arac_plaka_kg->save();
+                     }
+
                     // Veterineri sistem limite göre atayacak
-
-
                     $veteriner = $this->atamaServisi->assignVet('ithalat');
 
 
@@ -342,7 +369,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikasını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -363,7 +390,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = $formData[$i]["urunKG"];
+                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -400,7 +427,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -422,7 +449,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = $formData[$i]["urunKG"];
+                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -459,7 +486,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -652,7 +679,7 @@ class EvrakController extends Controller
                     $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
-                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);
+                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);// sondaki numarayı 1 arttırma
                     // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;
@@ -698,7 +725,7 @@ class EvrakController extends Controller
 
 
                     // Veterineri usks numarası üzerinden antrepo sertifika bulunarak bu evrağı alan veterinere atanacak
-                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])->where('miktar', $formData[$i]['usks_miktar'])->with('evrak_antrepo_sertifika')->first();
+                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])->where('miktar', (int)str_replace('.','',$formData[$i]['usks_miktar']))->with('evrak_antrepo_sertifika')->first();
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
 
                     // Seçilen veterinerin elinde iş varsa atama sistemi tarafından veteriner atama
@@ -719,7 +746,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = $formData[$i]["urunKG"];
+                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -810,7 +837,7 @@ class EvrakController extends Controller
 
 
 
-            return redirect()->route('memur.evrak.index')->with('success', "$saved_count evrak başarıyla eklendi.");
+            return redirect()->route('admin.evrak.index')->with('success', "$saved_count evrak başarıyla eklendi.");
         } catch (\Exception $e) {
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }

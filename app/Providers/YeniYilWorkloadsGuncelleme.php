@@ -14,7 +14,7 @@ class YeniYilWorkloadsGuncelleme
 
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
         $today = $todayWithHour->format('Y-m-d');
-        $last_saved_evraks_year = DailyTotalWorkload::latest()->first()->created_at->addHours(3)->year; // modelde 3 saat geri gösterir
+        $last_saved_evraks_year = DailyTotalWorkload::latest()?->first()?->created_at?->addHours(3)->year ?? $todayWithHour->year; // modelde 3 saat geri gösterir
 
 
         if ($todayWithHour->year > $last_saved_evraks_year) { // yeni yılın ilk evrağı gelmiş, yeni workloadlar oluştur
