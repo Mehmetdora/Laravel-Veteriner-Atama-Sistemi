@@ -12,10 +12,11 @@ class AtamaServisi
 
 
     protected $veteriner_evrak_durumu_kontrolu;
+    protected $temp_workloads_updater;
 
-    function __construct(VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
+    function __construct(TelafiBoyuncaTempWorkloadGuncelleme $telafi_boyunca_temp_workload_guncelleme, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
     {
-
+        $this->temp_workloads_updater = $telafi_boyunca_temp_workload_guncelleme;
         $this->veteriner_evrak_durumu_kontrolu = $veterinerEvrakDurumularıKontrolu;
     }
 
@@ -29,8 +30,6 @@ class AtamaServisi
         'canli_hayvan' => 10,
     ];
 
-    private $telafiSuresi = 60;
-
     public function assignVet(string $documentType)
     {
 
@@ -40,14 +39,12 @@ class AtamaServisi
         $veterinerler = $this->aktifVeterinerleriGetir($now);
 
 
-
-
-
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
         $today = $todayWithHour->format('Y-m-d');
 
         $has_telafi = false;
-        $bitmemis_telafiler = [];
+        $bitmemis_telafiler = [];   // telafisi var ama daha bitirmemiş
+        $telafisi_olan_vets = [];   // Telafisi var ama bitip bitmediği kesin değil
 
         foreach ($veterinerler as $vet) {
 
@@ -62,6 +59,7 @@ class AtamaServisi
             $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
             if ($has_telafi) {
 
+                $telafisi_olan_vets[] = $vet;
                 $telafiler = $workload->telafis()->where('tarih', $today)->get();
 
                 foreach ($telafiler as $telafi) {
@@ -80,6 +78,8 @@ class AtamaServisi
         // bu veterinerlerin telafileri bitene kadar öncelik bunlara verilecek ,
         // kimsenin telafisi yoksa yada telafilerini bitirmişler ise sistem normal atama işlemini yapar
 
+        // Tüm veterinerlerin telafiisi yokken normal şekilde random bir veterinerin seçilmesi
+
         if (empty($bitmemis_telafiler)) {
 
 
@@ -89,7 +89,7 @@ class AtamaServisi
             } */
 
             // 2. En düşük iş yüklü veteriner(ler)i bul
-            $minWorkload = PHP_INT_MAX;
+            $min_workload_degeri = PHP_INT_MAX;
             $adayVeterinerler = collect();
 
 
@@ -101,13 +101,28 @@ class AtamaServisi
                     continue;
                 }
 
-                // veterinerinBuYilkiWorkloadi fonksiyonu ile veterinerin bu yıl için bir workload modeli varsa getirir, yoksa bu yıl için yeni bir tane oluşturur.
-                $currentWorkload = $vet->veterinerinBuYilkiWorkloadi()->year_workload;
 
-                if ($currentWorkload < $minWorkload) {
-                    $minWorkload = $currentWorkload;
+                $currentWorkload_degeri = 0; // telafisi olması durumuna göre hangi değerin alınacağına karar verilecek
+
+                // Eğer telafisi olan veterinern varsa bu veterinerlerin  workload
+                // modelindeki temp_workload değerkerine bakılarak atama sisteminin çalışması gerekiyor
+                if (in_array($vet, $telafisi_olan_vets)) {
+
+                    $currentWorkload_degeri = $vet->veterinerinBuYilkiWorkloadi()->temp_workload;
+                } else {  // Eğer veterinerin telafisi yoksa bu sefer normal şekilde workload ının
+
+                    // veterinerinBuYilkiWorkloadi fonksiyonu ile veterinerin bu yıl için bir
+                    // workload modeli varsa getirir, yoksa bu yıl için yeni bir tane oluşturur.
+                    $currentWorkload_degeri = $vet->veterinerinBuYilkiWorkloadi()->year_workload;
+                }
+
+
+
+                // Workload değerleri arasından en az olani yada olanları bul
+                if ($currentWorkload_degeri < $min_workload_degeri) {
+                    $min_workload_degeri = $currentWorkload_degeri;
                     $adayVeterinerler = collect([$vet]);
-                } elseif ($currentWorkload == $minWorkload) {
+                } elseif ($currentWorkload_degeri == $min_workload_degeri) {
                     $adayVeterinerler->push($vet);
                 }
             }
@@ -116,17 +131,32 @@ class AtamaServisi
             // 3. Rastgele bir veterineri seç
             $seciliVeteriner = $adayVeterinerler->random();
 
-            // 4. Veterinerin iş yükünü güncelle
-            $this->updateWorkload(
-                $seciliVeteriner,
-                $this->workloadCoefficients[$documentType]
-            );
+
+
+            // Seçilen veterinerin workload ını veterinerin telafisi olmasına göre farklı şekilde güncellenmesi gerekiyor
+            if (in_array($seciliVeteriner, $telafisi_olan_vets)) {
+
+                $this->updateWorkload(
+                    $seciliVeteriner,
+                    $this->workloadCoefficients[$documentType],
+                    true
+                );
+            } else {
+                $this->updateWorkload(
+                    $seciliVeteriner,
+                    $this->workloadCoefficients[$documentType],
+                    false
+                );
+            }
+
+            $this->temp_workloads_updater->all_temp_workloads_update();
+
+
 
             return $seciliVeteriner;
-        }else{
+        } else {  // Telafisi olan veya telafisini bitirmemiş veterinerler üzerinde işlem yapma
 
-            //dd('bitmemiş telafisi olan veteriner var',$bitmemis_telafiler);
-
+            // Telafisi olan veterinerler arasında random bir tanesini seçme
             $secilenTelafi = array_rand($bitmemis_telafiler);
 
             $vet_id = $bitmemis_telafiler[$secilenTelafi]['vet_id'];
@@ -136,29 +166,41 @@ class AtamaServisi
 
             $this->updateWorkload(
                 $seciliVeteriner,
-                $this->workloadCoefficients[$documentType]
+                $this->workloadCoefficients[$documentType],
+                true
             );
             $telafi->remaining_telafi_workload -= $this->workloadCoefficients[$documentType];
             $telafi->save();
 
-            return $seciliVeteriner;
 
+            $this->temp_workloads_updater->all_temp_workloads_update();
+
+
+            return $seciliVeteriner;
         }
 
 
     }
 
 
-    private function updateWorkload(User $vet, int $coefficient)
+    private function updateWorkload(User $vet, int $coefficient, $has_telafi)
     {
+
         $today = Carbon::now();
 
         // Bu fonksiyona gelmeden önce assignVet fonksiyonunda tüm veterinerlere bu yıl için kesin bir tane workload atanmış oluyor.
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();
 
-        $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
-        $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
-        $veteriner_bu_yilki_workloadi->save();
+        if ($has_telafi) {
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->save();
+        } else {
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->save();
+        }
     }
 
 

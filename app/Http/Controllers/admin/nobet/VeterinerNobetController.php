@@ -10,6 +10,7 @@ class VeterinerNobetController extends Controller
 {
     public function index()
     {
+
         $data['vets'] = User::role('veteriner')->where('status', 1)->with(['nobets'])->get();
 
         return view('admin.nobets.index', $data);

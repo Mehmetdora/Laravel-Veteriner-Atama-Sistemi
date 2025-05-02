@@ -18,6 +18,13 @@ class DailyTotalWorkloadUpdateORCreateService{
         'canli_hayvan' => 10,
     ];
 
+    /*
+
+        Günlük gelen tüm evrak için her gün yeni bir kayıt oluşturularak her gün ne kadar evrak iş yükü
+        geldiğinin bilgisini tutan kayıtların güncellenmesi ve oluşturulması
+
+    */
+
 
     public function updateOrCreateTodayWorkload($evrak_type){
 

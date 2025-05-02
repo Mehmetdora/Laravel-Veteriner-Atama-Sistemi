@@ -7,16 +7,13 @@ use Exception;
 use App\Models\Izin;
 use App\Models\User;
 use App\Models\Telafi;
-use function Termwind\parse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use function PHPSTORM_META\map;
-
 use App\Http\Controllers\Controller;
 use App\Providers\BetaDegeriBulma;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
-use PHPUnit\Framework\MockObject\Generator\TemplateLoader;
+use App\Providers\YearWorklaodOrtalamasınıBulma;
 
 class VeterinerIzinController extends Controller
 {
@@ -24,8 +21,11 @@ class VeterinerIzinController extends Controller
     protected $ortalama_gunluk_workload_degeri_bulma;
     protected $beta_degeri_bulma;
 
-    function __construct(BetaDegeriBulma $beta_degeri_bulma ,OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma)
+    protected $ortalama_year_worklaod_degeri_bulma;
+
+    function __construct(YearWorklaodOrtalamasınıBulma $ortalama_year_worklaod_degeri_bulma, BetaDegeriBulma $beta_degeri_bulma, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma)
     {
+        $this->ortalama_year_worklaod_degeri_bulma = $ortalama_year_worklaod_degeri_bulma;
         $this->beta_degeri_bulma = $beta_degeri_bulma;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
     }
@@ -109,6 +109,7 @@ class VeterinerIzinController extends Controller
             $i = 0;
             while ($i < $telafi_suresi) {
                 // Eğer gün Cumartesi veya Pazar ise hafta içi bir güne kadar artır
+                // Böylece sadece hafta içi günleri için telafi oluşturulacak
                 while ($startDate->isWeekend()) {
                     $startDate->addDay();
                 }
@@ -129,6 +130,16 @@ class VeterinerIzinController extends Controller
 
 
             // *****************************************
+
+
+
+            /*
+                Bu ortalama değer telafisi ve izni olamayan veterinerlerin year_worklaod değerlerinin
+                ortalaması alınarak hesaplanmıştır.
+            */
+            $ortalama_year_worklaod = $this->ortalama_year_worklaod_degeri_bulma->DigerVetsOrtalamaYearWorklaodDegeri();
+            $user_workload->temp_workload = $ortalama_year_worklaod;
+            $user_workload->save();
 
 
 

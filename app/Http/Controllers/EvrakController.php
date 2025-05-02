@@ -23,6 +23,7 @@ use App\Models\EvrakAntrepoVaris;
 use App\Models\EvrakAntrepoSertifika;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
+use App\Providers\TelafiBoyuncaTempWorkloadGuncelleme;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use App\Providers\YeniYilWorkloadsGuncelleme;
 use Illuminate\Support\Facades\Validator;
@@ -36,9 +37,12 @@ class EvrakController extends Controller
     protected $ortalama_gunluk_workload_degeri_bulma;
     protected $atamaServisi;
     protected $yeni_yil_workloads_guncelleme;
-    function __construct( YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme , AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
-    {
+    protected $temp_worloads_updater;
 
+
+    function __construct( TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme , YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme , AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    {
+        $this->temp_worloads_updater = $telafiBoyuncaTempWorkloadGuncelleme;
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
         $this->daily_total_worklaod_update_create_servisi = $daily_total_workload_update_orcreate_service;
@@ -108,7 +112,6 @@ class EvrakController extends Controller
 
     public function create()
     {
-
         $data['uruns'] = Urun::all();
         return view('admin.evrak_kayit.create', $data);
     }
@@ -156,7 +159,7 @@ class EvrakController extends Controller
         // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı
         $errors = [];
 
-        // Validation
+        // Validations
         if ($formData[0]['evrak_turu'] == 0) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
@@ -378,7 +381,6 @@ class EvrakController extends Controller
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('ithalat');
 
-
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 1) {
@@ -563,6 +565,7 @@ class EvrakController extends Controller
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_varis');
 
+
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 4) {
@@ -717,8 +720,8 @@ class EvrakController extends Controller
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_sertifika');
 
-                    $saved_count++; // Başarıyla eklenen evrak sayısını artır
 
+                    $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
             } elseif ($formData[0]['evrak_turu'] == 5) {
                 for ($i = 1; $i < count($formData); $i++) {
@@ -773,6 +776,7 @@ class EvrakController extends Controller
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_cikis');
+
 
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }
@@ -830,6 +834,7 @@ class EvrakController extends Controller
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('canli_hayvan');
+
 
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }

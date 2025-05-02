@@ -61,7 +61,7 @@ class User extends Authenticatable
     public function izins()
     {
         return $this->belongsToMany(Izin::class, 'user_izin')->withPivot('startDate', 'endDate')
-            ->withTimestamps();;
+            ->withTimestamps();
     }
 
     public function nobets()
@@ -100,6 +100,7 @@ class User extends Authenticatable
             $workload = $this->workloads()->create([
                 'year' => $year,
                 'year_workload' => 0,
+                'temp_workload' => 0,
                 'total_workload' => 0
             ]);
 

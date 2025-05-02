@@ -30,6 +30,7 @@ class YeniYilWorkloadsGuncelleme
                 $workload = $vet->workloads()->create([
                     'year' => $todayWithHour->year,
                     'year_workload' => 0,
+                    'temp_workload' => 0,
                     'total_workload' => $past_years_workload->total_workload
                 ]);
 
