@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\UsksNo;
 use App\Models\UserEvrak;
 use App\Models\EvrakDurum;
+use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\EvrakAntrepoSertifika;
 use Illuminate\Support\Facades\Validator;
@@ -36,7 +38,7 @@ class EvrakController extends Controller
     protected $ortalama_gunluk_workload_degeri_bulma;
     protected $atamaServisi;
     protected $yeni_yil_workloads_guncelleme;
-    function __construct( YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme , AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
 
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
@@ -178,7 +180,7 @@ class EvrakController extends Controller
                     $errors[] = $validator->errors()->all();
                 }
             }
-        } elseif ($formData[0]['evrak_turu'] == 1){
+        } elseif ($formData[0]['evrak_turu'] == 1) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
@@ -309,6 +311,8 @@ class EvrakController extends Controller
         $gelen_evrak_sayisi = count($formData) - 1;
 
 
+        // Veritabanı başlangıç durumu
+        DB::beginTransaction();
 
         try {
             $saved_count = 0; // Başarıyla kaydedilen evrak sayısı
@@ -324,7 +328,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
@@ -340,14 +344,16 @@ class EvrakController extends Controller
                         $new_arac_plaka_kg->arac_plaka = $plaka_kg["plaka"];
                         $new_arac_plaka_kg->evrak_ithalat_id = $yeni_evrak->id;
                         $new_arac_plaka_kg->save();
-                     }
+                    }
 
                     // Veterineri sistem limite göre atayacak
                     $veteriner = $this->atamaServisi->assignVet('ithalat');
 
 
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    if (!$urun) {
+                        throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
+                    }elseif(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
                     $yeni_evrak->setUrun($urun);
@@ -359,7 +365,7 @@ class EvrakController extends Controller
                     $saved = $user_evrak->save();
 
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -369,7 +375,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikasını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -390,7 +396,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -404,8 +410,10 @@ class EvrakController extends Controller
                     // Veterineri sistem limite göre atayacak
                     $veteriner = $this->atamaServisi->assignVet('transit');
 
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    if (!$urun) {
+                        throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
+                    }elseif(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
                     $yeni_evrak->setUrun($urun);
@@ -417,7 +425,7 @@ class EvrakController extends Controller
 
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -427,7 +435,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -449,7 +457,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -463,8 +471,10 @@ class EvrakController extends Controller
                     // Veterineri sistem limite göre atayacak
                     $veteriner = $this->atamaServisi->assignVet('antrepo_giris');
 
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    if (!$urun) {
+                        throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
+                    }elseif(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
                     $yeni_evrak->setUrun($urun);
@@ -476,7 +486,7 @@ class EvrakController extends Controller
 
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -486,7 +496,7 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -537,6 +547,10 @@ class EvrakController extends Controller
                         }
                     }
 
+                    if(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+                    }
+
 
                     // Veteriner ile evrak kaydetme
                     $user_evrak = new UserEvrak;
@@ -544,7 +558,7 @@ class EvrakController extends Controller
                     $user_evrak->evrak()->associate($yeni_evrak);
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -649,8 +663,8 @@ class EvrakController extends Controller
 
                     $veteriner = User::find($veterinerId);
 
-                    if (!$veteriner) {
-                        throw new \Exception("Seçilen veteriner sistemde bulunamadı!");
+                    if(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
 
@@ -679,7 +693,7 @@ class EvrakController extends Controller
                     $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
-                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1);// sondaki numarayı 1 arttırma
+                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1); // sondaki numarayı 1 arttırma
                     // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;
@@ -698,7 +712,7 @@ class EvrakController extends Controller
 
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -725,7 +739,7 @@ class EvrakController extends Controller
 
 
                     // Veterineri usks numarası üzerinden antrepo sertifika bulunarak bu evrağı alan veterinere atanacak
-                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])->where('miktar', (int)str_replace('.','',$formData[$i]['usks_miktar']))->with('evrak_antrepo_sertifika')->first();
+                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])->where('miktar', (int)str_replace('.', '', $formData[$i]['usks_miktar']))->with('evrak_antrepo_sertifika')->first();
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
 
                     // Seçilen veterinerin elinde iş varsa atama sistemi tarafından veteriner atama
@@ -736,8 +750,10 @@ class EvrakController extends Controller
                     // İlişkili modelleri bağlama
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    if (!$urun) {
+                        throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
+                    }elseif(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
                     $yeni_evrak = new EvrakAntrepoCikis;
@@ -746,7 +762,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.','',$formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -764,7 +780,7 @@ class EvrakController extends Controller
                     $user_evrak->evrak()->associate($yeni_evrak);
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -799,8 +815,10 @@ class EvrakController extends Controller
                     // Veterineri sistem limite göre atayacak
                     $veteriner = $this->atamaServisi->assignVet('canli_hayvan');
 
-                    if (!$urun || !$veteriner) {
-                        throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
+                    if (!$urun) {
+                        throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
+                    }elseif(!$veteriner){
+                        throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
                     $yeni_evrak->setUrun($urun);
@@ -812,7 +830,7 @@ class EvrakController extends Controller
 
                     $saved = $user_evrak->save();
                     if (!$saved) {
-                        throw new \Exception("Evrak kaydedilemedi!");
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
                     }
 
                     // Evrak durumunu kaydetme
@@ -836,14 +854,20 @@ class EvrakController extends Controller
             }
 
 
+            // Veritabanı üzerinde yapılan değişiklikleri kalıcı hale getirme
+            DB::commit();
 
             return redirect()->route('admin.evrak.index')->with('success', "$saved_count evrak başarıyla eklendi.");
         } catch (\Exception $e) {
+
+            // Hata durumunda veritabanını transection(başlangıç) durumundaki haline geri getirir
+            DB::rollBack();
+
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
     }
 
-/*     public function edit($type, $evrak_id)
+    /*     public function edit($type, $evrak_id)
     {
 
         $type = explode("\\", $type);
