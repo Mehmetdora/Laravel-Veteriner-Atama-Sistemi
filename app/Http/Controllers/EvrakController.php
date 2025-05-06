@@ -28,6 +28,7 @@ use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\TelafiBoyuncaTempWorkloadGuncelleme;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
+use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
 
 class EvrakController extends Controller
@@ -41,10 +42,12 @@ class EvrakController extends Controller
     protected $yeni_yil_workloads_guncelleme;
     protected $temp_worloads_updater;
     protected $atanacak_veteriner;
+    protected $evrak_vet_degisirse_worklaods_updater;
 
 
-    function __construct(TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
+        $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
         $this->temp_worloads_updater = $telafiBoyuncaTempWorkloadGuncelleme;
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
@@ -321,25 +324,25 @@ class EvrakController extends Controller
         // 6-> Canlı Hayvan
         switch ($formData[0]['evrak_turu']) {
             case 0:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat', $gelen_evrak_sayisi);
                 break;
             case 1:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit', $gelen_evrak_sayisi);
                 break;
             case 2:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris', $gelen_evrak_sayisi);
                 break;
             case 3:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis', $gelen_evrak_sayisi);
                 break;
             case 4:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika', $gelen_evrak_sayisi);
                 break;
             case 5:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis', $gelen_evrak_sayisi);
                 break;
             case 6:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan', $gelen_evrak_sayisi);
                 break;
 
 
@@ -813,7 +816,7 @@ class EvrakController extends Controller
                         ->where('miktar', (int)str_replace('.', '', $formData[$i]['usks_miktar']))
                         ->with('evrak_antrepo_sertifika')->first();
 
-                    if(!$usks){
+                    if (!$usks) {
                         throw new \Exception('Girilen USKS bilgilerinin doğru olduğundan emin olduktan sonra tekrar deneyiniz!');
                     }
 
@@ -1157,6 +1160,15 @@ class EvrakController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'ithalat'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1229,6 +1241,15 @@ class EvrakController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'transit'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1276,6 +1297,15 @@ class EvrakController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_giris'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1310,6 +1340,15 @@ class EvrakController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_varis'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1375,7 +1414,7 @@ class EvrakController extends Controller
                 $evrak->urun()->sync([$urun->id]);
 
                 $usks = $evrak->usks;
-                if(!$usks){
+                if (!$usks) {
                     throw new \Exception('Evrakla ilişkili USKS verisine erişilemedi, Lütfen tekrar deneyiniz!');
                 }
                 $usks->miktar = $request->urunKG;
@@ -1387,7 +1426,7 @@ class EvrakController extends Controller
                 // Gelen sağlık sertifikalarının ID'lerini al
                 $yeni_sertifikalar = [];
                 $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
-                if(count($sertifikalar) == 0){
+                if (count($sertifikalar) == 0) {
                     throw new \Exception('Lütfen evrağa en az 1 adet sağlık sertifikası giriniz!');
                 }
 
@@ -1443,16 +1482,24 @@ class EvrakController extends Controller
                         ->where('ssn', $sertifika->ssn)
                         ->with('evraks_giris')
                         ->first();
-                    if($giris_sertifikası){
+                    if ($giris_sertifikası) {
                         $giris_sertifikası->kalan_miktar -= $sertifika->miktar;
                         $giris_sertifikası->save();
                     }
-
                 }
 
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_sertifika'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1496,6 +1543,15 @@ class EvrakController extends Controller
 
                 // Atanacak olan veteriner gelen veteriner hangisi ise ona atanır
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_cikis'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1536,6 +1592,15 @@ class EvrakController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'canli_hayvan'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 

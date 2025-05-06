@@ -2,6 +2,7 @@
 
 
 
+use App\Http\Controllers\admin\AntrepoStokTakipController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\EvrakController;
@@ -61,6 +62,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::controller(StokTakipController::class)->group(function () {
 
         Route::get('/admin/stok-takip/liste', 'index')->name('admin.stok_takip.index');
+    });
+
+    // Antrepo Stok Takip İşlemleri
+    Route::controller(AntrepoStokTakipController::class)->group(function () {
+
+        Route::get('/admin/antrepo-stok-takip/liste', 'index')->name('admin.antrepo_stok_takip.index');
     });
 
     // Ürün İşlemleri

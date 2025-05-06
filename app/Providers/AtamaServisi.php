@@ -30,7 +30,7 @@ class AtamaServisi
         'canli_hayvan' => 10,
     ];
 
-    public function assignVet(string $documentType)
+    public function assignVet(string $documentType, $evraks_count)
     {
 
         /*
@@ -149,13 +149,15 @@ class AtamaServisi
                 $this->updateWorkload(
                     $seciliVeteriner,
                     $this->workloadCoefficients[$documentType],
-                    true
+                    true,
+                    $evraks_count
                 );
             } else {
                 $this->updateWorkload(
                     $seciliVeteriner,
                     $this->workloadCoefficients[$documentType],
-                    false
+                    false,
+                    $evraks_count
                 );
             }
 
@@ -181,7 +183,8 @@ class AtamaServisi
             $this->updateWorkload(
                 $seciliVeteriner,
                 $this->workloadCoefficients[$documentType],
-                true
+                true,
+                $evraks_count
             );
             $telafi->remaining_telafi_workload -= $this->workloadCoefficients[$documentType];
             $telafi->save();
@@ -195,8 +198,10 @@ class AtamaServisi
     }
 
 
-    private function updateWorkload(User $vet, int $coefficient, $has_telafi)
+    private function updateWorkload(User $vet, int $coefficient, $has_telafi , $evraks_count)
     {
+
+        // Yapılan evrak sayısına göre workload değerleri çarpılarak güncellenir.
 
         $today = Carbon::now();
 
@@ -204,13 +209,13 @@ class AtamaServisi
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();
 
         if ($has_telafi) {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
-            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient*$evraks_count;
+            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient*$evraks_count;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient*$evraks_count;
             $veteriner_bu_yilki_workloadi->save();
         } else {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient;
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient*$evraks_count;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient*$evraks_count;
             $veteriner_bu_yilki_workloadi->save();
         }
     }

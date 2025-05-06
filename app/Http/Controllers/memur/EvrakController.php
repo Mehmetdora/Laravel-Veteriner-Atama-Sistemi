@@ -320,25 +320,25 @@ class EvrakController extends Controller
         // 6-> Canlı Hayvan
         switch ($formData[0]['evrak_turu']) {
             case 0:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat',$gelen_evrak_sayisi);
                 break;
             case 1:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit',$gelen_evrak_sayisi);
                 break;
             case 2:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris',$gelen_evrak_sayisi);
                 break;
             case 3:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis',$gelen_evrak_sayisi);
                 break;
             case 4:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika',$gelen_evrak_sayisi);
                 break;
             case 5:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis',$gelen_evrak_sayisi);
                 break;
             case 6:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan');
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan',$gelen_evrak_sayisi);
                 break;
 
 

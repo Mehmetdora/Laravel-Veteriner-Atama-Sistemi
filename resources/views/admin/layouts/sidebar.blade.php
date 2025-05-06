@@ -43,6 +43,15 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('admin.antrepo_stok_takip.index') }}" class="nav-link active">
+                        <i class="nav-icon fas fa-file-import"></i>
+                        <p>
+                            Antrepo Stok Takip
+                        </p>
+                    </a>
+                </li>
+
                 <br>
                 <li class="nav-item">
                     <a href="{{ route('admin.memurs.index') }}" class="nav-link ">
