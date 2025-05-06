@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SaglikSertifika extends Model
 {
-    protected $fillable = ['ssn','miktar'];
+    protected $fillable = ['ssn', 'toplam_miktar', 'kalan_miktar'];
 
     public function evraks_canli_hayvan()
     {
@@ -32,6 +32,4 @@ class SaglikSertifika extends Model
     {
         return $this->morphedByMany(EvrakAntrepoSertifika::class, 'evrak', 'evrak_saglik_sertifika');
     }
- 
-
 }

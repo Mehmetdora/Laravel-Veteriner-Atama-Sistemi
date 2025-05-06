@@ -11,6 +11,7 @@ use App\Models\EvrakDurum;
 use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
+use Exception;
 use Illuminate\Http\Request;
 use App\Models\SaglikSertifika;
 use App\Providers\AtamaServisi;
@@ -39,6 +40,7 @@ class EvrakController extends Controller
     protected $atamaServisi;
     protected $yeni_yil_workloads_guncelleme;
     protected $temp_worloads_updater;
+    protected $atanacak_veteriner;
 
 
     function __construct(TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
@@ -95,10 +97,8 @@ class EvrakController extends Controller
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
-            $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
-            $data['evrak'] = $evrak;
-            $data['usks'] = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
@@ -312,6 +312,44 @@ class EvrakController extends Controller
         //EĞER TEK SEFERDE GELEN EVRAK SAYISI 1 DEN FAZLA İSE TÜM EVRAKLARI LİMİTE GÖRE BAKIP TEK BİR VETERİNERE ATANMASI GEREKİYOR.
         $gelen_evrak_sayisi = count($formData) - 1;
 
+        // 0-> ithalat
+        // 1-> transit
+        // 2-> Atrepo giriş
+        // 3-> Atrepo varış
+        // 4-> Atrepo sertifika
+        // 5-> Atrepo çıkış
+        // 6-> Canlı Hayvan
+        switch ($formData[0]['evrak_turu']) {
+            case 0:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat');
+                break;
+            case 1:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit');
+                break;
+            case 2:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris');
+                break;
+            case 3:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis');
+                break;
+            case 4:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                break;
+            case 5:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis');
+                break;
+            case 6:
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan');
+                break;
+
+
+            default:
+                return redirect()->back()->withErrors($errors)->with('error', 'Hatalı evrak türü seçiminden dolayı evrak oluşturulamamıştır, Lütfen tekrar deneyiniz!');
+        }
+
+
+
+
         // Veritabanı başlangıç durumu
         DB::beginTransaction();
 
@@ -348,12 +386,12 @@ class EvrakController extends Controller
                     }
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('ithalat');
+                    $veteriner = $this->atanacak_veteriner;
 
 
                     if (!$urun) {
                         throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
-                    }elseif(!$veteriner){
+                    } elseif (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -375,7 +413,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikasını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -407,11 +446,11 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('transit');
+                    $veteriner = $this->atanacak_veteriner;
 
                     if (!$urun) {
                         throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
-                    }elseif(!$veteriner){
+                    } elseif (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -434,7 +473,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -468,11 +508,11 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('antrepo_giris');
+                    $veteriner = $this->atanacak_veteriner;
 
                     if (!$urun) {
                         throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
-                    }elseif(!$veteriner){
+                    } elseif (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -495,7 +535,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -533,7 +574,7 @@ class EvrakController extends Controller
                     // Eğer bu veterinerin elinde daha bitmemiş bir evrak varsa sistem random başka bir veterinere atama yapacak
                     $isi_var_mi = $veteriner->evraks->contains(fn($data) => $data->evrak->evrak_durumu->evrak_durum === 'İşlemde');
                     if ($isi_var_mi) {
-                        $veteriner = $this->atamaServisi->assignVet('antrepo_varis');
+                        $veteriner = $this->atanacak_veteriner;
                     } else {
 
 
@@ -546,7 +587,7 @@ class EvrakController extends Controller
                         }
                     }
 
-                    if(!$veteriner){
+                    if (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -568,7 +609,8 @@ class EvrakController extends Controller
                     foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
                         $saglik_sertfika = new SaglikSertifika;
                         $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
+                        $saglik_sertfika->toplam_miktar = $value['miktar'];
+                        $saglik_sertfika->kalan_miktar = $value['miktar'];
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
@@ -582,7 +624,7 @@ class EvrakController extends Controller
             } elseif ($formData[0]['evrak_turu'] == 4) {
                 for ($i = 1; $i < count($formData); $i++) {
 
-
+                    $antrepo_giris_saglik_sertifikalari = [];
                     $saglik_sertifikalari = $formData[$i]['vetSaglikSertifikasiNo'];
 
                     $veterinerSayilari = [];
@@ -591,8 +633,11 @@ class EvrakController extends Controller
 
                     // Her sağlık sertifikasının hangi veterinere ait olduğunu belirle
                     foreach ($saglik_sertifikalari as $saglik_sertifika) {
-                        $ss_saved = SaglikSertifika::where('ssn', $saglik_sertifika['ssn'])
-                            ->where('miktar', $saglik_sertifika['miktar'])
+
+                        // girilen sertifikanın ssn numarası bakarak bu sertifika bir antrepo giriş
+                        // evrağı ile ilişkili ise bu sertifikayı alma
+                        $ss_saved = SaglikSertifika::whereHas('evraks_giris', function ($query) {})
+                            ->where('ssn', $saglik_sertifika['ssn'])
                             ->with(['evraks_giris.veteriner.user'])
                             ->first();
 
@@ -603,6 +648,8 @@ class EvrakController extends Controller
                         // Veterinerleri kaşılaştırmak için miktar ve ss sayısını tut
                         if ($veteriner) {
                             $vetId = $veteriner->id;
+
+                            $antrepo_giris_saglik_sertifikalari[] = $ss_saved;
 
                             // Veterinerin sahip olduğu sertifika sayısını artır
                             $veterinerSayilari[$vetId] = ($veterinerSayilari[$vetId] ?? 0) + 1;
@@ -615,9 +662,14 @@ class EvrakController extends Controller
                     }
 
 
+                    // Sağlık sertifikaları hatalı ise
                     if (empty($veterinerSayilari)) {
                         throw new \Exception("Hiçbir veteriner için sağlık sertifikası bulunamadı!");
                     }
+
+
+
+
 
                     // En çok sağlık sertifikasına sahip veterinerleri bul
                     $maxSertifikaSayisi = max($veterinerSayilari);
@@ -633,7 +685,7 @@ class EvrakController extends Controller
                         // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa
                         if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
 
-                            $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                            $veteriner = $this->atanacak_veteriner;
                             $veterinerId = $veteriner->id;
                         }
 
@@ -655,7 +707,7 @@ class EvrakController extends Controller
                             // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa sistem atama yapsın
                             if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
 
-                                $veteriner = $this->atamaServisi->assignVet('antrepo_sertifika');
+                                $veteriner = $this->atanacak_veteriner;
                                 $veterinerId = $veteriner->id;
                             }
                         }
@@ -663,7 +715,7 @@ class EvrakController extends Controller
 
                     $veteriner = User::find($veterinerId);
 
-                    if(!$veteriner){
+                    if (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -723,10 +775,28 @@ class EvrakController extends Controller
                     foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
                         $saglik_sertfika = new SaglikSertifika;
                         $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
+                        $saglik_sertfika->toplam_miktar = $value['miktar'];
+                        $saglik_sertfika->kalan_miktar = $value['miktar'];
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
+
+
+                        /*
+                            antrepo giriş evrağından girilen sertifikalar için bu sertifikalrın
+                            miktarlarının antrpeo sertifika evrağında girilen sertifikalar kadar
+                            miktarlarının azaltılması için bu evrak oluşturma sırasında girilen
+                            aynı ssn numarasına sahip sağlık sertifikaları bulunması sağlandı
+                        */
+                        foreach ($antrepo_giris_saglik_sertifikalari as $sertifika) {
+                            if ($sertifika->ssn == $value['ssn']) {
+                                $sertifika->kalan_miktar = $sertifika->toplam_miktar - $value['miktar'];
+                                $sertifika->save();
+                            }
+                        }
                     }
+
+
+
 
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('antrepo_sertifika');
@@ -739,12 +809,19 @@ class EvrakController extends Controller
 
 
                     // Veterineri usks numarası üzerinden antrepo sertifika bulunarak bu evrağı alan veterinere atanacak
-                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])->where('miktar', (int)str_replace('.', '', $formData[$i]['usks_miktar']))->with('evrak_antrepo_sertifika')->first();
+                    $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])
+                        ->where('miktar', (int)str_replace('.', '', $formData[$i]['usks_miktar']))
+                        ->with('evrak_antrepo_sertifika')->first();
+
+                    if(!$usks){
+                        throw new \Exception('Girilen USKS bilgilerinin doğru olduğundan emin olduktan sonra tekrar deneyiniz!');
+                    }
+
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
 
                     // Seçilen veterinerin elinde iş varsa atama sistemi tarafından veteriner atama
                     if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veteriner->id)) {
-                        $veteriner = $this->atamaServisi->assignVet('antrepo_cikis');
+                        $veteriner = $this->atanacak_veteriner;
                     }
 
                     // İlişkili modelleri bağlama
@@ -752,7 +829,7 @@ class EvrakController extends Controller
 
                     if (!$urun) {
                         throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
-                    }elseif(!$veteriner){
+                    } elseif (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -814,11 +891,11 @@ class EvrakController extends Controller
                     $urun = Urun::find($formData[$i]["urun_kategori_id"]);
 
                     // Veterineri sistem limite göre atayacak
-                    $veteriner = $this->atamaServisi->assignVet('canli_hayvan');
+                    $veteriner = $this->atanacak_veteriner;
 
                     if (!$urun) {
                         throw new \Exception("Gerekli ilişkili ürün verileri hatalı yada eksik olduğu için evrak kaydı yapılamamıştır, Lütfen gerekli bilgileri doğru bir şekilde doldurup tekrar deneyiniz!");
-                    }elseif(!$veteriner){
+                    } elseif (!$veteriner) {
                         throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
                     }
 
@@ -841,7 +918,8 @@ class EvrakController extends Controller
                     foreach ($formData[$i]['vetSaglikSertifikasiNo'] as $value) {
                         $saglik_sertfika = new SaglikSertifika;
                         $saglik_sertfika->ssn = $value['ssn'];
-                        $saglik_sertfika->miktar = $value['miktar'];
+                        $saglik_sertfika->toplam_miktar = $value['miktar'];
+                        $saglik_sertfika->kalan_miktar = $value['miktar'];
                         $saglik_sertfika->save();
                         $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
                     }
@@ -1046,10 +1124,12 @@ class EvrakController extends Controller
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
 
+        DB::beginTransaction();
 
         try {
 
             if ($request->type == "EvrakIthalat") {
+
 
                 $evrak = EvrakIthalat::find($request->input('id'));
 
@@ -1115,13 +1195,12 @@ class EvrakController extends Controller
                     ]);
                 }
 
-                // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()->delete();
-
-                $evrak->saglikSertifikalari()->create([
-                    'ssn' => $request->ss_no,
-                    'miktar' => (int)str_replace('.', '', $request->urunKG),
-                ]);
+                // SErtifika update
+                $sertifika = $evrak->saglikSertifikalari()->first();
+                $sertifika->ssn = $request->ss_no;
+                $sertifika->toplam_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->save();
             } elseif ($request->type == "EvrakTransit") {
                 $evrak = EvrakTransit::find($request->input('id'));
 
@@ -1163,13 +1242,12 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
-                // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()->delete();
-
-                $evrak->saglikSertifikalari()->create([
-                    'ssn' => $request->ss_no,
-                    'miktar' => (int)str_replace('.', '', $request->urunKG),
-                ]);
+                // SErtifika update
+                $sertifika = $evrak->saglikSertifikalari()->first();
+                $sertifika->ssn = $request->ss_no;
+                $sertifika->toplam_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->save();
             } elseif ($request->type == "EvrakAntrepoGiris") {
                 $evrak = EvrakAntrepoGiris::find($request->input('id'));
 
@@ -1211,14 +1289,14 @@ class EvrakController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
 
-                // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()->delete();
-
-                $evrak->saglikSertifikalari()->create([
-                    'ssn' => $request->ss_no,
-                    'miktar' => (int)str_replace('.', '', $request->urunKG),
-                ]);
+                // SErtifika update
+                $sertifika = $evrak->saglikSertifikalari()->first();
+                $sertifika->ssn = $request->ss_no;
+                $sertifika->toplam_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
+                $sertifika->save();
             } elseif ($request->type == "EvrakAntrepoVaris") {
+
                 $evrak = EvrakAntrepoVaris::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
@@ -1269,12 +1347,14 @@ class EvrakController extends Controller
 
                     $evrak->saglikSertifikalari()->create([
                         'ssn' => $sertifika->ssn,
-                        'miktar' => $sertifika->miktar,
+                        'toplam_miktar' => $sertifika->miktar,
+                        'kalan_miktar' => $sertifika->miktar,
                     ]);
                 }
             } elseif ($request->type == "EvrakAntrepoSertifika") {
-                $evrak = EvrakAntrepoSertifika::find($request->input('id'));
 
+
+                $evrak = EvrakAntrepoSertifika::find($request->input('id'));
                 $evrak->evrakKayitNo = $request->siraNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
@@ -1289,13 +1369,87 @@ class EvrakController extends Controller
 
                 // İlişkili modelleri bağlama
                 $urun = Urun::find($request->urun_kategori_id);
-
-
                 if (!$urun) {
                     throw new \Exception("Gerekli ilişkili veriler bulunamadı!");
                 }
-
                 $evrak->urun()->sync([$urun->id]);
+
+                $usks = $evrak->usks;
+                if(!$usks){
+                    throw new \Exception('Evrakla ilişkili USKS verisine erişilemedi, Lütfen tekrar deneyiniz!');
+                }
+                $usks->miktar = $request->urunKG;
+                $usks->save();
+
+
+                //Sağlık sertifikalarını kaydetme
+                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
+                // Gelen sağlık sertifikalarının ID'lerini al
+                $yeni_sertifikalar = [];
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
+                if(count($sertifikalar) == 0){
+                    throw new \Exception('Lütfen evrağa en az 1 adet sağlık sertifikası giriniz!');
+                }
+
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+                    if (!isset($sertifika->id) || $sertifika->id == -1) {   // yeni gelen sertifika
+                        $yeni_sertifikalar[] = $sertifika;
+                    } else {        // Zaten kayıtlı sertifikalar
+                        $sertifika_ids[] = $sertifika->id;
+                    }
+                }
+
+
+                $silinen_sertifikalar = $evrak->saglikSertifikalari()
+                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)->get();
+
+
+                // amaç silinen bir sertifikanın miktarını geri antrpeo girişteki sertifikanın miktarına eklemek
+                // silinen sertifikalarda ana sertifikaya geri iade işlemi yapılacak
+                foreach ($silinen_sertifikalar as $sertifika) {
+                    $antp_giris_sertifika = SaglikSertifika::whereHas('evraks_giris', function ($query) {})
+                        ->where('ssn', $sertifika->ssn)
+                        ->with('evraks_giris')
+                        ->first();
+                    if ($antp_giris_sertifika->evraks_giris) {    // girilen sertifikaların ssn numaraları ile ana sertifikalar bulunuyor
+                        $antp_giris_sertifika->kalan_miktar += $sertifika->toplam_miktar;
+                        $antp_giris_sertifika->save();
+                    }
+                }
+
+
+                // Sertifikanın miktarını tekrar güncelledikten sonra silinecekler silinebilir
+                $evrak->saglikSertifikalari()
+                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
+                    ->delete();
+
+
+
+
+                // yeni eklenen sertifikalarda ana sertifikadan düşülecek
+                // değişiklik yapılmayan sertifikalarda yine bir değişiklik yapılmayacak
+                // En son yeni gelen evraklar ekleniyor
+                foreach ($yeni_sertifikalar as $sertifika) {
+
+                    $evrak->saglikSertifikalari()->create([
+                        'ssn' => $sertifika->ssn,
+                        'toplam_miktar' => $sertifika->miktar,
+                        'kalan_miktar' => $sertifika->miktar,
+                    ]);
+
+
+                    $giris_sertifikası = SaglikSertifika::whereHas('evraks_giris', function ($query) {})
+                        ->where('ssn', $sertifika->ssn)
+                        ->with('evraks_giris')
+                        ->first();
+                    if($giris_sertifikası){
+                        $giris_sertifikası->kalan_miktar -= $sertifika->miktar;
+                        $giris_sertifikası->save();
+                    }
+
+                }
+
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
@@ -1311,34 +1465,6 @@ class EvrakController extends Controller
                 $evrak_durum = $evrak->evrak_durumu;
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
-
-                //Sağlık sertifikalarını kaydetme
-                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
-
-                // Gelen sağlık sertifikalarının ID'lerini al
-                $yeni_sertifikalar = [];
-                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
-                $sertifika_ids = [];
-                foreach ($sertifikalar as $sertifika) {
-                    if (!isset($sertifika->id) || $sertifika->id == -1) {
-                        $yeni_sertifikalar[] = $sertifika;
-                    } else {
-                        $sertifika_ids[] = $sertifika->id;
-                    }
-                }
-
-                // Silinmesi gerekenleri silme
-                $evrak->saglikSertifikalari()
-                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
-                    ->delete();
-
-                foreach ($yeni_sertifikalar as $sertifika) {
-
-                    $evrak->saglikSertifikalari()->create([
-                        'ssn' => $sertifika->ssn,
-                        'miktar' => $sertifika->miktar,
-                    ]);
-                }
             } elseif ($request->type == "EvrakAntrepoCikis") {
                 $evrak = EvrakAntrepoCikis::find($request->input('id'));
 
@@ -1452,8 +1578,12 @@ class EvrakController extends Controller
                 }
             }
 
+            DB::commit();
+
             return redirect()->route('admin.evrak.index')->with('success', "Evrak başarıyla düzenlendi.");
         } catch (\Exception $e) {
+
+            DB::rollBack();     // veritabanını eski haline getirme - hata olmsı durumunda
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
     }

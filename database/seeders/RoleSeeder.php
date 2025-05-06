@@ -22,7 +22,7 @@ class RoleSeeder extends Seeder
         // Rolleri oluştur
         $adminRole = Role::create(['name' => 'admin']);
         $memurRole = Role::create(['name' => 'memur']);
-        $veterinerRole = Role::create(['name'=>'veteriner']);
+        $veterinerRole = Role::create(['name' => 'veteriner']);
 
         // İzinleri oluştur
         Permission::create(['name' => 'manage all']);
@@ -37,6 +37,15 @@ class RoleSeeder extends Seeder
         $memurRole->givePermissionTo(['edit evrak']);
 
 
+
+        User::create([
+            'name' => 'veteriner1 ',
+            'username' => 'veteriner1',
+            'email' => 'veteriner1@gmail.com',
+            'phone_number' => '1213423242',
+            'password' => bcrypt('123123')
+        ])->assignRole('veteriner');
+
         User::create([
             'name' => 'veteriner2',
             'username' => 'veteriner2',
@@ -46,10 +55,26 @@ class RoleSeeder extends Seeder
         ])->assignRole('veteriner');
 
         User::create([
-            'name' => 'veteriner1 ',
-            'username' => 'veteriner1',
+            'name' => 'veteriner3 ',
+            'username' => 'veteriner3',
             'email' => 'veteriner1@gmail.com',
-            'phone_number' => '1213423242',
+            'phone_number' => '5674565656',
+            'password' => bcrypt('123123')
+        ])->assignRole('veteriner');
+
+        User::create([
+            'name' => 'veteriner4 ',
+            'username' => 'veteriner4',
+            'email' => 'veteriner1@gmail.com',
+            'phone_number' => '6785674545',
+            'password' => bcrypt('123123')
+        ])->assignRole('veteriner');
+
+        User::create([
+            'name' => 'veteriner5 ',
+            'username' => 'veteriner5',
+            'email' => 'veteriner1@gmail.com',
+            'phone_number' => '4568906767',
             'password' => bcrypt('123123')
         ])->assignRole('veteriner');
 
@@ -81,7 +106,8 @@ class RoleSeeder extends Seeder
         Urun::create(['name' => 'Balık']);
         Urun::create(['name' => 'Süt']);
         Urun::create(['name' => 'Tohum']);
-        Urun::create(['name' => 'Muz']);
+        Urun::create(['name' => 'Küçük Baş']);
+        Urun::create(['name' => 'Büyük Baş']);
 
         $permissions = ['Yıllık İzin', 'Hastalık İzni', 'Özel İzin', 'Eğitim İzni'];
         foreach ($permissions as $permission) {

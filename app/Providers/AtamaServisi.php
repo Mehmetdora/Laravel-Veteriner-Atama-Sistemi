@@ -33,11 +33,20 @@ class AtamaServisi
     public function assignVet(string $documentType)
     {
 
+        /*
+
+        GEÇİCİ OLARAK VETERİNERLERİN ELİNDE BİTMEMİŞ EVRAK OLMA DURUMLARINA GÖRE SEÇİLMELERİ
+        KONTROLÜ KALDIRILDI, TEKRAR KONTROL EDİLMELİ...
+
+        */
+
         $now = now()->setTimezone('Europe/Istanbul'); // tam saat
 
         // 1. Aktif Veterinerleri Alma
         $veterinerler = $this->aktifVeterinerleriGetir($now);
-
+        if (empty($veterinerler)) {
+            throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+        }
 
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
         $today = $todayWithHour->format('Y-m-d');
@@ -50,9 +59,9 @@ class AtamaServisi
 
 
             // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
-            if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
+            /* if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
                 continue;
-            }
+            } */
 
 
             $workload = $vet->veterinerinBuYilkiWorkloadi();
@@ -97,9 +106,9 @@ class AtamaServisi
             foreach ($veterinerler as $vet) {
 
                 // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
-                if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
+                /* if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
                     continue;
-                }
+                } */
 
 
                 $currentWorkload_degeri = 0; // telafisi olması durumuna göre hangi değerin alınacağına karar verilecek
@@ -130,8 +139,9 @@ class AtamaServisi
 
             // 3. Rastgele bir veterineri seç
             $seciliVeteriner = $adayVeterinerler->random();
-
-
+            if (!$seciliVeteriner) {
+                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+            }
 
             // Seçilen veterinerin workload ını veterinerin telafisi olmasına göre farklı şekilde güncellenmesi gerekiyor
             if (in_array($seciliVeteriner, $telafisi_olan_vets)) {
@@ -163,6 +173,10 @@ class AtamaServisi
             $telafi = $bitmemis_telafiler[$secilenTelafi]['telafi'];
 
             $seciliVeteriner = User::find($vet_id);
+            if (!$seciliVeteriner) {
+                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+            }
+
 
             $this->updateWorkload(
                 $seciliVeteriner,
@@ -178,8 +192,6 @@ class AtamaServisi
 
             return $seciliVeteriner;
         }
-
-
     }
 
 
@@ -213,7 +225,8 @@ class AtamaServisi
     {
         // 8. Nöbet Kontrolü (17:00 sonrası)
         if ($simdikiZaman->hour >= 16) {
-            return User::role('veteriner')
+
+            $veterinerler = User::role('veteriner')
                 ->where('status', 1)
                 ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
                     $sorgu->where('startDate', '<=', $simdikiZaman)
@@ -222,14 +235,27 @@ class AtamaServisi
                 ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
                     $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
                 })->get();
+
+            if (empty($veterinerler)) {
+                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+            }
+
+            return $veterinerler;
         }
 
         // 9. Normal Çalışma Saatleri
-        return User::role('veteriner')
+
+        $veterinerler = User::role('veteriner')
             ->where('status', 1)
             ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
                 $sorgu->where('startDate', '<=', $simdikiZaman)
                     ->where('endDate', '>=', $simdikiZaman);
             })->get();
+
+        if (empty($veterinerler)) {
+            throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+        }
+
+        return $veterinerler;
     }
 }

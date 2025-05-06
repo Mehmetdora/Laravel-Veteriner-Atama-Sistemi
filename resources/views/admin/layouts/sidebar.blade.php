@@ -42,7 +42,7 @@
                         </p>
                     </a>
                 </li>
-                
+
                 <br>
                 <li class="nav-item">
                     <a href="{{ route('admin.memurs.index') }}" class="nav-link ">
@@ -53,7 +53,7 @@
                 <li class="nav-item">
                     <a href="{{ route('admin.veteriners.index') }}" class="nav-link ">
                         <i class="fas fa-syringe"></i>
-                        <p>Veterinerler</p>
+                        <p>Veteriner Hekimler</p>
                     </a>
                 </li>
 

@@ -42,6 +42,7 @@
                                             <th>Evrak Kayıt No:</th>
                                             <td>{{ $evrak->evrakKayitNo }}</td>
                                         </tr>
+
                                         @if ($type != 'EvrakAntrepoSertifika')
                                             <tr>
                                                 @if ($type == 'EvrakAntrepoVaris')
@@ -53,6 +54,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
                                         @if ($evrak->saglikSertifikalari)
                                             <tr>
                                                 <th>Veteriner Sağlık Sertifikaları:</th>
@@ -62,19 +64,27 @@
                                                             <li class="setted-sertifika"
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                                {{ $saglik_sertifika->ssn }} →
-                                                                {{ $saglik_sertifika->miktar }}
-                                                                KG
+                                                                <b>{{ $saglik_sertifika->ssn }} →
+                                                                    {{ $saglik_sertifika->toplam_miktar }}
+                                                                    KG
+                                                                </b>
+                                                                @if ($type == 'EvrakAntrepoSertifika')
+                                                                    ---- (KALAN MİKTAR →
+                                                                    {{ $saglik_sertifika->kalan_miktar }} KG)
+                                                                @endif
+
                                                             </li>
                                                         @endforeach
                                                     </ul>
                                                 </td>
                                             </tr>
                                         @endif
-                                        @if (isset($usks))
+
+                                        @if ($evrak->usks)
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
-                                                <td><b>{{ $usks->usks_no }} → {{ $usks->miktar }} KG</b></td>
+                                                <td><b>{{ $evrak->usks->usks_no }} → {{ $evrak->usks->miktar }} KG</b>
+                                                </td>
                                             </tr>
                                         @endif
 
@@ -109,6 +119,7 @@
                                                 <td>{{ $evrak->urunKG }} KG</td>
                                             </tr>
                                         @endif
+
                                         @if (isset($evrak->sevkUlke))
                                             <tr>
                                                 <th>Sevk Eden Ülke:</th>
@@ -129,7 +140,7 @@
                                         @endif
                                         @if ($evrak->aracPlakaKgs)
                                             <tr>
-                                                <th>Araç Plakaları ve Miktarları:</th>
+                                                <th>Araç Plakaları ve Miktarları::</th>
                                                 <td>
                                                     <ul id="dataList" class="list">
                                                         @foreach ($evrak->aracPlakaKgs as $plaka_kg)
@@ -143,6 +154,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
                                         @if ($evrak->urunlerinBulunduguAntrepo)
                                             <tr>
                                                 <th>Ürünlerin Bulunduğu Antrepo:</th>

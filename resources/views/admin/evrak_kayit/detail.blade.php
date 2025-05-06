@@ -37,7 +37,7 @@
                                     <tbody>
                                         <tr>
                                             <th>İşlem Türü:</th>
-                                            <td>{{ $evrak->evrak_adi() }}</td>
+                                            <td><b>{{ $evrak->evrak_adi() }}</b></td>
                                         </tr>
                                         <tr>
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
@@ -69,9 +69,15 @@
                                                             <li class="setted-sertifika"
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                                {{ $saglik_sertifika->ssn }} →
-                                                                {{ $saglik_sertifika->miktar }}
-                                                                KG
+                                                                <b>{{ $saglik_sertifika->ssn }} →
+                                                                    {{ $saglik_sertifika->toplam_miktar }}
+                                                                    KG
+                                                                </b>
+                                                                @if ($type == 'EvrakAntrepoSertifika')
+                                                                    ---- (KALAN MİKTAR →
+                                                                    {{ $saglik_sertifika->kalan_miktar }} KG)
+                                                                @endif
+
                                                             </li>
                                                         @endforeach
                                                     </ul>
@@ -79,10 +85,11 @@
                                             </tr>
                                         @endif
 
-                                        @if (isset($usks))
+                                        @if ($evrak->usks)
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
-                                                <td><b>{{ $usks->usks_no }} → {{ $usks->miktar }} KG</b></td>
+                                                <td><b>{{ $evrak->usks->usks_no }} → {{ $evrak->usks->miktar }} KG</b>
+                                                </td>
                                             </tr>
                                         @endif
 
@@ -152,6 +159,7 @@
                                                 </td>
                                             </tr>
                                         @endif
+
                                         @if ($evrak->urunlerinBulunduguAntrepo)
                                             <tr>
                                                 <th>Ürünlerin Bulunduğu Antrepo:</th>

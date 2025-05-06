@@ -14,13 +14,9 @@ class SsnKullanarakAntrepo_GVeterineriniBulma
         // Evrağın atanacağı veteriner sağlık sertifikası üzerinden Antrepo Giriş türü evrağının atandığı veterinere atanmalı
         $ss_input = $formData[$i]['vetSaglikSertifikasiNo'][0];
 
-        $ss_saved = SaglikSertifika::where('ssn', $ss_input['ssn'])
-            ->where('miktar', $ss_input['miktar'])
+        $ss_saved = SaglikSertifika::whereHas('evraks_giris', function($query){})
+            ->where('ssn', $ss_input['ssn'])
             ->first();
-
-
-
-        //$ss_saved->load('evraks_giris.veteriner.user');
 
 
 

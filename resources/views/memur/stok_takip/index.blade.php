@@ -46,9 +46,11 @@
                                                 Sağlık Sertifikası Numarası
                                             </th>
                                             <th>
-                                                Miktar(KG)
+                                                Toplam Miktar(KG)
                                             </th>
-
+                                            <th>
+                                                Kalan Miktar(KG)
+                                            </th>
                                             <th>
                                                 Evrak Türü
                                             </th>
@@ -70,9 +72,15 @@
                                                     </td>
 
                                                     <td>
-                                                        {{ $kayit['saglik_sertifika']->miktar }}
+                                                        {{ $kayit['saglik_sertifika']->toplam_miktar }}
                                                     </td>
-
+                                                    <td>
+                                                        @if ($kayit['evrak_type'] == 'Antrepo Giriş')
+                                                            {{ $kayit['saglik_sertifika']->kalan_miktar }}
+                                                        @else
+                                                            ---
+                                                        @endif
+                                                    </td>
                                                     <td>
                                                         {{ $kayit['evrak_type'] }}
                                                     </td>
@@ -104,9 +112,11 @@
                                                 Sağlık Sertifikası Numarası
                                             </th>
                                             <th>
-                                                Miktarı
+                                                Toplam Miktarı
                                             </th>
-
+                                            <th>
+                                                Kalan Miktarı
+                                            </th>
                                             <th>
                                                 Evrak Türü
                                             </th>
@@ -167,7 +177,7 @@
                         extend: 'pdfHtml5',
                         text: 'PDF',
                         exportOptions: {
-                            columns: [0, 1, 2, 3] // Tüm kolonları export eder
+                            columns: [0, 1, 2, 3, 4] // Tüm kolonları export eder
                         },
                         customize: function(doc) {
                             // Tabloyu genişletmek için sayfa genişliği ayarı
@@ -183,7 +193,7 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [0, 1, 2, 3] // Tüm kolonları dahil et
+                            columns: [0, 1, 2, 3, 4] // Tüm kolonları dahil et
                         }
                     }
                 ]

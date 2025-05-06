@@ -91,7 +91,7 @@
                                                     id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->miktar }}"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->toplam_miktar }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
@@ -298,7 +298,7 @@
                                                     required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->miktar }}"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->toplam_miktar }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
@@ -494,7 +494,8 @@
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }} KG
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ $saglik_sertifika->toplam_miktar }} KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
                                                 @endforeach
@@ -648,7 +649,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoGiris')
-                                    <form class="form" method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form class="form" method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -677,7 +679,7 @@
                                                     required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->miktar }}"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->kalan_miktar }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
@@ -817,7 +819,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoVaris')
-                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -852,8 +855,9 @@
                                             <ul id="dataList" class="list">
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }}
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ $saglik_sertifika->toplam_miktar }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -958,7 +962,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoSertifika')
-                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -987,8 +992,9 @@
                                             <ul id="dataList" class="list">
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
-                                                        data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                        {{ $saglik_sertifika->ssn }} - {{ $saglik_sertifika->miktar }}
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ $saglik_sertifika->toplam_miktar }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -1143,7 +1149,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoCikis')
-                                    <form method="post" action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">
@@ -1520,8 +1527,6 @@
         @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika' || $evrak_type == 'EvrakCanliHayvan')
 
 
-
-
             let addBtn = document.querySelector(`#addBtn`);
             let inputContainer = document.querySelector(`#inputContainer`);
             let input1 = document.querySelector(`#input1`);
@@ -1537,13 +1542,13 @@
             let netMiktar = 0;
 
             @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                var item = {
+                var item_{{ $saglik_sertifika->id }} = {
                     id: "{{ $saglik_sertifika->id }}",
                     ssn: "{{ $saglik_sertifika->ssn }}",
-                    miktar: {{ $saglik_sertifika->miktar }}
+                    miktar: {{ $saglik_sertifika->toplam_miktar }}
                 }
-                data.push(item);
-                netMiktar += {{ $saglik_sertifika->miktar }};
+                data.push(item_{{ $saglik_sertifika->id }});
+                netMiktar += {{ $saglik_sertifika->toplam_miktar }};
                 jsonDataInput.value = JSON.stringify(data);
             @endforeach
 
@@ -1555,15 +1560,19 @@
 
             const list_item = document.querySelectorAll('.setted-sertifika');
             list_item.forEach(item => {
-                item.addEventListener("click", function() {
+                item.querySelector('.delete-btn').addEventListener("click", function() {
                     const val = parseInt(item.getAttribute('data-miktar'));
                     const ssn = item.getAttribute('data-ssn');
 
-                    data = data.filter(item => item.ssn !== ssn || item.miktar !== val);
+                    const index = data.findIndex(item => item.ssn === ssn && item.miktar === val);
+                    if (index !== -1) {
+                        data.splice(index, 1); // Sadece ilk eşleşen öğeyi kaldırır
+                    }
                     netMiktar -= val;
                     if (netMiktarInput) {
                         netMiktarInput.value = netMiktar;
                     }
+
                     item.remove();
                     jsonDataInput.value = JSON.stringify(data);
 
@@ -1598,6 +1607,8 @@
                         }
                         listItem.remove();
                         jsonDataInput.value = JSON.stringify(data);
+                        console.log(jsonDataInput.value);
+
                     });
 
                     dataList.appendChild(listItem);
