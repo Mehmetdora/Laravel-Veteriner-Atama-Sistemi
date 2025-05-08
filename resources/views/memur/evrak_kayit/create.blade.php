@@ -1,5 +1,10 @@
 @extends('memur.layouts.app')
 @section('memur.customCSS')
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+
     <style>
         .inputs {
             display: flex;
@@ -142,6 +147,13 @@
 
 
 @section('memur.customJS')
+    <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/select2/js/select2.full.min.js"></script>
+
+
+
     <script>
         let selectedEvraklar = []; // Seçilen evrak türlerini ve sayılarını saklar
         let currentFormIndex = 0;
@@ -239,6 +251,16 @@
             } else {
                 alert('Hatalı İşlem! Lütfen yetkili kişi ile iletişime geçiniz!');
             }
+
+            $(function() {
+                //Initialize Select2 Elements
+                $('.select2').select2()
+
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+            });
 
         }
 
@@ -597,24 +619,16 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group">
-                                        <label for="varis_antrepo_input_${i}">Varış Antrepo(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="varis_antrepo_select_${i}">
-                                                <option selected value="">Antrepolar(Seçiniz)</option>
-                                                <hr>
-                                                <option value="Antrepo 1">Antrepo 1</option>
-                                                <option value="Antrepo 2">Antrepo 2</option>
-                                                <option value="Antrepo 3">Antrepo 3</option>
-
+                                        <div class="form-group">
+                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
+                                            <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
+                                                @if (isset($giris_antrepos))
+                                                    @foreach ($giris_antrepos as $giris_antrepo)
+                                                        <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="varisAntreposu_${i}"
-                                                id="varis_antrepo_input_${i}" placeholder="Varış Antreposu" required>
-
                                         </div>
-                                    </div>
     `;
             } else if (type == 3) {
                 return `
@@ -1158,7 +1172,6 @@
         function EventListenersFor_2_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
-            console.log(forms);
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
                 let dataList = formStep.querySelector(`#dataList_${index}`);
@@ -1168,24 +1181,11 @@
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
                 let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
 
-
-                let inputBox_varis_ant = formStep.querySelector(`#varis_antrepo_input_${index}`);
-                let selectBox_varis_ant = formStep.querySelector(`#varis_antrepo_select_${index}`);
-
                 let data = [];
                 let netMiktar = 0;
 
                 ss_miktari.addEventListener("blur", function() {
                     netMiktarInput.value = ss_miktari.value;
-                });
-
-
-
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_varis_ant.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_varis_ant.value = this.value;
-                    }
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
@@ -1510,7 +1510,6 @@
                     };
                     allFormData.push(formData);
                 }
-
             } else if (type == 1) {
                 for (let i = 0; i < totalForms; i++) {
                     let formData = {
@@ -1545,7 +1544,7 @@
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
                         girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                        varisAntreposu: document.querySelector(`[name="varisAntreposu_${i}"]`).value
+                        giris_antrepo_id: document.querySelector(`[name="giris_antrepo_id_${i}"]`).value
                     };
                     allFormData.push(formData);
                 }

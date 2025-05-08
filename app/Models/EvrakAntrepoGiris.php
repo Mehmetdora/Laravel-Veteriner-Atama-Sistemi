@@ -20,10 +20,16 @@ class EvrakAntrepoGiris extends Model
         $this->urun()->attach($urun->id);
     }
 
-    
+
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');
+    }
+
+    public function giris_antrepo(){
+
+        $antrepo = GirisAntrepo::find($this->giris_antrepo_id);
+        return $antrepo;
     }
 
     public function evrak_durumu()

@@ -1,5 +1,9 @@
 @extends('admin.layouts.app')
 @section('admin.customCSS')
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+
     <style>
         .inputs {
             display: flex;
@@ -762,26 +766,20 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Varış Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control " id="varis_antrepo_select">
-                                                    <option selected value="{{ $evrak->varisAntreposu }}">
-                                                        {{ $evrak->varisAntreposu }}</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control "
-                                                    value="{{ $evrak->varisAntreposu }}" id="varis_antrepo_input"
-                                                    type="text" name="varisAntreposu" placeholder="Varış Antreposu"
-                                                    required>
-
-                                            </div>
+                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
+                                            <select class="form-control select2" name="giris_antrepo_id"
+                                                style="width: 100%;">
+                                                @if (isset($giris_antrepos))
+                                                    @foreach ($giris_antrepos as $giris_antrepo)
+                                                        <option @if ($evrak->giris_antrepo()->name == $giris_antrepo->name) selected @endif
+                                                            value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
                                         </div>
+
+
 
                                         <div class="form-group">
                                             <label for="evrak_durum" class="control-label">Evrak Durumu</label>
@@ -1330,6 +1328,25 @@
 
 
 @section('admin.customJS')
+    <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/select2/js/select2.full.min.js"></script>
+
+    <script>
+        $(function() {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+        });
+    </script>
+
+
+
     @if ($evrak_type == 'EvrakIthalat')
         <script>
             const urun_kategori_id = document.querySelector('#urun_kategori_id');

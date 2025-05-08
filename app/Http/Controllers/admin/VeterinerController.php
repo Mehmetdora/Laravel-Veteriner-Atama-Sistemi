@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
+use App\Models\GirisAntrepo;
+
 use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
 
@@ -319,6 +321,7 @@ class VeterinerController extends Controller
         $data['evrak_type'] = $type;
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         $data['uruns'] = Urun::all();
+        $data['giris_antrepos'] = GirisAntrepo::all();
 
         return view('admin.veteriners.veteriner.evraks.edit', $data);
     }
@@ -380,7 +383,7 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'varisAntreposu' => 'required',
+                'giris_antrepo_id' => 'required',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -600,7 +603,7 @@ class VeterinerController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->giris_antrepo_id = $request->giris_antrepo_id;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama

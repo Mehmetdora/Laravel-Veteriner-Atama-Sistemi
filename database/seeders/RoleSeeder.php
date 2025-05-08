@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\EvrakTur;
+use App\Models\GirisAntrepo;
 use App\Models\Izin;
 use App\Models\Urun;
 use App\Models\User;
@@ -108,6 +109,12 @@ class RoleSeeder extends Seeder
         Urun::create(['name' => 'Tohum']);
         Urun::create(['name' => 'Küçük Baş']);
         Urun::create(['name' => 'Büyük Baş']);
+
+
+        GirisAntrepo::create(['name' => 'Antrepo 1']);
+        GirisAntrepo::create(['name' => 'Antrepo 2']);
+        GirisAntrepo::create(['name' => 'Antrepo 3']);
+        GirisAntrepo::create(['name' => 'Antrepo 4']);
 
         $permissions = ['Yıllık İzin', 'Hastalık İzni', 'Özel İzin', 'Eğitim İzni'];
         foreach ($permissions as $permission) {

@@ -21,6 +21,7 @@ use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\EvrakAntrepoSertifika;
+use App\Models\GirisAntrepo;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\YeniYilWorkloadsGuncelleme;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
@@ -112,6 +113,7 @@ class EvrakController extends Controller
     {
 
         $data['uruns'] = Urun::all();
+        $data['giris_antrepos'] = GirisAntrepo::all();
         return view('memur.evrak_kayit.create', $data);
     }
 
@@ -216,7 +218,7 @@ class EvrakController extends Controller
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
                     'girisGumruk' => 'required',
-                    'varisAntreposu' => 'required',
+                    'giris_antrepo_id' => 'required',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -498,7 +500,7 @@ class EvrakController extends Controller
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
-                    $yeni_evrak->varisAntreposu = $formData[$i]["varisAntreposu"];
+                    $yeni_evrak->giris_antrepo_id = $formData[$i]["giris_antrepo_id"];
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama

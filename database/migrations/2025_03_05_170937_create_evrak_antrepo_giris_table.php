@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('orjinUlke');
             $table->string('aracPlaka');
             $table->string('girisGumruk');
-            $table->string('varisAntreposu');
+            $table->foreignId('giris_antrepo_id')->constrained('giris_antrepos')->onDelete('cascade');
             $table->integer('difficulty_coefficient')->default(5);
 
             $table->timestamps();

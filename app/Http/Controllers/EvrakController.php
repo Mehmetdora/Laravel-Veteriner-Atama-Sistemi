@@ -22,6 +22,7 @@ use App\Models\EvrakAntrepoVaris;
 use App\Models\DailyTotalWorkload;
 use Illuminate\Support\Facades\DB;
 use App\Models\EvrakAntrepoSertifika;
+use App\Models\GirisAntrepo;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\YeniYilWorkloadsGuncelleme;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
@@ -116,6 +117,7 @@ class EvrakController extends Controller
 
     public function create()
     {
+        $data['giris_antrepos'] = GirisAntrepo::all();
         $data['uruns'] = Urun::all();
         return view('admin.evrak_kayit.create', $data);
     }
@@ -146,7 +148,6 @@ class EvrakController extends Controller
 
         //Evrak Kaydından önce yeni yıl kontrolü yapılarak workloadları duruma göre güncelleme
         $this->yeni_yil_workloads_guncelleme->YeniYilWorkloadsGuncelleme();
-
 
 
         $today = now()->setTimezone('Europe/Istanbul'); // tam saat
@@ -221,7 +222,7 @@ class EvrakController extends Controller
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
                     'girisGumruk' => 'required',
-                    'varisAntreposu' => 'required',
+                    'giris_antrepo_id' => 'required',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -504,7 +505,7 @@ class EvrakController extends Controller
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
-                    $yeni_evrak->varisAntreposu = $formData[$i]["varisAntreposu"];
+                    $yeni_evrak->giris_antrepo_id = $formData[$i]["giris_antrepo_id"];
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -985,6 +986,7 @@ class EvrakController extends Controller
         $data['evrak_type'] = $type;
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         $data['uruns'] = Urun::all();
+        $data['giris_antrepos'] = GirisAntrepo::all();
 
         return view('admin.evrak_kayit.edit', $data);
     }
@@ -1046,7 +1048,7 @@ class EvrakController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'varisAntreposu' => 'required',
+                'giris_antrepo_id' => 'required',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1126,6 +1128,7 @@ class EvrakController extends Controller
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
+
 
         DB::beginTransaction();
 
@@ -1282,7 +1285,7 @@ class EvrakController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->varisAntreposu = $request->varisAntreposu;
+                $evrak->giris_antrepo_id = $request->giris_antrepo_id;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama

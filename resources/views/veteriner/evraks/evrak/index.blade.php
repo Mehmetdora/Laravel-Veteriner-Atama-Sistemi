@@ -83,9 +83,15 @@
                                                             <li class="setted-sertifika"
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
-                                                                {{ $saglik_sertifika->ssn }} →
-                                                                {{ $saglik_sertifika->miktar }}
-                                                                KG
+                                                                <b>{{ $saglik_sertifika->ssn }} →
+                                                                    {{ $saglik_sertifika->toplam_miktar }}
+                                                                    KG
+                                                                </b>
+                                                                @if ($type == 'EvrakAntrepoSertifika')
+                                                                    ---- (KALAN MİKTAR →
+                                                                    {{ $saglik_sertifika->kalan_miktar }} KG)
+                                                                @endif
+
                                                             </li>
                                                         @endforeach
                                                     </ul>
@@ -172,15 +178,15 @@
                                                 <td>{{ $evrak->urunlerinBulunduguAntrepo }}</td>
                                             </tr>
                                         @endif
-                                        @if ($evrak->girisAntreposu)
+                                        @if ($evrak->giris_antrepo())
                                             <tr>
                                                 <th>Giriş Antreposu:</th>
-                                                <td>{{ $evrak->girisAntreposu }}</td>
+                                                <td>{{ $evrak->giris_antrepo()->name }}</td>
                                             </tr>
                                         @endif
                                         @if ($evrak->cikisAntreposu)
                                             <tr>
-                                                <th>Giriş Antreposu:</th>
+                                                <th>Çıkış Antreposu:</th>
                                                 <td>{{ $evrak->cikisAntreposu }}</td>
                                             </tr>
                                         @endif
