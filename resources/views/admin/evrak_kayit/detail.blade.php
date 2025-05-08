@@ -166,10 +166,10 @@
                                                 <td>{{ $evrak->urunlerinBulunduguAntrepo }}</td>
                                             </tr>
                                         @endif
-                                        @if ($evrak->giris_antrepo())
+                                        @if ($evrak->giris_antrepo)
                                             <tr>
                                                 <th>Giriş Antreposu:</th>
-                                                <td>{{ $evrak->giris_antrepo()->name }}</td>
+                                                <td>{{ $evrak->giris_antrepo->name }}</td>
                                             </tr>
                                         @endif
                                         @if ($evrak->cikisAntreposu)

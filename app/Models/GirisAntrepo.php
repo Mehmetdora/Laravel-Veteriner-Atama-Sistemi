@@ -8,7 +8,11 @@ class GirisAntrepo extends Model
 {
     protected $fillable = ['name'];
 
-    public function evrak_antrepo_giris(){
-        return $this->belongsTo(EvrakAntrepoGiris::class);
+    public function evraks_antrepo_giris(){
+
+        return $this->hasMany(EvrakAntrepoGiris::class);
+
+        $evraks_antrepo_giris = EvrakAntrepoGiris::where('giris_antrepo_id',$this->id)->get();
+        return $evraks_antrepo_giris;
     }
 }

@@ -67,7 +67,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     // Antrepo Stok Takip İşlemleri
     Route::controller(AntrepoStokTakipController::class)->group(function () {
 
-        Route::get('/admin/antrepo-stok-takip/liste', 'index')->name('admin.antrepo_stok_takip.index');
+        Route::get('/admin/antrepo-stok-takip/antrepolar/liste', 'index')->name('admin.antrepo_stok_takip.index');
+        Route::get('/admin/antrepo-stok-takip/antrepolar/{id}/detay', 'antrepo_detail')->name('admin.antrepo_stok_takip.detail');
     });
 
     // Ürün İşlemleri

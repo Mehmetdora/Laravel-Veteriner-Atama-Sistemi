@@ -771,7 +771,7 @@
                                                 style="width: 100%;">
                                                 @if (isset($giris_antrepos))
                                                     @foreach ($giris_antrepos as $giris_antrepo)
-                                                        <option @if ($evrak->giris_antrepo()->name == $giris_antrepo->name) selected @endif
+                                                        <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
                                                             value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}
                                                         </option>
                                                     @endforeach

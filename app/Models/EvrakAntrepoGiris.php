@@ -28,6 +28,8 @@ class EvrakAntrepoGiris extends Model
 
     public function giris_antrepo(){
 
+        return $this->belongsTo(GirisAntrepo::class);
+
         $antrepo = GirisAntrepo::find($this->giris_antrepo_id);
         return $antrepo;
     }

@@ -5,28 +5,66 @@ namespace App\Http\Controllers\admin;
 use Illuminate\Http\Request;
 use App\Models\SaglikSertifika;
 use App\Http\Controllers\Controller;
+use App\Models\GirisAntrepo;
 
 class AntrepoStokTakipController extends Controller
 {
     public function index()
     {
-
-
         /*
-
         Bu sayfada sadece antrepolar listelenecek
-
         */
 
-         /* sorun sağlık sertifikaları listelenirken sıralanamaması, nedeni ise evrak düzenlenirken
-         her düzenlemede tüm sağlık sertifikaları silinip baştan kaydedilmesi(sync) , bunu düzeltmek
-         için ise hepsini silmeden sadece silinenleri silip yenileri ekleyerek düzeltilecek. */
-        $saglik_s = SaglikSertifika::with(
-            ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_sertifika','evraks_canli_hayvan']
-        )->orderBy('created_at', 'desc')->get(); // Veritabanında sıralama yapılmadı, map ile sıralanacak
+        $antrepos = GirisAntrepo::all();
+
+        $antrepos = $antrepos->map(function ($antrepo) {
+            $sertifika_count = 0;
+
+            if ($antrepo->evraks_antrepo_giris->isNotEmpty()) {
+                $evraks = $antrepo->evraks_antrepo_giris;
+                foreach ($evraks as $evrak) {
+                    $sertifika_count += count($evrak->saglikSertifikalari);
+                }
+            }
+
+            return [
+                'antrepo' => $antrepo,
+                'sertifika_count' => $sertifika_count,
+            ];
+        });
+
+        $data['antrepos'] = $antrepos;
+
+
+
+        return view('admin.antrepo_stok_takip.index', $data);
+    }
+
+
+    public function antrepo_detail($id)
+    {
+
+        $antrepo = GirisAntrepo::find($id);
+        $sertifikas = [];
+
+        // seçilen antrepoya ait tüm sağlık sertifikarllını al
+        if ($antrepo->evraks_antrepo_giris->isNotEmpty()) {
+            $evraks = $antrepo->evraks_antrepo_giris;
+            foreach ($evraks as $evrak) {
+
+                // Evrağa ait tüm sertifikalarını al
+                if ($evrak->saglikSertifikalari->isNotEmpty()) {
+                    foreach ($evrak->saglikSertifikalari as $sertifika) {
+                        $sertifikas[] = $sertifika;
+                    }
+                }
+            }
+        }
+
+        $collection_s = collect($sertifikas);
 
         // Sağlık sertifikalarının bağlı olduğu tek evrağı bulma ve sıralama işlemi
-        $saglik_s = $saglik_s->map(function ($sertifika) {
+        $collection_s = $collection_s->map(function ($sertifika) use($antrepo) {
             $evrak = null;
             $evrak_type = null;
 
@@ -61,11 +99,10 @@ class AntrepoStokTakipController extends Controller
         });
 
         // Sağlık sertifikalarını `created_at` alanına göre azalan sırayla sıralama
-        $data['saglik_s'] = $saglik_s;
+        $data['kayitlar'] = $collection_s;
+        $data['antrepo'] = $antrepo;
 
+        return view('admin.antrepo_stok_takip.antrepo_detail', $data);
 
-
-
-        return view('admin.stok_takip.index', $data);
     }
 }
