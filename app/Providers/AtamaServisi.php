@@ -237,6 +237,10 @@ class AtamaServisi
                     $sorgu->where('startDate', '<=', $simdikiZaman)
                         ->where('endDate', '>=', $simdikiZaman);
                 })
+                ->whereDoesntHave('gemi_izins', function ($sorgu) use ($simdikiZaman) {
+                    $sorgu->where('start_date', '<=', $simdikiZaman)
+                        ->where('end_date', '>=', $simdikiZaman);
+                })
                 ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
                     $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
                 })->get();
@@ -255,7 +259,11 @@ class AtamaServisi
             ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
                 $sorgu->where('startDate', '<=', $simdikiZaman)
                     ->where('endDate', '>=', $simdikiZaman);
-            })->get();
+            })
+            ->whereDoesntHave('gemi_izins', function ($sorgu) use ($simdikiZaman) {
+                    $sorgu->where('start_date', '<=', $simdikiZaman)
+                        ->where('end_date', '>=', $simdikiZaman);
+                })->get();
 
         if (empty($veterinerler)) {
             throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");

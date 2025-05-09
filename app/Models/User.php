@@ -69,6 +69,11 @@ class User extends Authenticatable
         return $this->hasMany(Nobet::class, 'user_id');
     }
 
+    public function gemi_izins()
+    {
+        return $this->hasMany(GemiIzni::class, 'veteriner_id');
+    }
+
     public function workloads()
     {
         return $this->hasMany(WorkLoad::class, 'vet_id');

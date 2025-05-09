@@ -11,6 +11,7 @@ use App\Models\EvrakDurum;
 use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
+use App\Models\GirisAntrepo;
 use Illuminate\Http\Request;
 use App\Models\SaglikSertifika;
 use App\Providers\AtamaServisi;
@@ -20,9 +21,10 @@ use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\EvrakCanliHayvanGemi;
 use App\Models\EvrakAntrepoSertifika;
-use App\Models\GirisAntrepo;
 use Illuminate\Support\Facades\Validator;
+use App\Providers\CanliHGemiIzniOlusturma;
 use App\Providers\YeniYilWorkloadsGuncelleme;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
@@ -40,10 +42,12 @@ class EvrakController extends Controller
     protected $atamaServisi;
     protected $yeni_yil_workloads_guncelleme;
     protected $atanacak_veteriner;
+    protected $gemi_izni_olusturma;
 
-    function __construct(YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+
+    function __construct(CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
-
+        $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
         $this->daily_total_worklaod_update_create_servisi = $daily_total_workload_update_orcreate_service;
@@ -114,6 +118,7 @@ class EvrakController extends Controller
 
         $data['uruns'] = Urun::all();
         $data['giris_antrepos'] = GirisAntrepo::actives();
+        $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         return view('memur.evrak_kayit.create', $data);
     }
 
@@ -301,6 +306,18 @@ class EvrakController extends Controller
                     $errors[] = $validator->errors()->all();
                 }
             }
+        } elseif ($formData[0]['evrak_turu'] == 6) {
+            for ($i = 1; $i < count($formData); $i++) {
+                $validator = Validator::make($formData[$i], [
+                    'hayvan_sayisi' => 'required',
+                    'veteriner_id' => 'required',
+                    'start_date' => 'required',
+                    'day_count' => 'required',
+                ]);
+                if ($validator->fails()) {
+                    $errors[] = $validator->errors()->all();
+                }
+            }
         }
 
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
@@ -322,27 +339,29 @@ class EvrakController extends Controller
         // 6-> Canlı Hayvan
         switch ($formData[0]['evrak_turu']) {
             case 0:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat', $gelen_evrak_sayisi);
                 break;
             case 1:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit', $gelen_evrak_sayisi);
                 break;
             case 2:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris', $gelen_evrak_sayisi);
                 break;
             case 3:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis', $gelen_evrak_sayisi);
                 break;
             case 4:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika', $gelen_evrak_sayisi);
                 break;
             case 5:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis', $gelen_evrak_sayisi);
                 break;
             case 6:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan',$gelen_evrak_sayisi);
+                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan', $gelen_evrak_sayisi);
                 break;
-
+            case 7;
+                // Veteriner seçmeye gerek yok
+                break;
 
             default:
                 return redirect()->back()->withErrors($errors)->with('error', 'Hatalı evrak türü seçiminden dolayı evrak oluşturulamamıştır, Lütfen tekrar deneyiniz!');
@@ -925,6 +944,43 @@ class EvrakController extends Controller
                     // Günlük gelen evrakların toplam workload değerini tutma servisi
                     $this->daily_total_worklaod_update_create_servisi->updateOrCreateTodayWorkload('canli_hayvan');
 
+
+                    $saved_count++; // Başarıyla eklenen evrak sayısını artır
+                }
+            } elseif ($formData[0]['evrak_turu'] == 7) {
+                for ($i = 1; $i < count($formData); $i++) {
+
+                    $yeni_evrak = new EvrakCanliHayvanGemi;
+
+                    $yeni_evrak->hayvan_sayisi = $formData[$i]["hayvan_sayisi"];
+                    $yeni_evrak->start_date = Carbon::createFromFormat('m/d/Y', $formData[$i]["start_date"]);
+                    $yeni_evrak->day_count = (int)$formData[$i]["day_count"];
+                    $yeni_evrak->save();
+
+                    // İlişkili modelleri bağlama
+
+
+
+                    // Veteriner ile evrak kaydetme
+                    $user_evrak = new UserEvrak;
+                    $user_evrak->user_id = $formData[$i]["veteriner_id"];
+                    $user_evrak->evrak()->associate($yeni_evrak);
+                    $saved = $user_evrak->save();
+                    if (!$saved) {
+                        throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
+                    }
+
+                    // Evrak durumunu kaydetme
+                    $evrak_durum = new EvrakDurum;
+                    $yeni_evrak->evrak_durumu()->save($evrak_durum);
+
+
+                    // Gemi izni oluşturma
+                    $this->gemi_izni_olusturma->canli_h_gemi_izin_olustur(
+                        $formData[$i]["veteriner_id"],
+                        $yeni_evrak->start_date,
+                        (int)$formData[$i]["day_count"]
+                    );
 
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır
                 }

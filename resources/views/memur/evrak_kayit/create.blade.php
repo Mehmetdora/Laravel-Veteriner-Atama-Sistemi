@@ -3,6 +3,7 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.css">
 
 
     <style>
@@ -73,6 +74,7 @@
                                 <option value="4">Antrepo Setifika</option>
                                 <option value="5">Antrepo Çıkış</option>
                                 <option value="6">Canlı Hayvan</option>
+                                <option value="7">Canlı Hayvan(GEMİ)</option>
                             </select>
                         </div>
                         <div class="col-sm-6 justify-content-end">
@@ -149,10 +151,12 @@
 @section('memur.customJS')
     <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/moment/moment.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/select2/js/select2.full.min.js"></script>
-
-
+    <script src="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <script>
         let selectedEvraklar = []; // Seçilen evrak türlerini ve sayılarını saklar
@@ -171,6 +175,13 @@
                 });
                 updateEvrakList();
             }
+
+            $(function() {
+                //Date picker
+                $('#reservationdate').datetimepicker({
+                    format: 'L'
+                });
+            });
         }
 
         function updateEvrakList() {
@@ -186,6 +197,7 @@
                     'Antrepo Sertifika',
                     'Antrepo Çıkış',
                     'Canlı Hayvan',
+                    'Canlı Hayvan(GEMİ)',
                 ];
 
                 let li = document.createElement("li");
@@ -203,7 +215,11 @@
                 };
                 li.appendChild(removeBtn);
                 list.appendChild(li);
+
+
             });
+
+
         }
 
         function createForms() {
@@ -241,6 +257,8 @@
                     EventListenersFor_5_ToForm();
                 } else if (ilk_evrak.type == 6) {
                     EventListenersFor_6_ToForm();
+                } else if (ilk_evrak.type == 7) {
+                    EventListenersFor_7_ToForm();
                 } else {
                     alert("evrak Türleri hatası createForm");
                 }
@@ -261,6 +279,12 @@
                     theme: 'bootstrap4'
                 })
             });
+
+
+
+
+
+
 
         }
 
@@ -396,6 +420,8 @@
 
                                         </div>
                                     </div>
+
+
     `;
             } else if (type == 1) {
                 return `
@@ -619,16 +645,18 @@
                                         </div>
                                     </div>
 
-                                        <div class="form-group">
-                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
-                                            <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
-                                                @if (isset($giris_antrepos))
-                                                    @foreach ($giris_antrepos as $giris_antrepo)
-                                                        <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
+
+
+                                    <div class="form-group">
+                                        <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
+                                        <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
+                                            @if (isset($giris_antrepos))
+                                                @foreach ($giris_antrepos as $giris_antrepo)
+                                                    <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
     `;
             } else if (type == 3) {
                 return `
@@ -1047,6 +1075,41 @@
                     </div>
                 </div>
                 `;
+            } else if (type == 7) {
+                return `
+                <div class="form-group">
+                    <label for="hayvan_sayisi_${i}" class="control-label">Hayvan Sayısı:*</label>
+                    <input id="hayvan_sayisi_${i}" oninput="formatNumber(this)"  name="hayvan_sayisi_${i}" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="veteriner_id_${i}" class="control-label">Veteriner:*</label>
+                    <select class="form-control"
+                        name="veteriner_id_${i}" id="veteriner_id_${i}" required>
+                        @if (isset($veteriners))
+                            @foreach ($veteriners as $veteriner)
+                                <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
+                                </option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Başlangıç Tarihi:*</label>
+                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                        <input name="start_date_${i}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="day_count_${i}" class="control-label">Kaç Günlük:*(Tam Sayı Giriniz!)</label>
+                    <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control" required />
+                </div>
+                `;
             }
         }
 
@@ -1447,6 +1510,21 @@
             });
         }
 
+        function EventListenersFor_7_ToForm() {
+
+            const forms = document.querySelectorAll(".form-step");
+            document.querySelectorAll(".form-step").forEach((formStep, index) => {
+                let hayvan_sayisi = formStep.querySelector(`#hayvan_sayisi_${index}`);
+                let veteriner_id = formStep.querySelector(`#veteriner_id_${index}`);
+                let start_date = formStep.querySelector(`#start_date_${index}`);
+                let day_count = formStep.querySelector(`#day_count_${index}`);
+
+
+            });
+
+
+        }
+
 
         function nextForm() {
             let forms = document.querySelectorAll(".form-step");
@@ -1618,6 +1696,16 @@
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
                         cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                    };
+                    allFormData.push(formData);
+                }
+            } else if (type == 7) {
+                for (let i = 0; i < totalForms; i++) {
+                    let formData = {
+                        hayvan_sayisi: document.querySelector(`#hayvan_sayisi_${i}`).value,
+                        veteriner_id: document.querySelector(`#veteriner_id_${i}`).value,
+                        start_date: document.querySelector(`[name="start_date_${i}"]`).value,
+                        day_count: document.querySelector(`[name="day_count_${i}"]`).value,
                     };
                     allFormData.push(formData);
                 }
