@@ -321,7 +321,7 @@ class VeterinerController extends Controller
         $data['evrak_type'] = $type;
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         $data['uruns'] = Urun::all();
-        $data['giris_antrepos'] = GirisAntrepo::all();
+        $data['giris_antrepos'] = GirisAntrepo::actives();
 
         return view('admin.veteriners.veteriner.evraks.edit', $data);
     }

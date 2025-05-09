@@ -74,6 +74,13 @@
                 </li>
 
                 <li class="nav-item">
+                    <a href="{{ route('admin.antrepos.index') }}" class="nav-link ">
+                        <i class="fas fa-file"></i>
+                        <p>Antrepolar</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a href="{{ route('admin.nobet.veteriner.index') }}" class="nav-link">
                         <i class="far fa-calendar"></i>
                         <p>Veteriner Nöbet Takvimi</p>

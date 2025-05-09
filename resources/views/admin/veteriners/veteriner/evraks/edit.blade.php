@@ -769,11 +769,23 @@
                                             <select class="form-control select2" name="giris_antrepo_id"
                                                 style="width: 100%;">
                                                 @if (isset($giris_antrepos))
-                                                    @foreach ($giris_antrepos as $giris_antrepo)
-                                                        <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
-                                                            value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}
+                                                    @if (!in_array($evrak->giris_antrepo->id, Arr::pluck($giris_antrepos, 'id')))
+                                                        <option selected value="{{ $evrak->giris_antrepo->id }}">
+                                                            {{ $evrak->giris_antrepo->name }}
                                                         </option>
-                                                    @endforeach
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option value="{{ $giris_antrepo->id }}">
+                                                                {{ $giris_antrepo->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    @else
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
+                                                                value="{{ $giris_antrepo->id }}">
+                                                                {{ $giris_antrepo->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
                                                 @endif
                                             </select>
                                         </div>
@@ -1439,14 +1451,6 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoGiris')
         <script>
-            let inputBox_varis_ant = document.querySelector(`#varis_antrepo_input`);
-            let selectBox_varis_ant = document.querySelector(`#varis_antrepo_select`);
-            selectBox_varis_ant.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox_varis_ant.value = this.value;
-                }
-            });
-
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
             var data_id2 = urun_kategori_id.getAttribute('data-id');
             var options2 = urun_kategori_id.childNodes;

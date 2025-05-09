@@ -113,7 +113,7 @@ class EvrakController extends Controller
     {
 
         $data['uruns'] = Urun::all();
-        $data['giris_antrepos'] = GirisAntrepo::all();
+        $data['giris_antrepos'] = GirisAntrepo::actives();
         return view('memur.evrak_kayit.create', $data);
     }
 

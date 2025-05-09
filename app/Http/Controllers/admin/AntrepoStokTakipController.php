@@ -15,7 +15,7 @@ class AntrepoStokTakipController extends Controller
         Bu sayfada sadece antrepolar listelenecek
         */
 
-        $antrepos = GirisAntrepo::all();
+        $antrepos = GirisAntrepo::actives();
 
         $antrepos = $antrepos->map(function ($antrepo) {
             $sertifika_count = 0;

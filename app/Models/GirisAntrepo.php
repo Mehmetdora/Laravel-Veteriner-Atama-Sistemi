@@ -11,8 +11,11 @@ class GirisAntrepo extends Model
     public function evraks_antrepo_giris(){
 
         return $this->hasMany(EvrakAntrepoGiris::class);
+    }
 
-        $evraks_antrepo_giris = EvrakAntrepoGiris::where('giris_antrepo_id',$this->id)->get();
-        return $evraks_antrepo_giris;
+
+    // Static bir fonk yaparak direkt model üzerinden erişilebilir bir fonk haline geldi
+    public static function actives(){
+        return self::where('is_active',1)->get();
     }
 }

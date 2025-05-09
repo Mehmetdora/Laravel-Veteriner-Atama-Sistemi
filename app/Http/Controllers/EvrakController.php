@@ -117,7 +117,7 @@ class EvrakController extends Controller
 
     public function create()
     {
-        $data['giris_antrepos'] = GirisAntrepo::all();
+        $data['giris_antrepos'] = GirisAntrepo::actives();
         $data['uruns'] = Urun::all();
         return view('admin.evrak_kayit.create', $data);
     }
@@ -986,7 +986,7 @@ class EvrakController extends Controller
         $data['evrak_type'] = $type;
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
         $data['uruns'] = Urun::all();
-        $data['giris_antrepos'] = GirisAntrepo::all();
+        $data['giris_antrepos'] = GirisAntrepo::actives();
 
         return view('admin.evrak_kayit.edit', $data);
     }

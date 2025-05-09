@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\EvrakController;
 use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\AntrepoController;
 use App\Http\Controllers\memur\MemurController;
 use App\Http\Controllers\admin\EvrakTurController;
 use App\Http\Controllers\admin\izin\MemurIzinController;
@@ -69,6 +70,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/antrepo-stok-takip/antrepolar/liste', 'index')->name('admin.antrepo_stok_takip.index');
         Route::get('/admin/antrepo-stok-takip/antrepolar/{id}/detay', 'antrepo_detail')->name('admin.antrepo_stok_takip.detail');
+    });
+
+    // Antrepo İşlemleri
+    Route::controller(AntrepoController::class)->group(function(){
+
+        Route::get('/admin/antrepolar/liste', 'index')->name('admin.antrepos.index');
+        Route::get('/admin/antrepolar/{id}/sil', 'delete')->name('admin.antrepos.delete');
+
+        Route::get('/admin/antrepolar/{id}/düzenle', 'edit')->name('admin.antrepos.edit');
+        Route::post('/admin/antrepolar/düzenlendi', 'edited')->name('admin.antrepos.edited');
+
+        Route::get('/admin/antrepolar/ekle', 'create')->name('admin.antrepos.create');
+        Route::post('/admin/antrepolar/eklendi', 'created')->name('admin.antrepos.created');
+
+
     });
 
     // Ürün İşlemleri
