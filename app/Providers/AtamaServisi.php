@@ -13,9 +13,11 @@ class AtamaServisi
 
     protected $veteriner_evrak_durumu_kontrolu;
     protected $temp_workloads_updater;
+    protected $vet_gemi_izin_kontrolu;
 
-    function __construct(TelafiBoyuncaTempWorkloadGuncelleme $telafi_boyunca_temp_workload_guncelleme, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
+    function __construct(VetCanliHIzinKontrol $vetCanliHIzinKontrol,TelafiBoyuncaTempWorkloadGuncelleme $telafi_boyunca_temp_workload_guncelleme, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
     {
+        $this->vet_gemi_izin_kontrolu = $vetCanliHIzinKontrol;
         $this->temp_workloads_updater = $telafi_boyunca_temp_workload_guncelleme;
         $this->veteriner_evrak_durumu_kontrolu = $veterinerEvrakDurumularıKontrolu;
     }
@@ -62,6 +64,11 @@ class AtamaServisi
             /* if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
                 continue;
             } */
+
+            // Veteriner canli hayvan gemide mi kontrolü
+            if($this->vet_gemi_izin_kontrolu->izin_var_mi($vet->id)){
+                continue;   // izinli ise geç
+            }
 
 
             $workload = $vet->veterinerinBuYilkiWorkloadi();

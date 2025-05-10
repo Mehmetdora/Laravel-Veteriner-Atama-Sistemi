@@ -73,10 +73,10 @@
                                                     </td>
                                                     <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }}</td>
                                                     <td>{{ $evrak->evrak_adi() }}</td>
-                                                    <td>{{ $evrak->evrakKayitNo }}</td>
-                                                    <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
-                                                    <td>{{ $evrak->urunAdi }}</td>
-                                                    <td>{{ $evrak->gtipNo }}</td>
+                                                    <td>{{ $evrak->evrakKayitNo ?? '---' }}</td>
+                                                    <td>{{ $evrak->vekaletFirmaKisiAdi ?? '---' }}</td>
+                                                    <td>{{ $evrak->urunAdi ?? '---' }}</td>
+                                                    <td>{{ $evrak->gtipNo ?? '---' }}</td>
                                                     <td>{{ number_format($evrak->urunKG ?? 0, 2, ',', '.') }}</td>
                                                     <td>{{ $evrak->usks?->usks_no ?? '---' }}</td>
                                                     <td>{{ $evrak->veteriner->user?->name ?? 'Atanmamış(Hata)' }}</td>

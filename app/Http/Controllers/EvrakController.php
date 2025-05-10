@@ -24,7 +24,9 @@ use App\Models\DailyTotalWorkload;
 use Illuminate\Support\Facades\DB;
 use App\Models\EvrakAntrepoSertifika;
 use App\Models\EvrakCanliHayvanGemi;
+use App\Models\GemiIzni;
 use App\Models\GirisAntrepo;
+use App\Providers\CanliHGemiIzinDuzenleme;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\YeniYilWorkloadsGuncelleme;
 use App\Providers\VeterinerEvrakDurumularıKontrolu;
@@ -38,6 +40,7 @@ class EvrakController extends Controller
 {
 
     protected $gemi_izni_olusturma;
+    protected $gemi_izni_duzenleme;
     protected $ssn_ile_antrepo_giris_vet_bulma_servisi;
     protected $veteriner_evrak_durum_kontrol_servisi;
     protected $daily_total_worklaod_update_create_servisi;
@@ -49,9 +52,10 @@ class EvrakController extends Controller
     protected $evrak_vet_degisirse_worklaods_updater;
 
 
-    function __construct(CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
         $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
+        $this->gemi_izni_duzenleme = $canliHGemiIzniDuzenleme;
         $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
         $this->temp_worloads_updater = $telafiBoyuncaTempWorkloadGuncelleme;
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
@@ -73,7 +77,8 @@ class EvrakController extends Controller
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
             ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get());
+            ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama
         $evraks_all = $evraks_all->sortByDesc('created_at');
@@ -109,6 +114,9 @@ class EvrakController extends Controller
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 
@@ -996,7 +1004,7 @@ class EvrakController extends Controller
                         if ($workload->temp_workload != 0) {
                             $workload->temp_workload += 150;
                         }
-                    }elseif($yeni_evrak->hayvan_sayisi > 15000){
+                    } elseif ($yeni_evrak->hayvan_sayisi > 15000) {
                         $workload->year_workload += 300;
                         $workload->total_workload += 300;
                         if ($workload->temp_workload != 0) {
@@ -1054,6 +1062,11 @@ class EvrakController extends Controller
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $evrak = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+            $data['evrak'] = $evrak;
+            $data['start_date'] = Carbon::parse($evrak->start_date)->format('m/d/Y');
         }
 
 
@@ -1197,7 +1210,18 @@ class EvrakController extends Controller
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
+        } elseif ($request->type == "EvrakCanliHayvanGemi") {
+            $validator = Validator::make($request->all(), [
+                'hayvan_sayisi' => 'required',
+                'veteriner_id' => 'required',
+                'start_date' => 'required',
+                'day_count' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
         }
+
 
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
         if (!empty($errors)) {
@@ -1719,6 +1743,91 @@ class EvrakController extends Controller
                         'miktar' => $sertifika->miktar,
                     ]);
                 }
+            } elseif ($request->type == "EvrakCanliHayvanGemi") {
+
+                $old_start_date = null;
+                $old_vet_id = null;
+                $old_hayvan_s = null;
+
+
+                $evrak = EvrakCanliHayvanGemi::find($request->id);
+                $old_start_date = $evrak->start_date;
+                $old_vet_id = $evrak->veteriner->user->id;
+                $old_hayvan_s = $evrak->hayvan_sayisi;
+
+                $evrak->hayvan_sayisi = $request->hayvan_sayisi;
+                $evrak->start_date = Carbon::createFromFormat('m/d/Y', $request->start_date);
+                $evrak->day_count = (int)$request->day_count;
+                $evrak->save();
+
+                // İlişkili modelleri bağlama
+
+
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = $request->veteriner_id;
+                $user_evrak->evrak()->associate($evrak);
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
+                }
+
+                // Evrak durumu değişmeyecek , veterinerler işi bitirince bitmiş olacak
+
+
+                // Gemi izni düzenleme
+                $gemi_izin = GemiIzni::where('veteriner_id', $old_vet_id)
+                    ->where('start_date', $old_start_date)->first();
+
+                $this->gemi_izni_duzenleme->canli_h_gemi_izin_düzenle(
+                    $gemi_izin,
+                    $request->veteriner_id,
+                    Carbon::createFromFormat('m/d/Y', $request->start_date),
+                    (int)$request->day_count
+                );
+
+
+                // Veterinerin worklaod güncelleme
+                if ($request->veteriner_id != $old_vet_id) {  // veteriner değişmişse
+                    // eski veterinerin workload ını azalt, yenisini arttır.
+
+                    $old_veteriner = User::find($old_vet_id);
+                    $old_workload = $old_veteriner->veterinerinBuYilkiWorkloadi();
+                    if ($old_hayvan_s < 15000) {
+                        $old_workload->year_workload -= 150;
+                        $old_workload->total_workload -= 150;
+                        if ($old_workload->temp_workload != 0) {
+                            $old_workload->temp_workload -= 150;
+                        }
+                    } elseif ($old_hayvan_s > 15000) {
+                        $old_workload->year_workload -= 300;
+                        $old_workload->total_workload -= 300;
+                        if ($old_workload->temp_workload != 0) {
+                            $old_workload->temp_workload -= 300;
+                        }
+                    }
+                    $old_workload->save();
+
+
+                    $veteriner = User::find($request->veteriner_id);
+                    $workload = $veteriner->veterinerinBuYilkiWorkloadi();
+                    if ($request->hayvan_sayisi > 0 && $request->hayvan_sayisi <= 15000) {
+                        $workload->year_workload += 150;
+                        $workload->total_workload += 150;
+                        if ($workload->temp_workload != 0) {
+                            $workload->temp_workload += 150;
+                        }
+                    } elseif ($request->hayvan_sayisi > 15000) {
+                        $workload->year_workload += 300;
+                        $workload->total_workload += 300;
+                        if ($workload->temp_workload != 0) {
+                            $workload->temp_workload += 300;
+                        }
+                    }
+                    $workload->save();
+                }
+
             }
 
             DB::commit();

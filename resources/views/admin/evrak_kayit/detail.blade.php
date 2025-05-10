@@ -41,14 +41,35 @@
                                         </tr>
                                         <tr>
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
-                                            <td>{{ $evrak->created_at->format('d-m-y') }}</td>
+                                            <td>{{ $evrak->created_at->format('d-m-Y') }}</td>
                                         </tr>
-                                        <tr>
-                                            <th>Evrak Kayıt No:</th>
-                                            <td>{{ $evrak->evrakKayitNo }}</td>
-                                        </tr>
+                                        @if ($evrak->hayvan_sayisi)
+                                            <tr>
+                                                <th>Hayvan Sayısı:</th>
+                                                <td>{{ $evrak->hayvan_sayisi }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->start_date)
+                                            <tr>
+                                                <th>İş Başlangıç Tarihi:</th>
+                                                <td>{{ $evrak->start_date }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->day_count)
+                                            <tr>
+                                                <th>İş Süresi(Gün):</th>
+                                                <td>{{ $evrak->day_count }}</td>
+                                            </tr>
+                                        @endif
+                                        @if ($evrak->evrakKayitNo)
+                                            <tr>
+                                                <th>Evrak Kayıt No:</th>
+                                                <td>{{ $evrak->evrakKayitNo }}</td>
+                                            </tr>
+                                        @endif
 
-                                        @if ($type != 'EvrakAntrepoSertifika')
+
+                                        @if ($type != 'EvrakAntrepoSertifika' && $type != 'EvrakCanliHayvanGemi')
                                             <tr>
                                                 @if ($type == 'EvrakAntrepoVaris')
                                                     <th>VGB Numarası:</th>
@@ -93,14 +114,20 @@
                                             </tr>
                                         @endif
 
-                                        <tr>
-                                            <th>Vekalet Sahibi Firma/Kişi Adı:</th>
-                                            <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Ürünün Açık İsmi:</th>
-                                            <td>{{ $evrak->urunAdi }}</td>
-                                        </tr>
+                                        @if ($evrak->vekaletFirmaKisiAdi)
+                                            <tr>
+                                                <th>Vekalet Sahibi Firma/Kişi Adı:</th>
+                                                <td>{{ $evrak->vekaletFirmaKisiAdi }}</td>
+                                            </tr>
+                                        @endif
+
+                                        @if ($evrak->urunAdi)
+                                            <tr>
+                                                <th>Ürünün Açık İsmi:</th>
+                                                <td>{{ $evrak->urunAdi }}</td>
+                                            </tr>
+                                        @endif
+
                                         @if (isset($evrak->urun))
                                             <tr>
                                                 <th>Ürünün Kategorisi:</th>
@@ -108,10 +135,13 @@
                                                 </td>
                                             </tr>
                                         @endif
-                                        <tr>
-                                            <th>G.T.İ.P. No İlk 4 Rakamı:</th>
-                                            <td>{{ $evrak->gtipNo }}</td>
-                                        </tr>
+                                        @if ($evrak->gtipNo)
+                                            <tr>
+                                                <th>G.T.İ.P. No İlk 4 Rakamı:</th>
+                                                <td>{{ $evrak->gtipNo }}</td>
+                                            </tr>
+                                        @endif
+
                                         @if (isset($evrak->hayvanSayisi))
                                             <tr>
                                                 <th>Başvuru Yapılan Hayvan Sayısı(Baş Sayısı):</th>

@@ -14,6 +14,7 @@ use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use App\Http\Controllers\Controller;
+use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
@@ -129,6 +130,9 @@ class VeterinerController extends Controller
             $data['usks'] = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 

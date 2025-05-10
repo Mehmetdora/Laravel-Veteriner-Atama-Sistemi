@@ -7,13 +7,15 @@ use App\Models\User;
 use App\Models\Evrak;
 use App\Models\UsksNo;
 use App\Models\EvrakTur;
+use App\Models\GemiIzni;
 use App\Models\EvrakDurum;
 use App\Models\NobetHafta;
 use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
-use Illuminate\Http\Request;
 
+use App\Models\GirisAntrepo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\SaglikSertifika;
 use function PHPSTORM_META\map;
@@ -24,9 +26,11 @@ use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\EvrakCanliHayvanGemi;
+
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
-use App\Models\GirisAntrepo;
+use App\Providers\CanliHGemiIzinDuzenleme;
 
 use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
@@ -34,6 +38,12 @@ use Illuminate\Support\Facades\Validator;
 class VeterinerController extends Controller
 {
 
+    protected $gemi_izni_duzenleme;
+
+    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzinDuzenleme){
+        $this->gemi_izni_duzenleme = $canliHGemiIzinDuzenleme;
+
+    }
     public function index()
     {
         date_default_timezone_set('Europe/Istanbul');
@@ -315,6 +325,11 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $evrak = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+            $data['evrak'] = $evrak;
+            $data['start_date'] = Carbon::parse($evrak->start_date)->format('m/d/Y');
         }
 
 
@@ -453,6 +468,16 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakCanliHayvanGemi") {
+            $validator = Validator::make($request->all(), [
+                'hayvan_sayisi' => 'required',
+                'veterinerId' => 'required',
+                'start_date' => 'required',
+                'day_count' => 'required',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -919,6 +944,89 @@ class VeterinerController extends Controller
                         'miktar' => $sertifika->miktar,
                     ]);
                 }
+            } elseif ($request->type == "EvrakCanliHayvanGemi") {
+
+                $old_start_date = null;
+                $old_vet_id = null;
+                $old_hayvan_s = null;
+
+
+                $evrak = EvrakCanliHayvanGemi::find($request->id);
+                $old_start_date = $evrak->start_date;
+                $old_vet_id = $evrak->veteriner->user->id;
+                $old_hayvan_s = $evrak->hayvan_sayisi;
+
+                $evrak->hayvan_sayisi = $request->hayvan_sayisi;
+                $evrak->start_date = Carbon::createFromFormat('m/d/Y', $request->start_date);
+                $evrak->day_count = (int)$request->day_count;
+                $evrak->save();
+
+
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                $user_evrak->user_id = $request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydı sırasında beklenmedik bir hata oluştu, Lütfen bilgilerinizi kontrol edip tekrar deneyiniz!");
+                }
+
+                // Evrak durumu değişmeyecek , veterinerler işi bitirince bitmiş olacak
+
+
+                // Gemi izni düzenleme
+                $gemi_izin = GemiIzni::where('veteriner_id', $old_vet_id)
+                    ->where('start_date', $old_start_date)->first();
+
+                $this->gemi_izni_duzenleme->canli_h_gemi_izin_düzenle(
+                    $gemi_izin,
+                    $request->veterinerId,
+                    Carbon::createFromFormat('m/d/Y', $request->start_date),
+                    (int)$request->day_count
+                );
+
+
+                // Veterinerin worklaod güncelleme
+                if ($request->veterinerId != $old_vet_id) {  // veteriner değişmişse
+                    // eski veterinerin workload ını azalt, yenisini arttır.
+
+                    $old_veteriner = User::find($old_vet_id);
+                    $old_workload = $old_veteriner->veterinerinBuYilkiWorkloadi();
+                    if ($old_hayvan_s < 15000) {
+                        $old_workload->year_workload -= 150;
+                        $old_workload->total_workload -= 150;
+                        if ($old_workload->temp_workload != 0) {
+                            $old_workload->temp_workload -= 150;
+                        }
+                    } elseif ($old_hayvan_s > 15000) {
+                        $old_workload->year_workload -= 300;
+                        $old_workload->total_workload -= 300;
+                        if ($old_workload->temp_workload != 0) {
+                            $old_workload->temp_workload -= 300;
+                        }
+                    }
+                    $old_workload->save();
+
+
+                    $veteriner = User::find($request->veterinerId);
+                    $workload = $veteriner->veterinerinBuYilkiWorkloadi();
+                    if ($request->hayvan_sayisi > 0 && $request->hayvan_sayisi <= 15000) {
+                        $workload->year_workload += 150;
+                        $workload->total_workload += 150;
+                        if ($workload->temp_workload != 0) {
+                            $workload->temp_workload += 150;
+                        }
+                    } elseif ($request->hayvan_sayisi > 15000) {
+                        $workload->year_workload += 300;
+                        $workload->total_workload += 300;
+                        if ($workload->temp_workload != 0) {
+                            $workload->temp_workload += 300;
+                        }
+                    }
+                    $workload->save();
+                }
+
             }
 
             DB::commit();
@@ -958,6 +1066,9 @@ class VeterinerController extends Controller
             $data['usks'] = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 

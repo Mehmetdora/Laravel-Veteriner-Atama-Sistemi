@@ -2,7 +2,7 @@
 @section('admin.customCSS')
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
-
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.css">
 
     <style>
         .inputs {
@@ -1319,7 +1319,61 @@
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
                                         </div>
                                     </form>
+                                @elseif ($evrak_type == 'EvrakCanliHayvanGemi')
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
 
+
+                                        <div class="form-group">
+                                            <label for="hayvan_sayisi" class="control-label">Hayvan
+                                                Sayısı:*</label>
+                                            <input id="hayvan_sayisi" value="{{ $evrak->hayvan_sayisi }}"
+                                                oninput="formatNumber(this)" name="hayvan_sayisi" class="form-control"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="veterinerId" class="control-label">Veteriner:*</label>
+                                            <select class="form-control" name="veterinerId"
+                                                data-id="{{ $evrak->veteriner->user->id }}" id="veterinerId" required>
+                                                @if (isset($veteriners))
+                                                    @foreach ($veteriners as $veteriner)
+                                                        <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Başlangıç Tarihi:*</label>
+                                            <div class="input-group date" id="reservationdate"
+                                                data-target-input="nearest">
+                                                <input value="{{ $start_date }}" name="start_date" type="text"
+                                                    class="form-control datetimepicker-input"
+                                                    data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate"
+                                                    data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="day_count" class="control-label">Kaç Günlük:*(Tam Sayı
+                                                Giriniz!)</label>
+                                            <input id="day_count" name="day_count" value="{{ $evrak->day_count }}"
+                                                type="number" class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                        </div>
+                                    </form>
                                 @endif
 
 
@@ -1341,8 +1395,14 @@
 @section('admin.customJS')
     <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
     <!-- Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/moment/moment.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="{{ asset('admin_Lte/') }}/plugins/select2/js/select2.full.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js">
+    </script>
+
 
     <script>
         $(function() {
@@ -1538,6 +1598,14 @@
             if (element.value == data_id3) {
                 element.setAttribute('selected', 'selected');
             }
+        });
+
+
+        $(function() {
+            //Date picker
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
         });
 
 

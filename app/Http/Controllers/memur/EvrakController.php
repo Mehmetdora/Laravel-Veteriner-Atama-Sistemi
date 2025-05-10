@@ -67,7 +67,8 @@ class EvrakController extends Controller
             ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
             ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get());
+            ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakCanliHayvanGemi::with(['veteriner.user','evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama
         $evraks_all = $evraks_all->sortByDesc('created_at');
@@ -103,6 +104,9 @@ class EvrakController extends Controller
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvan") {
             $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 
@@ -306,7 +310,7 @@ class EvrakController extends Controller
                     $errors[] = $validator->errors()->all();
                 }
             }
-        } elseif ($formData[0]['evrak_turu'] == 6) {
+        } elseif ($formData[0]['evrak_turu'] == 7) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
                     'hayvan_sayisi' => 'required',

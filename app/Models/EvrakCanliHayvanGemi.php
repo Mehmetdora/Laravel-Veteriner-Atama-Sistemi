@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvrakCanliHayvanGemi extends Model
 {
+
+    public function evrak_adi(){
+        return 'Canlı Hayvan(GEMİ)';
+    }
     public function veteriner()
     {
         return $this->morphOne(UserEvrak::class, 'evrak');
@@ -16,5 +20,5 @@ class EvrakCanliHayvanGemi extends Model
         return $this->morphOne(EvrakDurum::class, 'evrak');
     }
 
-    
+
 }

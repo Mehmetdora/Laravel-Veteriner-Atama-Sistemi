@@ -62,14 +62,14 @@
                                                                 class="badge badge-warning">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
                                                         @endif
                                                     </td>
-                                                    <td>{{ $kayit->evrak->evrakKayitNo }}</td>
+                                                    <td>{{ $kayit->evrak->evrakKayitNo ?? "----" }}</td>
                                                     <td class="text-center">
-                                                        {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->VSKSSertifikaReferansNo }}
+                                                        {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->VSKSSertifikaReferansNo ?: "----" }}
                                                     </td>
                                                     <td>{{ $kayit->evrak->evrak_adi() }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->vekaletFirmaKisiAdi }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->urunAdi }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->urunKG }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->vekaletFirmaKisiAdi ?? "----" }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->urunAdi ?? "----" }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->urunKG ?? "----" }}</td>
 
                                                     <td>
                                                         <a
