@@ -76,6 +76,19 @@
 
 
                                         <div class="form-group">
+                                            <label for="is_numuneli" class="control-label">Numuneli/Numunesiz:*</label>
+                                            <select class="form-control" name="is_numuneli" id="is_numuneli" required>
+                                                @if ($evrak->is_numuneli == true)
+                                                    <option selected value="1">Numuneli</option>
+                                                    <option value="0">Numunesiz</option>
+                                                @else
+                                                    <option value="1">Numuneli</option>
+                                                    <option selected value="0">Numunesiz</option>
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
                                             <label name="siraNo" class="control-label">Evrak Kayıt No</label>
                                             <input id="siraNo" name="siraNo" class="form-control"
                                                 value="{{ $evrak->evrakKayitNo }}" required />
@@ -1359,8 +1372,8 @@
                                             <label>Başlangıç Tarihi:*</label>
                                             <div class="input-group date" id="reservationdate"
                                                 data-target-input="nearest">
-                                                <input value="{{ $start_date }}" name="start_date"
-                                                    type="text" class="form-control datetimepicker-input"
+                                                <input value="{{ $start_date }}" name="start_date" type="text"
+                                                    class="form-control datetimepicker-input"
                                                     data-target="#reservationdate" />
                                                 <div class="input-group-append" data-target="#reservationdate"
                                                     data-toggle="datetimepicker">

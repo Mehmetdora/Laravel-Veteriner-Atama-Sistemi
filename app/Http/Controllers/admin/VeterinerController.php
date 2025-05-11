@@ -31,6 +31,7 @@ use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
 use App\Providers\CanliHGemiIzinDuzenleme;
+use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
 
 use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
@@ -39,10 +40,13 @@ class VeterinerController extends Controller
 {
 
     protected $gemi_izni_duzenleme;
+    protected $evrak_vet_degisirse_worklaods_updater;
 
-    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzinDuzenleme){
+
+    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzinDuzenleme,EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme)
+    {
+        $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
         $this->gemi_izni_duzenleme = $canliHGemiIzinDuzenleme;
-
     }
     public function index()
     {
@@ -361,6 +365,8 @@ class VeterinerController extends Controller
                 'arac_plaka_kg' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+                'is_numuneli' => 'required',
+
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -499,6 +505,7 @@ class VeterinerController extends Controller
 
 
                 $evrak = EvrakIthalat::find($request->input('id'));
+                $old_is_numuneli = $evrak->is_numuneli;
 
                 $evrak->evrakKayitNo = $request->siraNo;
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
@@ -510,6 +517,7 @@ class VeterinerController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
+                $evrak->is_numuneli = $request->is_numuneli;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -521,9 +529,63 @@ class VeterinerController extends Controller
                 $evrak->urun()->sync([$urun->id]);
 
 
-
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+
+                // numunesizden -> numuneliye
+                if ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == true) {  // Evrak türü değişmiş ise
+
+                    // Veteriner değişmişse worklaod güncelleme
+                    if ($user_evrak->user_id != (int)$request->veterinerId) {
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                (int)$request->veterinerId,
+                                'ithalat',
+                                'numuneli_ithalat'
+                            );
+                    } else {  // veteriner değişmemişse
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                $user_evrak->user_id,
+                                'ithalat',
+                                'numuneli_ithalat'
+                            );
+                    }
+
+                    // numuneliden -> numunesize
+                } elseif ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == false) {
+                    // Veteriner değişmişse worklaod güncelleme
+                    if ($user_evrak->user_id != (int)$request->veterinerId) {
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                (int)$request->veterinerId,
+                                'numuneli_ithalat',
+                                'ithalat'
+                            );
+                    } else {  // veteriner değişmemişse
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                $user_evrak->user_id,
+                                'numuneli_ithalat',
+                                'ithalat'
+                            );
+                    }
+
+                    // sadece veteriner değişmişse
+                } else {
+                    $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            $evrak_type,
+                            $evrak_type
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1026,7 +1088,6 @@ class VeterinerController extends Controller
                     }
                     $workload->save();
                 }
-
             }
 
             DB::commit();

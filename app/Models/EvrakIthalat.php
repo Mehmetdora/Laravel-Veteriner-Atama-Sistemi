@@ -10,7 +10,8 @@ class EvrakIthalat extends Model
 
 
     public function evrak_adi(){
-        return "İthalat";
+
+        return $this->is_numuneli ? "Numuneli İthalat" : 'İthalat';
     }
 
     public function setUrun(Urun $urun)

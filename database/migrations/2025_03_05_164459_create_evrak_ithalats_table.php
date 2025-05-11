@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('girisGumruk');
             $table->string('cikisGumruk');
             $table->integer('difficulty_coefficient')->default(20);
+            $table->boolean('is_numuneli')->default(0);
 
             $table->timestamps();
         });
