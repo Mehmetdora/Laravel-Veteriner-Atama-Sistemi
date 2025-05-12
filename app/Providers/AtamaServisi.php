@@ -24,6 +24,7 @@ class AtamaServisi
 
     private $workloadCoefficients = [
         'ithalat' => 20,
+        'numuneli_ithalat' => 40,
         'transit' => 5,
         'antrepo_giris' => 5,
         'antrepo_varis' => 1,

@@ -27,6 +27,8 @@ class EvrakIthalat extends Model
         return $this->hasMany(AracPlakaKg::class,'evrak_ithalat_id');
     }
 
+    
+
 
     public function veteriner()
     {

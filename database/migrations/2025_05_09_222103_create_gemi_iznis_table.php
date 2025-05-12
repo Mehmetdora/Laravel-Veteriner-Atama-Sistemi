@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('veteriner_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('evrak_id')->constrained('evrak_canli_hayvan_gemis')->onDelete('cascade');
             $table->date('start_date');
             $table->date('end_date');
 

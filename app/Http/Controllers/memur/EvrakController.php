@@ -983,7 +983,8 @@ class EvrakController extends Controller
                     $this->gemi_izni_olusturma->canli_h_gemi_izin_olustur(
                         $formData[$i]["veteriner_id"],
                         $yeni_evrak->start_date,
-                        (int)$formData[$i]["day_count"]
+                        (int)$formData[$i]["day_count"],
+                        $yeni_evrak->id
                     );
 
                     $saved_count++; // Başarıyla eklenen evrak sayısını artır

@@ -37,6 +37,37 @@
 @endsection
 
 @section('admin.content')
+
+
+
+    <div class="modal fade" id="modal-delete">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Bu Evrağı Silmek İstediğinizden Emin Misiniz?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bu evrak silindiğinde beraberinde oluşturulan tüm kayıtlar ve evrağın kaydıyla birlikte değişen tüm
+                        değerler eski haline getirilecek. Bu işlem geri alınamaz!</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                    <a href="{{ route('admin.evrak.delete', ['type' => $evrak_type, 'id' => $evrak->id]) }}">
+                        <button type="button" class="btn btn-primary">Evrağı Sil</button>
+                    </a>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+
+
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -282,6 +313,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakTransit')
@@ -469,6 +504,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakCanliHayvan')
@@ -663,6 +702,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoGiris')
@@ -837,6 +880,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoVaris')
@@ -980,6 +1027,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoSertifika')
@@ -1167,6 +1218,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoCikis')
@@ -1223,8 +1278,10 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                            <label for="urun_kategori_id" class="control-label">Ürünün
+                                                Kategorisi</label>
+                                            <select class="form-control"
+                                                data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
                                                     @if (isset($evrak->urun->first()->id))
@@ -1257,8 +1314,8 @@
 
                                         <div class="form-group">
                                             <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
-                                                required />
+                                            <input name="sevkUlke" class="form-control"
+                                                value="{{ $evrak->sevkUlke }}" required />
                                         </div>
 
                                         <div class="form-group">
@@ -1330,6 +1387,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakCanliHayvanGemi')
@@ -1385,6 +1446,10 @@
 
                                         <div class="form-group">
                                             <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
                                 @endif

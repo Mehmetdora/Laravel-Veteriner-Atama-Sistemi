@@ -57,6 +57,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/evrak/ekle', 'create')->name('admin.evrak.create');
         Route::post('/admin/evrak/eklendi', 'created')->name('admin.evrak.created');
+
+        Route::get('/admin/evrak/sil/{type}/{id}','delete')->name('admin.evrak.delete');
     });
 
     // Stok Takip İşlemleri

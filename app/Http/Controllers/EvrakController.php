@@ -602,6 +602,13 @@ class EvrakController extends Controller
 
 
 
+                    /*
+
+                    giriş evrağının sahibine atanırken eğer bu veterinerin elinde iş varsa
+                    ve 50 iş yükünden fazla ise o zaman random bir şekilde bir veterinere atama yap
+                    */
+
+
                     // Eğer bu veterinerin elinde daha bitmemiş bir evrak varsa sistem random başka bir veterinere atama yapacak
                     $isi_var_mi = $veteriner->evraks->contains(fn($data) => $data->evrak->evrak_durumu->evrak_durum === 'İşlemde');
                     if ($isi_var_mi) {
@@ -992,7 +999,8 @@ class EvrakController extends Controller
                     $this->gemi_izni_olusturma->canli_h_gemi_izin_olustur(
                         $formData[$i]["veteriner_id"],
                         $yeni_evrak->start_date,
-                        (int)$formData[$i]["day_count"]
+                        (int)$formData[$i]["day_count"],
+                        $yeni_evrak->id
                     );
 
                     // Veterinerin worklaod güncelleme
@@ -1799,13 +1807,12 @@ class EvrakController extends Controller
                 $old_vet_id = null;
                 $old_hayvan_s = null;
 
-
                 $evrak = EvrakCanliHayvanGemi::find($request->id);
                 $old_start_date = $evrak->start_date;
                 $old_vet_id = $evrak->veteriner->user->id;
-                $old_hayvan_s = $evrak->hayvan_sayisi;
+                $old_hayvan_s = (int)str_replace('.', '', $request->hayvan_sayisi);
 
-                $evrak->hayvan_sayisi = $request->hayvan_sayisi;
+                $evrak->hayvan_sayisi = (int)str_replace('.', '', $request->hayvan_sayisi);
                 $evrak->start_date = Carbon::createFromFormat('m/d/Y', $request->start_date);
                 $evrak->day_count = (int)$request->day_count;
                 $evrak->save();
@@ -1882,6 +1889,104 @@ class EvrakController extends Controller
             DB::commit();
 
             return redirect()->route('admin.evrak.index')->with('success', "Evrak başarıyla düzenlendi.");
+        } catch (\Exception $e) {
+
+            DB::rollBack();     // veritabanını eski haline getirme - hata olmsı durumunda
+            return redirect()->back()->with('error', "Hata: " . $e->getMessage());
+        }
+    }
+
+
+    public function delete($type, $evrak_id)
+    {
+        $evrak = null;
+        $usks = null;
+        $coefficient = 0;
+
+        if ($type == "EvrakIthalat") {
+            $evrak = EvrakIthalat::with(['urun', 'aracPlakaKgs', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = $evrak->is_numuneli ? 40 : 20;
+        } else if ($type == "EvrakTransit") {
+            $evrak = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = 5;
+        } else if ($type == "EvrakAntrepoGiris") {
+            $evrak = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = 5;
+        } else if ($type == "EvrakAntrepoVaris") {
+            $evrak = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = 1;
+        } else if ($type == "EvrakAntrepoSertifika") {
+            $evrak = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = 2;
+        } else if ($type == "EvrakAntrepoCikis") {
+            $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+            $coefficient = 5;
+            $usks = UsksNo::find($evrak->usks_id);
+        } else if ($type == "EvrakCanliHayvan") {
+            $evrak = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $coefficient = 10;
+        } else if ($type == "EvrakCanliHayvanGemi") {
+            $evrak = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+
+            if ($evrak->hayvan_sayisi < 15000) {
+                $coefficient = 150;
+            } else {
+                $coefficient = 300;
+            }
+        }
+
+        // Önce evrağın ilişkili olduğu verileri sil veya eski haline getir, sonra evrağı sil
+
+        $vet = $evrak->veteriner->user;
+        DB::beginTransaction();
+
+        try {
+
+            if (method_exists($evrak, 'urun')) {
+                $evrak->urun()->detach();   // Evrağa ait urun pivot tablosundan kaldırıldı
+            }
+            if (method_exists($evrak, 'aracPlakaKgs')) {
+                $evrak->aracPlakaKgs()->delete();   // Evrağa ait araç plaka modellerini silme
+            }
+            if (method_exists($evrak, 'veteriner')) {
+                $evrak->veteriner()->delete();  // Evrak-veteriner pivot tablosunu silme
+            }
+            if (method_exists($evrak, 'evrak_durumu')) {
+                $evrak->evrak_durumu()->delete();   // evrak durumunu silme
+            }
+            if (method_exists($evrak, 'saglikSertifikalari')) {
+                $evrak->saglikSertifikalari()->delete();
+            }
+            if (method_exists($evrak, 'usks')) {
+                $evrak->usks()->delete();
+            }
+            if (method_exists($evrak, 'gemi_izin')) {
+                $evrak->gemi_izin()->delete();
+            }
+
+
+            // workload güncelleme
+            $workload = $vet->veterinerinBuYilkiWorkloadi();
+            $workload->year_workload -= $coefficient;
+            $workload->total_workload -= $coefficient;
+            if ($workload->temp_workload != 0) {
+                $workload->temp_workload -= $coefficient;
+            }
+            $workload->save();
+
+            $evrak->delete();
+
+
+            DB::commit();
+            return redirect()->route('admin.evrak.index')->with('success', "Evrak Başarıyla Silinmiştir.");
         } catch (\Exception $e) {
 
             DB::rollBack();     // veritabanını eski haline getirme - hata olmsı durumunda

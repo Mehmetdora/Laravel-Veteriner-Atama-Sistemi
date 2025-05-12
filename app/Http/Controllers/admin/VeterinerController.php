@@ -1016,9 +1016,9 @@ class VeterinerController extends Controller
                 $evrak = EvrakCanliHayvanGemi::find($request->id);
                 $old_start_date = $evrak->start_date;
                 $old_vet_id = $evrak->veteriner->user->id;
-                $old_hayvan_s = $evrak->hayvan_sayisi;
+                $old_hayvan_s = (int)str_replace('.', '', $request->hayvan_sayisi);
 
-                $evrak->hayvan_sayisi = $request->hayvan_sayisi;
+                $evrak->hayvan_sayisi = (int)str_replace('.', '', $request->hayvan_sayisi);
                 $evrak->start_date = Carbon::createFromFormat('m/d/Y', $request->start_date);
                 $evrak->day_count = (int)$request->day_count;
                 $evrak->save();

@@ -15,6 +15,10 @@ class EvrakCanliHayvanGemi extends Model
         return $this->morphOne(UserEvrak::class, 'evrak');
     }
 
+    public function gemi_izin(){
+        return $this->hasOne(GemiIzni::class,'evrak_id');
+    }
+
      public function evrak_durumu()
     {
         return $this->morphOne(EvrakDurum::class, 'evrak');

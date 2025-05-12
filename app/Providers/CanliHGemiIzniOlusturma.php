@@ -11,7 +11,7 @@ class CanliHGemiIzniOlusturma
 {
 
 
-    public function canli_h_gemi_izin_olustur($vet_id, $start_date, $day_count)
+    public function canli_h_gemi_izin_olustur($vet_id, $start_date, $day_count,$evrak_id)
     {
         $start = $start_date->copy();
         $end_date = $start_date->copy()->addDays($day_count);
@@ -20,6 +20,7 @@ class CanliHGemiIzniOlusturma
         $gemi_izin->start_date = $start;
         $gemi_izin->end_date = $end_date;
         $gemi_izin->veteriner_id = $vet_id;
+        $gemi_izin->evrak_id = $evrak_id;
         $gemi_izin->save();
     }
 }
