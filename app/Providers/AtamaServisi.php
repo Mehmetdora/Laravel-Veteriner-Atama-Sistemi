@@ -14,9 +14,11 @@ class AtamaServisi
     protected $veteriner_evrak_durumu_kontrolu;
     protected $temp_workloads_updater;
     protected $vet_gemi_izin_kontrolu;
+    protected $worklaod_service;
 
-    function __construct(VetCanliHIzinKontrol $vetCanliHIzinKontrol,TelafiBoyuncaTempWorkloadGuncelleme $telafi_boyunca_temp_workload_guncelleme, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
+    function __construct(WorkloadsService $workloadsService, VetCanliHIzinKontrol $vetCanliHIzinKontrol, TelafiBoyuncaTempWorkloadGuncelleme $telafi_boyunca_temp_workload_guncelleme, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu)
     {
+        $this->worklaod_service = $workloadsService;
         $this->vet_gemi_izin_kontrolu = $vetCanliHIzinKontrol;
         $this->temp_workloads_updater = $telafi_boyunca_temp_workload_guncelleme;
         $this->veteriner_evrak_durumu_kontrolu = $veterinerEvrakDurumularıKontrolu;
@@ -58,37 +60,65 @@ class AtamaServisi
         $bitmemis_telafiler = [];   // telafisi var ama daha bitirmemiş
         $telafisi_olan_vets = [];   // Telafisi var ama bitip bitmediği kesin değil
 
+
+        // Elinde işlemde evrak olmayan, işi olmayan veterinerleri bulma
+        $işlemde_olmayan_vets = [];
         foreach ($veterinerler as $vet) {
 
-
-            // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
-            /* if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
-                continue;
-            } */
-
             // Veteriner canli hayvan gemide mi kontrolü
-            if($this->vet_gemi_izin_kontrolu->izin_var_mi($vet->id)){
+            if ($this->vet_gemi_izin_kontrolu->izin_var_mi($vet->id)) {
                 continue;   // izinli ise geç
             }
 
+            // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
+            if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
+                continue;
+            }
+            $işlemde_olmayan_vets[] = $vet;
+        }
 
-            $workload = $vet->veterinerinBuYilkiWorkloadi();
-            $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
-            if ($has_telafi) {
+        if (!empty($işlemde_olmayan_vets)) {    // EĞER MÜSAİT OLAN VETERİNER VAR İSE BUNLAR ARASINDAN SEÇ
+            foreach ($işlemde_olmayan_vets as $vet) {
+                $workload = $vet->veterinerinBuYilkiWorkloadi();
+                $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
+                if ($has_telafi) {
 
-                $telafisi_olan_vets[] = $vet;
-                $telafiler = $workload->telafis()->where('tarih', $today)->get();
+                    $telafisi_olan_vets[] = $vet;
+                    $telafiler = $workload->telafis()->where('tarih', $today)->get();
 
-                foreach ($telafiler as $telafi) {
-                    if ($telafi->remaining_telafi_workload > 0) {
-                        $bitmemis_telafiler[] = [
-                            'telafi' => $telafi,
-                            'vet_id' => $vet->id
-                        ];
+                    foreach ($telafiler as $telafi) {
+                        if ($telafi->remaining_telafi_workload > 0) {
+                            $bitmemis_telafiler[] = [
+                                'telafi' => $telafi,
+                                'vet_id' => $vet->id
+                            ];
+                        }
+                    }
+                }
+            }
+        } else {  // EĞER TÜM VETERİNELER DOLU İSE TÜM VETERİNERLER ARASINDA RANDOM SEÇ
+            foreach ($veterinerler as $vet) {
+                $workload = $vet->veterinerinBuYilkiWorkloadi();
+                $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
+                if ($has_telafi) {
+
+                    $telafisi_olan_vets[] = $vet;
+                    $telafiler = $workload->telafis()->where('tarih', $today)->get();
+
+                    foreach ($telafiler as $telafi) {
+                        if ($telafi->remaining_telafi_workload > 0) {
+                            $bitmemis_telafiler[] = [
+                                'telafi' => $telafi,
+                                'vet_id' => $vet->id
+                            ];
+                        }
                     }
                 }
             }
         }
+
+
+
 
 
         // Eğer bugün için izinli olmayan veterinerler arasından telafisi olanlar varsa
@@ -206,7 +236,7 @@ class AtamaServisi
     }
 
 
-    private function updateWorkload(User $vet, int $coefficient, $has_telafi , $evraks_count)
+    private function updateWorkload(User $vet, int $coefficient, $has_telafi, $evraks_count)
     {
 
         // Yapılan evrak sayısına göre workload değerleri çarpılarak güncellenir.
@@ -217,13 +247,13 @@ class AtamaServisi
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();
 
         if ($has_telafi) {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient*$evraks_count;
-            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient*$evraks_count;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient*$evraks_count;
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient * $evraks_count;
+            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient * $evraks_count;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient * $evraks_count;
             $veteriner_bu_yilki_workloadi->save();
         } else {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient*$evraks_count;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient*$evraks_count;
+            $veteriner_bu_yilki_workloadi->year_workload += $coefficient * $evraks_count;
+            $veteriner_bu_yilki_workloadi->total_workload += $coefficient * $evraks_count;
             $veteriner_bu_yilki_workloadi->save();
         }
     }
@@ -236,8 +266,34 @@ class AtamaServisi
      */
     private function aktifVeterinerleriGetir(Carbon $simdikiZaman)
     {
-        // 8. Nöbet Kontrolü (17:00 sonrası)
-        if ($simdikiZaman->hour >= 16) {
+
+        try {
+
+            // 8. Nöbet Kontrolü (17:00 sonrası)
+            if ($simdikiZaman->hour >= 16) {
+
+                $veterinerler = User::role('veteriner')
+                    ->where('status', 1)
+                    ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
+                        $sorgu->where('startDate', '<=', $simdikiZaman)
+                            ->where('endDate', '>=', $simdikiZaman);
+                    })
+                    ->whereDoesntHave('gemi_izins', function ($sorgu) use ($simdikiZaman) {
+                        $sorgu->where('start_date', '<=', $simdikiZaman)
+                            ->where('end_date', '>=', $simdikiZaman);
+                    })
+                    ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
+                        $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+                    })->get();
+
+                if (empty($veterinerler)) {
+                    throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen en az bir nöbetçi veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+                }
+
+                return $veterinerler;
+            }
+
+            // 9. Normal Çalışma Saatleri
 
             $veterinerler = User::role('veteriner')
                 ->where('status', 1)
@@ -248,35 +304,15 @@ class AtamaServisi
                 ->whereDoesntHave('gemi_izins', function ($sorgu) use ($simdikiZaman) {
                     $sorgu->where('start_date', '<=', $simdikiZaman)
                         ->where('end_date', '>=', $simdikiZaman);
-                })
-                ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
-                    $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
                 })->get();
 
             if (empty($veterinerler)) {
-                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen en az bir nöbetçi veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
             }
 
             return $veterinerler;
+        } catch (\Exception $e) {
+            throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen en az bir nöbetçi veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
         }
-
-        // 9. Normal Çalışma Saatleri
-
-        $veterinerler = User::role('veteriner')
-            ->where('status', 1)
-            ->whereDoesntHave('izins', function ($sorgu) use ($simdikiZaman) {
-                $sorgu->where('startDate', '<=', $simdikiZaman)
-                    ->where('endDate', '>=', $simdikiZaman);
-            })
-            ->whereDoesntHave('gemi_izins', function ($sorgu) use ($simdikiZaman) {
-                    $sorgu->where('start_date', '<=', $simdikiZaman)
-                        ->where('end_date', '>=', $simdikiZaman);
-                })->get();
-
-        if (empty($veterinerler)) {
-            throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
-        }
-
-        return $veterinerler;
     }
 }

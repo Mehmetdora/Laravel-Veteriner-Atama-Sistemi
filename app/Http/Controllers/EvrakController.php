@@ -35,6 +35,7 @@ use App\Providers\TelafiBoyuncaTempWorkloadGuncelleme;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
+use App\Providers\WorkloadsService;
 
 class EvrakController extends Controller
 {
@@ -50,10 +51,12 @@ class EvrakController extends Controller
     protected $temp_worloads_updater;
     protected $atanacak_veteriner;
     protected $evrak_vet_degisirse_worklaods_updater;
+    protected $workloads_service;
 
 
-    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(WorkloadsService $workloadsService, CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
+        $this->workloads_service = $workloadsService;
         $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
         $this->gemi_izni_duzenleme = $canliHGemiIzniDuzenleme;
         $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
@@ -602,19 +605,10 @@ class EvrakController extends Controller
 
 
 
-                    /*
-
-                    giriş evrağının sahibine atanırken eğer bu veterinerin elinde iş varsa
-                    ve 50 iş yükünden fazla ise o zaman random bir şekilde bir veterinere atama yap
-                    */
-
-
-                    // Eğer bu veterinerin elinde daha bitmemiş bir evrak varsa sistem random başka bir veterinere atama yapacak
-                    $isi_var_mi = $veteriner->evraks->contains(fn($data) => $data->evrak->evrak_durumu->evrak_durum === 'İşlemde');
-                    if ($isi_var_mi) {
+                    // Veterinerin 50 den fazla elinde işi bitmemiş iş varsa o zaman random bir veteriner seç
+                    if ($this->workloads_service->vet_işlemde_worklaod_count($veteriner->id) > 50) {
                         $veteriner = $this->atanacak_veteriner;
                     } else {
-
 
                         // Eğer veterinere evrak sistem tarafından atanmıyorsa manuel olarak workload değerini güncelle
                         $workload = $veteriner->workloads->where('year', $today->year)->first();
@@ -720,9 +714,8 @@ class EvrakController extends Controller
                         $veterinerId = $enCokSertifikaSahipleri[0];
 
 
-                        // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa
-                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
-
+                        // Veterinerin 50 den fazla elinde işi bitmemiş iş varsa o zaman random bir veteriner seç
+                        if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
                             $veteriner = $this->atanacak_veteriner;
                             $veterinerId = $veteriner->id;
                         }
@@ -738,12 +731,12 @@ class EvrakController extends Controller
 
 
                         // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa 2. sıradakini seç
-                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+                        if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
 
                             $veterinerId = $enCokSertifikaSahipleri[1];
 
                             // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa sistem atama yapsın
-                            if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+                            if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
 
                                 $veteriner = $this->atanacak_veteriner;
                                 $veterinerId = $veteriner->id;
@@ -858,7 +851,7 @@ class EvrakController extends Controller
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
 
                     // Seçilen veterinerin elinde iş varsa atama sistemi tarafından veteriner atama
-                    if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veteriner->id)) {
+                    if ($this->workloads_service->vet_işlemde_worklaod_count($veteriner->id) > 50) {
                         $veteriner = $this->atanacak_veteriner;
                     }
 
@@ -1259,6 +1252,9 @@ class EvrakController extends Controller
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
+                if ($request->is_numuneli) {
+                    $evrak->difficulty_coefficient = 40;
+                }
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -1407,6 +1403,7 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
+                            'transit',
                             'transit'
                         );
                 }
@@ -1463,6 +1460,7 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
+                            'antrepo_giris',
                             'antrepo_giris'
                         );
                 }
@@ -1506,6 +1504,7 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
+                            'antrepo_varis',
                             'antrepo_varis'
                         );
                 }
@@ -1657,6 +1656,7 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
+                            'antrepo_sertifika',
                             'antrepo_sertifika'
                         );
                 }
@@ -1709,7 +1709,8 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
-                            'antrepo_cikis'
+                            'antrepo_cikis',
+                            'antrepo_cikis',
                         );
                 }
                 $user_evrak->user_id = (int)$request->veterinerId;
@@ -1758,6 +1759,7 @@ class EvrakController extends Controller
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
                             (int)$request->veterinerId,
+                            'canli_hayvan',
                             'canli_hayvan'
                         );
                 }
@@ -1942,6 +1944,9 @@ class EvrakController extends Controller
                 $coefficient = 300;
             }
         }
+        if (!$evrak) {
+            return redirect()->back()->with('error', 'Evrak bulunamadı!');
+        }
 
         // Önce evrağın ilişkili olduğu verileri sil veya eski haline getir, sonra evrağı sil
 
@@ -1975,8 +1980,8 @@ class EvrakController extends Controller
 
             // workload güncelleme
             $workload = $vet->veterinerinBuYilkiWorkloadi();
-            $workload->year_workload -= $coefficient;
-            $workload->total_workload -= $coefficient;
+            $workload->year_workload = max(0, $workload->year_workload - $coefficient);
+            $workload->total_workload = max(0, $workload->total_workload - $coefficient);
             if ($workload->temp_workload != 0) {
                 $workload->temp_workload -= $coefficient;
             }

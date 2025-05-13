@@ -518,6 +518,9 @@ class VeterinerController extends Controller
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
+                if($request->is_numuneli){
+                    $evrak->difficulty_coefficient = 40;
+                }
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -658,6 +661,16 @@ class VeterinerController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'transit',
+                            'transit'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -705,6 +718,16 @@ class VeterinerController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_giris',
+                            'antrepo_giris'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -739,6 +762,16 @@ class VeterinerController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_varis',
+                            'antrepo_varis'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -883,7 +916,18 @@ class VeterinerController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
-                $user_evrak->user_id = (int)$request->veterinerId;
+                 // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_sertifika',
+                            'antrepo_sertifika'
+                        );
+                }
                 $user_evrak->evrak()->associate($evrak);
 
                 $saved = $user_evrak->save();
@@ -926,6 +970,16 @@ class VeterinerController extends Controller
 
                 // Atanacak olan veteriner gelen veteriner hangisi ise ona atanır
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_cikis',
+                            'antrepo_cikis'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -964,8 +1018,17 @@ class VeterinerController extends Controller
 
 
 
-                // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'canli_hayvan',
+                            'canli_hayvan'
+                        );
+                }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
 
@@ -1148,6 +1211,7 @@ class VeterinerController extends Controller
         $veteriner->izins()->detach();
         $veteriner->nobets()->delete();
         $veteriner->workloads()->delete();
+        $veteriner->gemi_izins()->delete();
 
 
         $veteriner->save();

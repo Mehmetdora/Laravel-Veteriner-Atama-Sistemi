@@ -638,7 +638,7 @@
                                                 </select>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü" required>
 
                                             </div>
                                         </div>
@@ -717,25 +717,24 @@
 
 
 
-
                                         <div class="form-group">
                                             <label for="urunlerinBulunduguAntrepo_input${i}">Giriş Antrepo(Seç yada yeni bir tane
                                                 oluştur):*</label>
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select${i}">
-                                                    <option selected value="">Antrepolar(Seç)</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
-
+                                                    @if (isset($giris_antrepos))
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                                        @endforeach
+                                                    @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}"
-                                                    id="urunlerinBulunduguAntrepo_input${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
+                                                    id="urunlerinBulunduguAntrepo_input${i}" placeholder="Giriş Antreposu" required>
                                             </div>
                                         </div>
+
+
 
 
         `;

@@ -30,7 +30,7 @@ use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
-
+use App\Providers\WorkloadsService;
 
 class EvrakController extends Controller
 {
@@ -43,10 +43,12 @@ class EvrakController extends Controller
     protected $yeni_yil_workloads_guncelleme;
     protected $atanacak_veteriner;
     protected $gemi_izni_olusturma;
+    protected $workloads_service;
 
 
-    function __construct(CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(WorkloadsService $workloadsService, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
+        $this->workloads_service = $workloadsService;
         $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
         $this->yeni_yil_workloads_guncelleme = $yeni_yil_workloads_guncelleme;
         $this->ortalama_gunluk_workload_degeri_bulma = $ortalama_gunluk_workload_degeri_bulma;
@@ -68,7 +70,7 @@ class EvrakController extends Controller
             ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
             ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakCanliHayvanGemi::with(['veteriner.user','evrak_durumu'])->get());
+            ->merge(EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])->get());
 
         // `created_at`'e göre azalan sırayla sıralama
         $evraks_all = $evraks_all->sortByDesc('created_at');
@@ -596,7 +598,10 @@ class EvrakController extends Controller
                     // Eğer bu veterinerin elinde daha bitmemiş bir evrak varsa sistem random başka bir veterinere atama yapacak
                     $isi_var_mi = $veteriner->evraks->contains(fn($data) => $data->evrak->evrak_durumu->evrak_durum === 'İşlemde');
                     if ($isi_var_mi) {
-                        $veteriner = $this->atanacak_veteriner;
+                        // Veterinerin 50 den fazla elinde işi bitmemiş iş varsa o zaman random bir veteriner seç
+                        if ($this->workloads_service->vet_işlemde_worklaod_count($veteriner->id) > 50) {
+                            $veteriner = $this->atanacak_veteriner;
+                        }
                     } else {
 
 
@@ -704,9 +709,8 @@ class EvrakController extends Controller
                         $veterinerId = $enCokSertifikaSahipleri[0];
 
 
-                        // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa
-                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
-
+                        // Veterinerin 50 den fazla elinde işi bitmemiş iş varsa o zaman random bir veteriner seç
+                        if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
                             $veteriner = $this->atanacak_veteriner;
                             $veterinerId = $veteriner->id;
                         }
@@ -722,12 +726,12 @@ class EvrakController extends Controller
 
 
                         // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa 2. sıradakini seç
-                        if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+                        if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
 
                             $veterinerId = $enCokSertifikaSahipleri[1];
 
                             // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa sistem atama yapsın
-                            if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veterinerId)) {
+                            if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
 
                                 $veteriner = $this->atanacak_veteriner;
                                 $veterinerId = $veteriner->id;
@@ -841,7 +845,7 @@ class EvrakController extends Controller
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
 
                     // Seçilen veterinerin elinde iş varsa atama sistemi tarafından veteriner atama
-                    if ($this->veteriner_evrak_durum_kontrol_servisi->vet_evrak_durum_kontrol($veteriner->id)) {
+                    if ($this->workloads_service->vet_işlemde_worklaod_count($veteriner->id) > 50) {
                         $veteriner = $this->atanacak_veteriner;
                     }
 
