@@ -43,7 +43,7 @@ class VeterinerController extends Controller
     protected $evrak_vet_degisirse_worklaods_updater;
 
 
-    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzinDuzenleme,EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme)
+    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzinDuzenleme, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme)
     {
         $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
         $this->gemi_izni_duzenleme = $canliHGemiIzinDuzenleme;
@@ -102,12 +102,20 @@ class VeterinerController extends Controller
                     $yuzde = round($onaylandi / ($islemde + $onaylandi), 2) * 100;
                 }
 
-                $ortalamalar[] = $yuzde;
+                $ortalamalar[] = [
+                    'toplam' => ($islemde + $onaylandi),
+                    'islemde' => $islemde,
+                    'yuzde' => $yuzde
+                ];
             } else {
-                $ortalamalar[] = -1;
+                $ortalamalar[] = [
+                    'toplam' => 0,
+                    'islemde' => 0,
+                    'yuzde' => 0
+                ];
             }
         }
-        $data['yuzdeler'] = $ortalamalar;
+        $data['evraks_info'] = $ortalamalar;
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
         $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler, $izinliler) {
@@ -366,7 +374,21 @@ class VeterinerController extends Controller
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
                 'is_numuneli' => 'required',
-
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'is_numuneli.required' => 'Numuneli/Numunesiz, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -386,6 +408,20 @@ class VeterinerController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -405,6 +441,20 @@ class VeterinerController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'giris_antrepo_id' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -419,6 +469,16 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => 'required',
                 'urunlerinBulunduguAntrepo' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
+
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -437,6 +497,19 @@ class VeterinerController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -456,6 +529,20 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'usks_no.required' => 'USKS Numarası, alanı eksik!',
+                'usks_miktar.required' => 'USKS Miktarı, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -474,6 +561,19 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'hayvanSayisi.required' => 'Başvuru Yapılan Hayvan Sayısı(Baş Sayısı), alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -481,9 +581,14 @@ class VeterinerController extends Controller
         } elseif ($request->type == "EvrakCanliHayvanGemi") {
             $validator = Validator::make($request->all(), [
                 'hayvan_sayisi' => 'required',
-                'veterinerId' => 'required',
+                'veteriner_id' => 'required',
                 'start_date' => 'required',
                 'day_count' => 'required',
+            ], [
+                'hayvan_sayisi' => 'Hayvan Sayısı, alanı eksik!',
+                'veteriner_id' => 'Veteriner Hekim, alanı eksik!',
+                'start_date' => 'Başlangıç Tarihi, alanı eksik!',
+                'day_count' => 'Kaç Günlük, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -518,7 +623,7 @@ class VeterinerController extends Controller
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
-                if($request->is_numuneli){
+                if ($request->is_numuneli) {
                     $evrak->difficulty_coefficient = 40;
                 }
                 $evrak->save();
@@ -916,7 +1021,7 @@ class VeterinerController extends Controller
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
-                 // Veteriner ile evrak kaydetme
+                // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;
                 // Veteriner değişmişse worklaod güncelleme
                 if ($user_evrak->user_id != (int)$request->veterinerId) {

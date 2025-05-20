@@ -33,24 +33,24 @@
                     <table class="table table-striped projects">
                         <thead>
                             <tr>
-                                <th style="width: 1%">
+                                <th style="width: 3%">
                                     id
                                 </th>
                                 <th style="width: 15%">
                                     Adı Soyadı
                                 </th>
-                                <th style="width: 25%">
+                                <th style="width: 30%">
                                     Evrakların Durumları
                                 </th>
 
-                                <th style="width: 12%" class="text-center">
-                                    Nöbetçi Mi?(Bugün)
+                                <th style="width: 10%" class="text-center">
+                                    Nöbetçi Mi?(Şu an)
                                 </th>
 
-                                <th style="width: 12%" class="text-center">
-                                    İzinli Mi?
+                                <th style="width: 10%" class="text-center">
+                                    İzinli Mi?(Şu an)
                                 </th>
-                                <th style="width: 25%" class="text-center">
+                                <th style="width: 29%" class="text-center">
                                     İşlemler
                                 </th>
                             </tr>
@@ -76,14 +76,15 @@
                                             <div class="progress progress-sm">
                                                 <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
                                                     aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: {{ $yuzdeler[$loop->index] }}%">
+                                                    style="width: {{ $evraks_info[$loop->index]['yuzde'] }}%">
                                                 </div>
                                             </div>
                                             <small>
-                                                @if ($yuzdeler[$loop->index] == -1)
+                                                @if ($evraks_info[$loop->index]['toplam'] == 0)
                                                     Hiç Evrak Atanmamış
                                                 @else
-                                                    Evraklar %{{ $yuzdeler[$loop->index] }} Tamamlandı
+                                                    Toplam {{ $evraks_info[$loop->index]['toplam'] }} evraktan
+                                                    {{ $evraks_info[$loop->index]['islemde'] }} tanesi işlemde.
                                                 @endif
                                             </small>
                                         </td>
@@ -101,7 +102,7 @@
                                                 <span class="badge badge-warning">İzinli değil</span>
                                             @endif
                                         </td>
-                                        <td class="project-actions text-right">
+                                        <td class="project-actions text-center">
                                             <a class="btn btn-primary btn-sm"
                                                 href="{{ route('admin.veteriners.veteriner.evraks', $veteriner['id']) }}">
                                                 <i class="fas fa-folder">

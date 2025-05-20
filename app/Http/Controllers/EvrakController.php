@@ -197,6 +197,20 @@ class EvrakController extends Controller
                     'arac_plaka_kg' => 'required',
                     'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                    'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
+                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -218,6 +232,20 @@ class EvrakController extends Controller
                     'aracPlaka' => 'required',
                     'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                    'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -239,6 +267,20 @@ class EvrakController extends Controller
                     'aracPlaka' => 'required',
                     'girisGumruk' => 'required',
                     'giris_antrepo_id' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                    'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                    'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -255,6 +297,16 @@ class EvrakController extends Controller
                     'gtipNo' => 'required',
                     'urunKG' => 'required',
                     'urunlerinBulunduguAntrepo' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
+
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -275,6 +327,19 @@ class EvrakController extends Controller
                     'aracPlaka' => 'required',
                     'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -296,6 +361,20 @@ class EvrakController extends Controller
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
                     'cıkısGumruk' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                    'usks_no.required' => 'USKS Numarası, alanı eksik!',
+                    'usks_miktar.required' => 'USKS Miktarı, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -316,6 +395,19 @@ class EvrakController extends Controller
                     'orjinUlke' => 'required',
                     'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
+                ], [
+                    'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                    'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                    'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'hayvanSayisi.required' => 'Başvuru Yapılan Hayvan Sayısı(Baş Sayısı), alanı eksik!',
+                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                    'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -328,6 +420,11 @@ class EvrakController extends Controller
                     'veteriner_id' => 'required',
                     'start_date' => 'required',
                     'day_count' => 'required',
+                ], [
+                    'hayvan_sayisi' => 'Hayvan Sayısı, alanı eksik!',
+                    'veteriner_id' => 'Veteriner Hekim, alanı eksik!',
+                    'start_date' => 'Başlangıç Tarihi, alanı eksik!',
+                    'day_count' => 'Kaç Günlük, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -1101,6 +1198,21 @@ class EvrakController extends Controller
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
                 'is_numuneli' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'is_numuneli.required' => 'Numuneli/Numunesiz, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1120,6 +1232,20 @@ class EvrakController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1139,6 +1265,20 @@ class EvrakController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'giris_antrepo_id' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1153,6 +1293,16 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => 'required',
                 'urunlerinBulunduguAntrepo' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
+
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1171,6 +1321,19 @@ class EvrakController extends Controller
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1190,6 +1353,20 @@ class EvrakController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'usks_no.required' => 'USKS Numarası, alanı eksik!',
+                'usks_miktar.required' => 'USKS Miktarı, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1208,6 +1385,19 @@ class EvrakController extends Controller
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'hayvanSayisi.required' => 'Başvuru Yapılan Hayvan Sayısı(Baş Sayısı), alanı eksik!',
+                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
+                'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
+                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1218,6 +1408,11 @@ class EvrakController extends Controller
                 'veteriner_id' => 'required',
                 'start_date' => 'required',
                 'day_count' => 'required',
+            ], [
+                'hayvan_sayisi' => 'Hayvan Sayısı, alanı eksik!',
+                'veteriner_id' => 'Veteriner Hekim, alanı eksik!',
+                'start_date' => 'Başlangıç Tarihi, alanı eksik!',
+                'day_count' => 'Kaç Günlük, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();

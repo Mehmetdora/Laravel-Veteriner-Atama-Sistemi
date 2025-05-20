@@ -1081,7 +1081,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="veteriner_id_${i}" class="control-label">Veteriner:*</label>
+                    <label for="veteriner_id_${i}" class="control-label">Veteriner Hekim:*</label>
                     <select class="form-control"
                         name="veteriner_id_${i}" id="veteriner_id_${i}" required>
                         @if (isset($veteriners))
