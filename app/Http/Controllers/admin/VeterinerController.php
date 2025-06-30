@@ -80,7 +80,7 @@ class VeterinerController extends Controller
 
 
         // EVRAK BİTİRME YÜZDESİ HESAPLAMA
-        $ortalamalar = [];
+        $evrak_istatistikleri = [];
         foreach ($veterinerler as $user) {
             if ($user->evraks()->exists()) {
                 $islemde = 0;
@@ -102,20 +102,22 @@ class VeterinerController extends Controller
                     $yuzde = round($onaylandi / ($islemde + $onaylandi), 2) * 100;
                 }
 
-                $ortalamalar[] = [
+                $evrak_istatistikleri[] = [
                     'toplam' => ($islemde + $onaylandi),
+                    'onaylandi' => $onaylandi,
                     'islemde' => $islemde,
                     'yuzde' => $yuzde
                 ];
             } else {
-                $ortalamalar[] = [
+                $evrak_istatistikleri[] = [
                     'toplam' => 0,
+                    'onaylandi' => 0,
                     'islemde' => 0,
                     'yuzde' => 0
                 ];
             }
         }
-        $data['evraks_info'] = $ortalamalar;
+        $data['evraks_info'] = $evrak_istatistikleri;
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
         $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler, $izinliler) {
@@ -175,7 +177,7 @@ class VeterinerController extends Controller
         /*
         Yeni bir veteriner oluşturma sırasında yeni veterinerin workload değerini sıfırdan
         başlatıp tüm evrakların bu veterinere atanamasını önlemek için diğer veterinerlerin
-        bu yılki workloadlarının iş yükü ortalamalarını alarak bu değerden başlatılmalı.
+        bu yılki workloadlarının iş yükü ortalamalasrını alarak bu değerden başlatılmalı.
         */
 
         $all_vets = User::role('veteriner')

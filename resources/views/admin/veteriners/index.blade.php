@@ -39,11 +39,18 @@
                                 <th style="width: 15%">
                                     Adı Soyadı
                                 </th>
-                                <th style="width: 30%">
-                                    Evrakların Durumları
+                                <th style="width: 7%" class="text-center">
+                                    Toplam Evrak Sayısı
+                                </th>
+                                <th style="width: 7%" class="text-center">
+                                    Onaylanan Evrak Sayısı
+                                </th>
+                                <th style="width: 7%" class="text-center">
+                                    İşlemde Evrak Sayısı
                                 </th>
 
-                                <th style="width: 10%" class="text-center">
+
+                                <th style="width: 10%" class=" text-center">
                                     Nöbetçi Mi?(Şu an)
                                 </th>
 
@@ -72,21 +79,22 @@
                                             </small>
                                         </td>
 
-                                        <td class="project_progress">
-                                            <div class="progress progress-sm">
-                                                <div class="progress-bar bg-green" role="progressbar" aria-valuenow="57"
-                                                    aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: {{ $evraks_info[$loop->index]['yuzde'] }}%">
-                                                </div>
-                                            </div>
-                                            <small>
-                                                @if ($evraks_info[$loop->index]['toplam'] == 0)
-                                                    Hiç Evrak Atanmamış
-                                                @else
-                                                    Toplam {{ $evraks_info[$loop->index]['toplam'] }} evraktan
-                                                    {{ $evraks_info[$loop->index]['islemde'] }} tanesi işlemde.
-                                                @endif
-                                            </small>
+
+                                        <td class="project-state">
+                                            <span
+                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam'] }}</span>
+                                        </td>
+                                        <td class="project-state">
+                                            <span
+                                                class="badge badge-info">{{ $evraks_info[$loop->index]['onaylandi'] }}</span>
+                                        </td>
+                                        <td class="project-state">
+                                            @if ($evraks_info[$loop->index]['islemde'] == 0)
+                                                <span class="badge badge-danger">-----</span>
+                                            @else
+                                                <span
+                                                    class="badge badge-danger">{{ $evraks_info[$loop->index]['islemde'] }}</span>
+                                            @endif
                                         </td>
                                         <td class="project-state">
                                             @if ($veteriner['is_nobetci'] == true)
