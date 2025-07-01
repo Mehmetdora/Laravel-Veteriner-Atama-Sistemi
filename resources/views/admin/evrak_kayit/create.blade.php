@@ -11,6 +11,7 @@
             gap: 5px;
             margin-top: 10px;
             justify-content: center;
+
         }
 
         .hidden {
@@ -58,41 +59,58 @@
                 <hr>
 
 
-                <div class="row mt-2">
+                <div class="row mt-2" id="info-tab">
 
 
                     <div class="col-sm-12 d-flex justify-content-center">
 
-                        <div class="col-sm-4">
-                            <label for="evrakType">Evrak Türü Seçiniz:*</label>
-                            <select class="form-control" id="evrakType">
-                                <option value="0">İthalat</option>
-                                <option value="1">Transit</option>
-                                <option value="2">Antrepo Giriş</option>
-                                <option value="3">Antrepo Varış</option>
-                                <option value="4">Antrepo Setifika</option>
-                                <option value="5">Antrepo Çıkış</option>
-                                <option value="6">Canlı Hayvan</option>
-                                <option value="7">Canlı Hayvan(GEMİ)</option>
-                            </select>
+                        <div class="col-sm-3 ">
+                            <div class="mb-3">
+                                <label for="evrakType">Evrak Türü Seçiniz:*</label>
+                                <select class="form-control" id="evrakType">
+                                    <option value="0">İthalat</option>
+                                    <option value="1">Transit</option>
+                                    <option value="2">Antrepo Giriş</option>
+                                    <option value="3">Antrepo Varış</option>
+                                    <option value="4">Antrepo Setifika</option>
+                                    <option value="5">Antrepo Çıkış</option>
+                                    <option value="6">Canlı Hayvan</option>
+                                    <option value="7">Canlı Hayvan(GEMİ)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="formCount">Kaç Evrak Eklemek İstiyorsunuz?*</label>
+                                <input type="number" class="form-control" id="formCount" min="1">
+                            </div>
+                            <div class="text-center mt-2">
+                                <button class="btn btn-primary" onclick="createForms()">Oluştur</button>
+                            </div>
+
                         </div>
-                        <div class="col-sm-6 justify-content-end">
-                            <label for="formCount">Kaç Evrak Eklemek İstiyorsunuz?*</label>
-                            <input type="number" class="form-control" id="formCount" min="1">
+
+                        <div class="col-sm-6 text-center">
+                            <h4 id="evraks-info-h4"></h4>
                         </div>
-                        <button class="btn btn-primary" onclick="createForms()">Oluştur</button>
+
+                        <div class="col-sm-3" id="empty-div"></div>{{-- bu div evraklar oluşturulduktan sonra kaybolacak ve kopya evrak div i gözükecek --}}
+                        <div class="col-sm-3 text-center" id="kopya-evrak-div" style="display: none">
+                            <p>
+                                Birden fazla evrak oluştururken aynı verileri her evrağa tekrar tekrar girmek yerine
+                                istenilen yerleri bir kopya evrak oluşturarak doldurabilirsiniz:
+                            </p>
+                            <button class="btn btn-primary">Kopya Evrak Oluştur</button>
+                        </div>
 
                     </div>
 
+                    <div id="evrak-delete-div" class="col-sm-12">
+
+                    </div>
 
 
                 </div><!-- /.row -->
-                <div class="row">
-                    <div class="col-sm-6"></div>
-                    <div class="col-sm-6 d-flex justify-content-center">
-                        <ul id="selectedEvrakList"></ul>
-                    </div>
-                </div>
+
+
 
             </div><!-- /.container-fluid -->
         </div>
@@ -104,7 +122,8 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="row">
+                        <div class="row mt-2">
+                            <div class="col-md-2"></div>
                             <div class="col-md-8">
                                 @include('admin.layouts.messages')
 
@@ -113,22 +132,33 @@
                                     @csrf
                                     <input type="hidden" name="formData" id="formData">
 
-                                    {{-- Tüm form inputları burada olacak --}}
+                                    <div class="formButtons d-flex justify-content-center"
+                                        style="margin-top: 10px; display: none;">
+                                        <button type="button" class="btn btn-primary mr-3 prevButtons" onclick="prevForm()"
+                                            style="display: none;">
+                                            < </button>
+                                                <button type="button" class="btn btn-primary nextButtons"
+                                                    onclick="nextForm()">></button>
+                                    </div>
+
+                                    {{-- Tüm form inputları ayrı div'ler şeklinde burada olacak --}}
                                     <div id="formContainer">
                                     </div>
 
 
-                                    <div id="formButtons" style="margin-top: 10px; display: none;">
-                                        <button type="button" class="btn btn-primary mr-3" id="prevButton"
-                                            onclick="prevForm()" style="display: none;">Önceki</button>
-                                        <button type="button" class="btn btn-primary" id="nextButton"
-                                            onclick="nextForm()">Sonraki</button>
+                                    <div class=" formButtons d-flex justify-content-center"
+                                        style="margin-top: 10px; display: none;">
+                                        <button type="button" class="btn btn-primary mr-3 prevButtons"
+                                            onclick="prevForm();scrollToTop();" style="display: none;">Önceki</button>
+                                        <button type="button" class="btn btn-primary nextButtons"
+                                            onclick="nextForm();scrollToTop();">Sonraki</button>
                                         <button type="submit" class="btn btn-primary" id="submitButton"
                                             style="display: none;">Kaydet</button>
                                     </div>
                                 </form>
 
                             </div>
+                            <div class="col-md-2"></div>
                         </div>
                         <!-- /.card -->
                     </div>
@@ -163,6 +193,8 @@
         let selectedEvraklar = []; // Seçilen evrak türlerini ve sayılarını saklar
         let currentFormIndex = 0;
         let totalForms = 0;
+        let evraks_type = "";
+        let creacted_forms = [];
 
         function addEvrakType() {
             let type = document.getElementById("evrakType").value;
@@ -186,8 +218,17 @@
         }
 
         function updateEvrakList() {
-            let list = document.getElementById("selectedEvrakList");
-            list.innerHTML = "";
+            let info_tab = document.getElementById("info-tab");
+            let formButtons = document.getElementsByClassName("formButtons");
+            let delete_div = document.getElementById("evrak-delete-div");
+            delete_div.innerHTML = "";
+
+
+
+            //kopya evrak div i gizleme
+            let empty_div = document.getElementById("empty-div");
+            let kopya_evrak_div = document.getElementById("kopya-evrak-div");
+            let evrak_info_h4 = document.getElementById("evraks-info-h4");
 
             selectedEvraklar.forEach((evrak, index) => {
                 const türler = [
@@ -201,21 +242,51 @@
                     'Canlı Hayvan(GEMİ)',
                 ];
 
-                let li = document.createElement("li");
-                li.textContent = `Evrakların Türü: ${türler[evrak.type]}, Adedi: ${evrak.count}`;
+                let evrak_silme_div = document.createElement("div");
+                evrak_silme_div.classList.add("justify-content-center");
+                evrak_silme_div.classList.add("align-items-center");
+                evrak_silme_div.classList.add("d-flex");
+
+                let div = document.createElement("div");
+                div.classList.add("text-center");
+                div.style.padding = "5px";
+                div.style.borderRadius = "3px";
+                div.style.backgroundColor = "#ababab";
+
+                let description = document.createElement("p");
+                description.textContent = `Sayfadaki Tüm Evrak Formlarını Temizle:`;
+
                 let removeBtn = document.createElement("button");
-                removeBtn.textContent = "Sil";
+                removeBtn.textContent = "Temizle-Sıfırla";
                 removeBtn.classList.add('btn-primary');
                 removeBtn.classList.add('btn');
-                removeBtn.classList.add('ml-3');
                 removeBtn.onclick = () => {
+
+
+                    // Değerleri sıfırlama
                     selectedEvraklar.splice(index, 1);
                     updateEvrakList();
                     document.getElementById('formCount').value = 0;
-                    createForms();
+                    totalForms = 0;
+                    currentFormIndex = 0;
+                    evrak_info_h4.innerHTML = "";
+
+                    document.querySelectorAll(".formButtons").forEach(el => {
+                        el.style.setProperty('display', 'none', 'important');
+                    });
+
+                    let formContainer = document.getElementById("formContainer");
+                    formContainer.innerHTML = "";
+                    // kopya evrak divi gizleme
+                    kopya_evrak_div.style.display = "none";
+                    empty_div.style.display = "block";
+
                 };
-                li.appendChild(removeBtn);
-                list.appendChild(li);
+
+                div.appendChild(description);
+                div.appendChild(removeBtn);
+                evrak_silme_div.appendChild(div);
+                delete_div.appendChild(evrak_silme_div);
 
 
             });
@@ -245,30 +316,59 @@
             let ilk_evrak = selectedEvraklar[0];
             if (ilk_evrak != undefined) {
                 if (ilk_evrak.type == 0) {
+                    evraks_type = "İthalat";
                     EventListenersFor_0_ToForm();
                 } else if (ilk_evrak.type == 1) {
+                    evraks_type = "Transit";
                     EventListenersFor_1_ToForm();
                 } else if (ilk_evrak.type == 2) {
+                    evraks_type = "Antrepo Giriş";
                     EventListenersFor_2_ToForm();
                 } else if (ilk_evrak.type == 3) {
+                    evraks_type = "Antrepo Varış";
                     EventListenersFor_3_ToForm();
                 } else if (ilk_evrak.type == 4) {
+                    evraks_type = "Antrepo Sertifika";
                     EventListenersFor_4_ToForm();
                 } else if (ilk_evrak.type == 5) {
+                    evraks_type = "Antrepo Çıkış";
                     EventListenersFor_5_ToForm();
                 } else if (ilk_evrak.type == 6) {
+                    evraks_type = "Canlı Hayvan";
                     EventListenersFor_6_ToForm();
                 } else if (ilk_evrak.type == 7) {
+                    evraks_type = "Canlı Hayvan(GEMİ)";
                     EventListenersFor_7_ToForm();
                 } else {
                     alert("evrak Türleri hatası createForm");
                 }
 
                 document.getElementById("dynamicForm").style.display = "block";
-                document.getElementById("formButtons").style.display = "block";
+                for (let form of document.getElementsByClassName("formButtons")) {
+                    form.style.display = "block";
+                }
+
                 updateButtonVisibility();
+
+
+                //kopya evrak gösteme
+                let empty_div = document.getElementById("empty-div");
+                let kopya_evrak_div = document.getElementById("kopya-evrak-div");
+                kopya_evrak_div.style.display = "block";
+                empty_div.style.display = "none";
+
+
+                /* creacted_forms = document.querySelectorAll(".form-step");
+                console.log(creacted_forms[0]);
+
+                for (let index = 0; index < creacted_forms.length; index++) {
+                    const element = creacted_forms[index].querySelector(`#ss_no_${index}`);
+                    console.log(element);
+                } */
+
+
             } else {
-                alert('Hatalı İşlem! Lütfen yetkili kişi ile iletişime geçiniz!');
+                alert('Hatalı yada eksik işlem, lütfen sayfayı yenileyip tekrar deneyiniz!');
             }
 
             $(function() {
@@ -1541,11 +1641,22 @@
         }
 
         function updateButtonVisibility() {
-            document.getElementById("prevButton").style.display = currentFormIndex > 0 ? "inline-block" : "none";
-            document.getElementById("nextButton").style.display = currentFormIndex < totalForms - 1 ? "inline-block" :
-                "none";
+
             document.getElementById("submitButton").style.display = currentFormIndex === totalForms - 1 ? "inline-block" :
                 "none";
+
+            for (let btn of document.getElementsByClassName("prevButtons")) {
+                btn.style.display = currentFormIndex > 0 ? "inline-block" : "none";
+            }
+            for (let btn of document.getElementsByClassName("nextButtons")) {
+                btn.style.display = currentFormIndex < (totalForms - 1) ? "inline-block" : "none";
+            }
+
+
+            // evrak ve sayfa bilgileri gösterme
+            let evrak_info_h4 = document.getElementById("evraks-info-h4");
+            evrak_info_h4.innerHTML =
+                `Evrak Türü: ${evraks_type}, <br>Oluşturulan ${totalForms} evraktan ${currentFormIndex +1}. evrak`;
         }
 
 
@@ -1728,6 +1839,13 @@
                 .split('').reverse().join(''); // Yeniden ters çevir
 
             input.value = value;
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            })
         }
     </script>
 @endsection

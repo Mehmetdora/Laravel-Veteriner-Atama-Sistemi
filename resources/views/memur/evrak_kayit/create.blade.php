@@ -59,42 +59,56 @@
                 <hr>
 
 
-                <div class="row mt-2">
+                <div class="row mt-2" id="info-tab">
 
 
                     <div class="col-sm-12 d-flex justify-content-center">
 
-                        <div class="col-sm-4">
-                            <label for="evrakType">Evrak Türü Seçiniz:*</label>
-                            <select class="form-control" id="evrakType">
-                                <option value="0">İthalat</option>
-                                <option value="1">Transit</option>
-                                <option value="2">Antrepo Giriş</option>
-                                <option value="3">Antrepo Varış</option>
-                                <option value="4">Antrepo Setifika</option>
-                                <option value="5">Antrepo Çıkış</option>
-                                <option value="6">Canlı Hayvan</option>
-                                <option value="7">Canlı Hayvan(GEMİ)</option>
-                            </select>
+                        <div class="col-sm-3 ">
+                            <div class="mb-3">
+                                <label for="evrakType">Evrak Türü Seçiniz:*</label>
+                                <select class="form-control" id="evrakType">
+                                    <option value="0">İthalat</option>
+                                    <option value="1">Transit</option>
+                                    <option value="2">Antrepo Giriş</option>
+                                    <option value="3">Antrepo Varış</option>
+                                    <option value="4">Antrepo Setifika</option>
+                                    <option value="5">Antrepo Çıkış</option>
+                                    <option value="6">Canlı Hayvan</option>
+                                    <option value="7">Canlı Hayvan(GEMİ)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="formCount">Kaç Evrak Eklemek İstiyorsunuz?*</label>
+                                <input type="number" class="form-control" id="formCount" min="1">
+                            </div>
+                            <div class="text-center mt-2">
+                                <button class="btn btn-primary" onclick="createForms()">Oluştur</button>
+                            </div>
+
                         </div>
-                        <div class="col-sm-6 justify-content-end">
-                            <label for="formCount">Kaç Evrak Eklemek İstiyorsunuz?*</label>
-                            <input type="number" class="form-control" id="formCount" min="1">
+
+                        <div class="col-sm-6 text-center">
+                            <h4 id="evraks-info-h4"></h4>
                         </div>
-                        <button class="btn btn-primary" onclick="createForms()">Oluştur</button>
+
+                        <div class="col-sm-3" id="empty-div"></div>{{-- bu div evraklar oluşturulduktan sonra kaybolacak ve kopya evrak div i gözükecek --}}
+                        <div class="col-sm-3 text-center" id="kopya-evrak-div" style="display: none">
+                            <p>
+                                Birden fazla evrak oluştururken aynı verileri her evrağa tekrar tekrar girmek yerine
+                                istenilen yerleri bir kopya evrak oluşturarak doldurabilirsiniz:
+                            </p>
+                            <button class="btn btn-primary">Kopya Evrak Oluştur</button>
+                        </div>
 
                     </div>
 
+                    <div id="evrak-delete-div" class="col-sm-12">
+
+                    </div>
 
 
                 </div><!-- /.row -->
-
-                <div class="row">
-                    <div class="col-sm-6"></div>
-                    <div class="col-sm-6 d-flex justify-content-center">
-                        <ul id="selectedEvrakList"></ul>
-                    </div>
-                </div>
 
             </div><!-- /.container-fluid -->
         </div>
@@ -106,7 +120,8 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div class="row">
+                        <div class="row mt-2">
+                            <div class="col-md-2"></div>
                             <div class="col-md-8">
                                 @include('memur.layouts.messages')
 
@@ -115,22 +130,33 @@
                                     @csrf
                                     <input type="hidden" name="formData" id="formData">
 
+                                    <div class="formButtons d-flex justify-content-center"
+                                        style="margin-top: 10px; display: none;">
+                                        <button type="button" class="btn btn-primary mr-3 prevButtons" onclick="prevForm()"
+                                            style="display: none;">
+                                            < </button>
+                                                <button type="button" class="btn btn-primary nextButtons"
+                                                    onclick="nextForm()">></button>
+                                    </div>
+
                                     {{-- Tüm form inputları burada olacak --}}
                                     <div id="formContainer">
                                     </div>
 
 
-                                    <div id="formButtons" style="margin-top: 10px; display: none;">
-                                        <button type="button" class="btn btn-primary mr-3" id="prevButton"
-                                            onclick="prevForm()" style="display: none;">Önceki</button>
-                                        <button type="button" class="btn btn-primary" id="nextButton"
-                                            onclick="nextForm()">Sonraki</button>
+                                    <div class=" formButtons d-flex justify-content-center"
+                                        style="margin-top: 10px; display: none;">
+                                        <button type="button" class="btn btn-primary mr-3 prevButtons"
+                                            onclick="prevForm();scrollToTop();" style="display: none;">Önceki</button>
+                                        <button type="button" class="btn btn-primary nextButtons"
+                                            onclick="nextForm();scrollToTop();">Sonraki</button>
                                         <button type="submit" class="btn btn-primary" id="submitButton"
                                             style="display: none;">Kaydet</button>
                                     </div>
                                 </form>
 
                             </div>
+                            <div class="col-md-2"></div>
                         </div>
                         <!-- /.card -->
                     </div>
@@ -162,6 +188,8 @@
         let selectedEvraklar = []; // Seçilen evrak türlerini ve sayılarını saklar
         let currentFormIndex = 0;
         let totalForms = 0;
+        let evraks_type = "";
+        let creacted_forms = [];
 
         function addEvrakType() {
             let type = document.getElementById("evrakType").value;
@@ -185,8 +213,17 @@
         }
 
         function updateEvrakList() {
-            let list = document.getElementById("selectedEvrakList");
-            list.innerHTML = "";
+            let info_tab = document.getElementById("info-tab");
+            let formButtons = document.getElementsByClassName("formButtons");
+            let delete_div = document.getElementById("evrak-delete-div");
+            delete_div.innerHTML = "";
+
+
+
+            //kopya evrak div i gizleme
+            let empty_div = document.getElementById("empty-div");
+            let kopya_evrak_div = document.getElementById("kopya-evrak-div");
+            let evrak_info_h4 = document.getElementById("evraks-info-h4");
 
             selectedEvraklar.forEach((evrak, index) => {
                 const türler = [
@@ -200,21 +237,51 @@
                     'Canlı Hayvan(GEMİ)',
                 ];
 
-                let li = document.createElement("li");
-                li.textContent = `Evrakların Türü: ${türler[evrak.type]}, Adedi: ${evrak.count}`;
+                let evrak_silme_div = document.createElement("div");
+                evrak_silme_div.classList.add("justify-content-center");
+                evrak_silme_div.classList.add("align-items-center");
+                evrak_silme_div.classList.add("d-flex");
+
+                let div = document.createElement("div");
+                div.classList.add("text-center");
+                div.style.padding = "5px";
+                div.style.borderRadius = "3px";
+                div.style.backgroundColor = "#ababab";
+
+                let description = document.createElement("p");
+                description.textContent = `Sayfadaki Tüm Evrak Formlarını Temizle:`;
+
                 let removeBtn = document.createElement("button");
-                removeBtn.textContent = "Sil";
+                removeBtn.textContent = "Temizle-Sıfırla";
                 removeBtn.classList.add('btn-primary');
                 removeBtn.classList.add('btn');
-                removeBtn.classList.add('ml-3');
                 removeBtn.onclick = () => {
+
+
+                    // Değerleri sıfırlama
                     selectedEvraklar.splice(index, 1);
                     updateEvrakList();
                     document.getElementById('formCount').value = 0;
-                    createForms();
+                    totalForms = 0;
+                    currentFormIndex = 0;
+                    evrak_info_h4.innerHTML = "";
+
+                    document.querySelectorAll(".formButtons").forEach(el => {
+                        el.style.setProperty('display', 'none', 'important');
+                    });
+
+                    let formContainer = document.getElementById("formContainer");
+                    formContainer.innerHTML = "";
+                    // kopya evrak divi gizleme
+                    kopya_evrak_div.style.display = "none";
+                    empty_div.style.display = "block";
+
                 };
-                li.appendChild(removeBtn);
-                list.appendChild(li);
+
+                div.appendChild(description);
+                div.appendChild(removeBtn);
+                evrak_silme_div.appendChild(div);
+                delete_div.appendChild(evrak_silme_div);
 
 
             });
@@ -244,30 +311,59 @@
             let ilk_evrak = selectedEvraklar[0];
             if (ilk_evrak != undefined) {
                 if (ilk_evrak.type == 0) {
+                    evraks_type = "İthalat";
                     EventListenersFor_0_ToForm();
                 } else if (ilk_evrak.type == 1) {
+                    evraks_type = "Transit";
                     EventListenersFor_1_ToForm();
                 } else if (ilk_evrak.type == 2) {
+                    evraks_type = "Antrepo Giriş";
                     EventListenersFor_2_ToForm();
                 } else if (ilk_evrak.type == 3) {
+                    evraks_type = "Antrepo Varış";
                     EventListenersFor_3_ToForm();
                 } else if (ilk_evrak.type == 4) {
+                    evraks_type = "Antrepo Sertifika";
                     EventListenersFor_4_ToForm();
                 } else if (ilk_evrak.type == 5) {
+                    evraks_type = "Antrepo Çıkış";
                     EventListenersFor_5_ToForm();
                 } else if (ilk_evrak.type == 6) {
+                    evraks_type = "Canlı Hayvan";
                     EventListenersFor_6_ToForm();
                 } else if (ilk_evrak.type == 7) {
+                    evraks_type = "Canlı Hayvan(GEMİ)";
                     EventListenersFor_7_ToForm();
                 } else {
                     alert("evrak Türleri hatası createForm");
                 }
 
                 document.getElementById("dynamicForm").style.display = "block";
-                document.getElementById("formButtons").style.display = "block";
+                for (let form of document.getElementsByClassName("formButtons")) {
+                    form.style.display = "block";
+                }
+
                 updateButtonVisibility();
+
+
+                //kopya evrak gösteme
+                let empty_div = document.getElementById("empty-div");
+                let kopya_evrak_div = document.getElementById("kopya-evrak-div");
+                kopya_evrak_div.style.display = "block";
+                empty_div.style.display = "none";
+
+
+                /* creacted_forms = document.querySelectorAll(".form-step");
+                console.log(creacted_forms[0]);
+
+                for (let index = 0; index < creacted_forms.length; index++) {
+                    const element = creacted_forms[index].querySelector(`#ss_no_${index}`);
+                    console.log(element);
+                } */
+
+
             } else {
-                alert('Hatalı İşlem! Lütfen yetkili kişi ile iletişime geçiniz!');
+                alert('Hatalı yada eksik işlem, lütfen sayfayı yenileyip tekrar deneyiniz!');
             }
 
             $(function() {
@@ -280,12 +376,6 @@
                 })
             });
 
-
-
-
-
-
-
         }
 
 
@@ -293,434 +383,433 @@
         function getFormHtml(type, i) {
             if (type == 0) {
                 return `
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                            Numarası</label>
-                                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
-                                                id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                id="ss_miktar_${i}" placeholder="Miktarı" required>
-
-                                        </div>
-                                    </div>
-
-
-
-
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                            required>
-                                            @if (isset($uruns))
-                                                <option selected value="">Ürün Kategorileri</option>
-                                                @foreach ($uruns as $urun)
-                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                        <input name="sevkUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                        <input name="orjinUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="arac_plaka_kg_${i}" class="control-label">Araç Plakası ve Yük Miktarı(KG)</label>
-                                        <button type="button" id="addBtn_${i}">➕</button>
-
-                                        <div id="inputContainer_${i}" class="inputs hidden">
-                                            <input type="text" id="input1_${i}"
-                                                placeholder="Araç Plakası">
-                                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı(KG)">
-                                            <button type="button" id="confirmBtn_${i}">✔️</button>
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
 
-                                        <ul id="dataList_${i}" class="list"></ul>
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
+                                        </div>
 
-                                        <input type="hidden" name="arac_plaka_kg_${i}" id="jsonData_${i}"
-                                            class="form-control" required />
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Mersin">Mersin</option>
-                                                <option value="Taşucu">Taşucu</option>
 
+                                        <div class="form-group">
+                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                                required>
+                                                @if (isset($uruns))
+                                                    <option selected value="">Ürün Kategorileri</option>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
                                         </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Habur">Habur</option>
-                                                <option value="Cilvegözü">Cilvegözü</option>
-
-                                            </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="arac_plaka_kg_${i}" class="control-label">Araç Plakası ve Yük Miktarı(KG)</label>
+                                            <button type="button" id="addBtn_${i}">➕</button>
+
+                                            <div id="inputContainer_${i}" class="inputs hidden">
+                                                <input type="text" id="input1_${i}"
+                                                    placeholder="Araç Plakası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı(KG)">
+                                                <button type="button" id="confirmBtn_${i}">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="arac_plaka_kg_${i}" id="jsonData_${i}"
+                                                class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
 
 
-    `;
+        `;
             } else if (type == 1) {
                 return `
 
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                            Numarası</label>
-                                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
-                                                id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                id="ss_miktar_${i}" placeholder="Miktarı" required>
-
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+
+                                            </div>
+                                        </div>
 
 
 
 
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                            required>
-                                            @if (isset($uruns))
-                                                <option selected value="">Ürün Kategorileri</option>
-                                                @foreach ($uruns as $urun)
-                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                        <input name="sevkUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                        <input name="orjinUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
-                                            No</label>
-                                        <input name="aracPlaka_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Mersin">Mersin</option>
-                                                <option value="Taşucu">Taşucu</option>
-
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                                required>
+                                                @if (isset($uruns))
+                                                    <option selected value="">Ürün Kategorileri</option>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
                                         </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Habur">Habur</option>
-                                                <option value="Cilvegözü">Cilvegözü</option>
-
-                                            </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
-    `;
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+        `;
             } else if (type == 2) {
                 return `
 
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                            Numarası</label>
-                                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
-                                    </div>
-
-
-
-
-                                    <div class="form-group">
-                                        <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
-                                                id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                id="ss_miktar_${i}" placeholder="Miktarı" required>
-
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
+                                        </div>
 
 
 
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
 
-                                    <div class="form-group">
-                                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                            required>
-                                            @if (isset($uruns))
-                                                <option selected value="">Ürün Kategorileri</option>
-                                                @foreach ($uruns as $urun)
-                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+                                            </div>
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                        <input name="sevkUlke_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                        <input name="orjinUlke_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
-                                            No</label>
-                                        <input name="aracPlaka_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Mersin">Mersin</option>
-                                                <option value="Taşucu">Taşucu</option>
-
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                                required>
+                                                @if (isset($uruns))
+                                                    <option selected value="">Ürün Kategorileri</option>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
                                         </div>
-                                    </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü" required>
+
+                                            </div>
+                                        </div>
 
 
 
-                                    <div class="form-group">
-                                        <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
-                                        <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
-                                            @if (isset($giris_antrepos))
-                                                @foreach ($giris_antrepos as $giris_antrepo)
-                                                    <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-    `;
+                                        <div class="form-group">
+                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
+                                            <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
+                                                @if (isset($giris_antrepos))
+                                                    @foreach ($giris_antrepos as $giris_antrepo)
+                                                        <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+        `;
             } else if (type == 3) {
                 return `
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
-                                        <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="number" class="form-control" required />
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                            Numarası Ve Miktarı(KG)</label>
-                                        <button type="button" id="addBtn_${i}">➕</button>
-
-                                        <div id="inputContainer_${i}" class="inputs hidden">
-                                            <input type="text" id="input1_${i}"
-                                                placeholder="Sağlık Sertifikası Numarası">
-                                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                            <button type="button" id="confirmBtn_${i}">✔️</button>
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
 
-                                        <ul id="dataList_${i}" class="list"></ul>
-
-                                        <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                            class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
+                                            <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="number" class="form-control" required />
+                                        </div>
 
 
 
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn_${i}">➕</button>
 
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
-                                    </div>
+                                            <div id="inputContainer_${i}" class="inputs hidden">
+                                                <input type="text" id="input1_${i}"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn_${i}">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
+                                                class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
+                                        </div>
 
 
 
 
-
-                                    <div class="form-group">
+                                        <div class="form-group">
                                             <label for="urunlerinBulunduguAntrepo_input${i}">Giriş Antrepo(Seç yada yeni bir tane
                                                 oluştur):*</label>
                                             <div class="row" style="display: flex; align-items: center;">
@@ -738,376 +827,378 @@
                                         </div>
 
 
-    `;
+
+
+        `;
             } else if (type == 4) {
                 return `
 
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                            Numarası Ve Miktarı(KG)</label>
-                                        <button type="button" id="addBtn_${i}">➕</button>
-
-                                        <div id="inputContainer_${i}" class="inputs hidden">
-                                            <input type="text" id="input1_${i}"
-                                                placeholder="Sağlık Sertifikası Numarası">
-                                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                            <button type="button" id="confirmBtn_${i}">✔️</button>
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
 
-                                        <ul id="dataList_${i}" class="list"></ul>
 
-                                        <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                            class="form-control" required />
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn_${i}">➕</button>
 
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
+                                            <div id="inputContainer_${i}" class="inputs hidden">
+                                                <input type="text" id="input1_${i}"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn_${i}">✔️</button>
+                                            </div>
 
-                                    <div class="form-group">
-                                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                            required>
-                                            @if (isset($uruns))
-                                                <option selected value="">Ürün Kategorileri</option>
-                                                @foreach ($uruns as $urun)
-                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
+                                            <ul id="dataList_${i}" class="list"></ul>
 
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
+                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
+                                                class="form-control" required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                        <input name="sevkUlke_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
 
-                                    <div class="form-group">
-                                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                        <input name="orjinUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
-                                            No</label>
-                                        <input name="aracPlaka_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Mersin">Mersin</option>
-                                                <option value="Taşucu">Taşucu</option>
-
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                                required>
+                                                @if (isset($uruns))
+                                                    <option selected value="">Ürün Kategorileri</option>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
                                         </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Habur">Habur</option>
-                                                <option value="Cilvegözü">Cilvegözü</option>
-
-                                            </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
-    `;
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+        `;
             } else if (type == 5) {
                 return `
 
-                                    <div class="form-group">
-                                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                            Numarası</label>
-                                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
-                                    </div>
-
-
-
-                                    <div class="form-group">
-                                        <label for="usks_${i}">USKS Numarası ve Miktarı:*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
-                                                id="usks_no_${i}" placeholder="USKS Numarası" required>
-                                            <div class="col-sm-2"></div>
-                                            <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
-                                                id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
-
+                                        <div class="form-group">
+                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                            Kişi
-                                            İsmi</label>
-                                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                            required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                        <input name="urunAdi_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                            required>
-                                            @if (isset($uruns))
-                                                <option selected value="">Ürün Kategorileri</option>
-                                                @foreach ($uruns as $urun)
-                                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                @endforeach
-                                            @endif
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                        <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                            Miktarı</label>
-                                        <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                        <input name="sevkUlke_${i}" value="Türkiye" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                        <input name="orjinUlke_${i}" class="form-control" required />
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
-                                            No</label>
-                                        <input name="aracPlaka_${i}" class="form-control" required />
-                                    </div>
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
+                                        </div>
 
 
 
-                                    <div class="form-group">
-                                        <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                            oluştur):*</label>
-                                        <div class="row" style="display: flex; align-items: center;">
-                                            <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                <option selected value="">Gümrükler(Seç)</option>
-                                                <hr>
-                                                <option value="Habur">Habur</option>
-                                                <option value="Cilvegözü">Cilvegözü</option>
+                                        <div class="form-group">
+                                            <label for="usks_${i}">USKS Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
+                                                    id="usks_no_${i}" placeholder="USKS Numarası" required>
+                                                <div class="col-sm-2"></div>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
+                                                    id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
 
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                                required>
+                                                @if (isset($uruns))
+                                                    <option selected value="">Ürün Kategorileri</option>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
-                                            <div class="col-sm-1"></div>
-                                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
                                         </div>
-                                    </div>
-    `;
+
+                                        <div class="form-group">
+                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke_${i}" value="Türkiye" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                                                    <option selected value="">Gümrükler(Seç)</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+        `;
             } else if (type == 6) {
                 return `
-                <div class="form-group">
-                    <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                        Numarası</label>
-                    <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
-                </div>
-
-
-
-                <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                        Numarası Ve Miktarı(KG)</label>
-                    <button type="button" id="addBtn_${i}">➕</button>
-
-                    <div id="inputContainer_${i}" class="inputs hidden">
-                        <input type="text" id="input1_${i}"
-                            placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                        <button type="button" id="confirmBtn_${i}">✔️</button>
+                    <div class="form-group">
+                        <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                     </div>
 
-                    <ul id="dataList_${i}" class="list"></ul>
-
-                    <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                        class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                        Kişi
-                        İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                        required />
-                </div>
-
-                <div class="form-group">
-                    <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi_${i}" class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                        required>
-                        @if (isset($uruns))
-                            <option selected value="">Ürün Kategorileri</option>
-                            @foreach ($uruns as $urun)
-                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo_${i}" class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="hayvanSayisi_${i}" class="control-label">Başvuru Yapılan Hayvan Sayısı(Baş Sayısı)</label>
-                    <input id="hayvanSayisi_${i}" name="hayvanSayisi_${i}" class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke_${i}" class="form-control" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke_${i}" class="form-control" required />
-                </div>
+                    <div class="form-group">
+                        <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                            Numarası</label>
+                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="number" class="form-control" required />
+                    </div>
 
 
-                <div class="form-group">
-                    <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                        oluştur):*</label>
-                    <div class="row" style="display: flex; align-items: center;">
-                        <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                            <option selected value="">Gümrükler(Seç)</option>
-                            <hr>
-                            <option value="Mersin">Mersin</option>
-                            <option value="Taşucu">Taşucu</option>
 
+                    <div class="form-group">
+                        <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                            Numarası Ve Miktarı(KG)</label>
+                        <button type="button" id="addBtn_${i}">➕</button>
+
+                        <div id="inputContainer_${i}" class="inputs hidden">
+                            <input type="text" id="input1_${i}"
+                                placeholder="Sağlık Sertifikası Numarası">
+                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                            <button type="button" id="confirmBtn_${i}">✔️</button>
+                        </div>
+
+                        <ul id="dataList_${i}" class="list"></ul>
+
+                        <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
+                            class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                            Kişi
+                            İsmi</label>
+                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                            required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                        <input name="urunAdi_${i}" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                            required>
+                            @if (isset($uruns))
+                                <option selected value="">Ürün Kategorileri</option>
+                                @foreach ($uruns as $urun)
+                                    <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                @endforeach
+                            @endif
                         </select>
-                        <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                            id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                        oluştur):*</label>
-                    <div class="row" style="display: flex; align-items: center;">
-                        <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                            <option selected value="">Gümrükler(Seç)</option>
-                            <hr>
-                            <option value="Habur">Habur</option>
-                            <option value="Cilvegözü">Cilvegözü</option>
-
-                        </select>
-                        <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                            id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                    <div class="form-group">
+                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                        <input type="number" name="gtipNo_${i}" class="form-control" required />
                     </div>
-                </div>
-                `;
-            } else if (type == 7) {
-                return `
-                <div class="form-group">
-                    <label for="hayvan_sayisi_${i}" class="control-label">Hayvan Sayısı:*</label>
-                    <input id="hayvan_sayisi_${i}" oninput="formatNumber(this)"  name="hayvan_sayisi_${i}" class="form-control" required />
-                </div>
 
-                <div class="form-group">
-                    <label for="veteriner_id_${i}" class="control-label">Veteriner Hekim:*</label>
-                    <select class="form-control"
-                        name="veteriner_id_${i}" id="veteriner_id_${i}" required>
-                        @if (isset($veteriners))
-                            @foreach ($veteriners as $veteriner)
-                                <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
-                                </option>
-                            @endforeach
-                        @endif
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="hayvanSayisi_${i}" class="control-label">Başvuru Yapılan Hayvan Sayısı(Baş Sayısı)</label>
+                        <input id="hayvanSayisi_${i}" name="hayvanSayisi_${i}" class="form-control" required />
+                    </div>
 
-                <div class="form-group">
-                    <label>Başlangıç Tarihi:*</label>
-                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                        <input name="start_date_${i}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
-                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    <div class="form-group">
+                        <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                        <input name="sevkUlke_${i}" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                        <input name="orjinUlke_${i}" class="form-control" required />
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                            oluştur):*</label>
+                        <div class="row" style="display: flex; align-items: center;">
+                            <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                                <option selected value="">Gümrükler(Seç)</option>
+                                <hr>
+                                <option value="Mersin">Mersin</option>
+                                <option value="Taşucu">Taşucu</option>
+
+                            </select>
+                            <div class="col-sm-1"></div>
+                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+
                         </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="day_count_${i}" class="control-label">Kaç Günlük:*(Tam Sayı Giriniz!)</label>
-                    <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control" required />
-                </div>
-                `;
+                    <div class="form-group">
+                        <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                            oluştur):*</label>
+                        <div class="row" style="display: flex; align-items: center;">
+                            <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                                <option selected value="">Gümrükler(Seç)</option>
+                                <hr>
+                                <option value="Habur">Habur</option>
+                                <option value="Cilvegözü">Cilvegözü</option>
+
+                            </select>
+                            <div class="col-sm-1"></div>
+                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                                id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                        </div>
+                    </div>
+                    `;
+            } else if (type == 7) {
+                return `
+                    <div class="form-group">
+                        <label for="hayvan_sayisi_${i}" class="control-label">Hayvan Sayısı:*</label>
+                        <input id="hayvan_sayisi_${i}" oninput="formatNumber(this)"  name="hayvan_sayisi_${i}" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="veteriner_id_${i}" class="control-label">Veteriner Hekim:*</label>
+                        <select class="form-control"
+                            name="veteriner_id_${i}" id="veteriner_id_${i}" required>
+                            @if (isset($veteriners))
+                                @foreach ($veteriners as $veteriner)
+                                    <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Başlangıç Tarihi:*</label>
+                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                            <input name="start_date_${i}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="day_count_${i}" class="control-label">Kaç Günlük:*(Tam Sayı Giriniz!)</label>
+                        <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control" required />
+                    </div>
+                    `;
             }
         }
 
@@ -1545,11 +1636,22 @@
         }
 
         function updateButtonVisibility() {
-            document.getElementById("prevButton").style.display = currentFormIndex > 0 ? "inline-block" : "none";
-            document.getElementById("nextButton").style.display = currentFormIndex < totalForms - 1 ? "inline-block" :
-                "none";
+
             document.getElementById("submitButton").style.display = currentFormIndex === totalForms - 1 ? "inline-block" :
                 "none";
+
+            for (let btn of document.getElementsByClassName("prevButtons")) {
+                btn.style.display = currentFormIndex > 0 ? "inline-block" : "none";
+            }
+            for (let btn of document.getElementsByClassName("nextButtons")) {
+                btn.style.display = currentFormIndex < (totalForms - 1) ? "inline-block" : "none";
+            }
+
+
+            // evrak ve sayfa bilgileri gösterme
+            let evrak_info_h4 = document.getElementById("evraks-info-h4");
+            evrak_info_h4.innerHTML =
+                `Evrak Türü: ${evraks_type}, <br>Oluşturulan ${totalForms} evraktan ${currentFormIndex +1}. evrak`;
         }
 
 
@@ -1728,6 +1830,13 @@
                 .split('').reverse().join(''); // Yeniden ters çevir
 
             input.value = value;
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            })
         }
     </script>
 @endsection
