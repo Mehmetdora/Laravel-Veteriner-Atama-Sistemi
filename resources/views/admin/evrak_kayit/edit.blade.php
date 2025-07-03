@@ -1778,7 +1778,6 @@
                         }
                         listItem.remove();
                         jsonDataInput.value = JSON.stringify(data);
-                        console.log(jsonDataInput.value);
 
                     });
 

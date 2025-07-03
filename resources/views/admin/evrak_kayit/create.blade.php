@@ -169,6 +169,7 @@
             </div><!-- /.container-fluid -->
 
 
+            {{-- kopya evrak form modal --}}
             <div class="modal fade" id="modal-kopya-evrak">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -186,8 +187,9 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
-                            <button type="button" class="btn btn-primary" id="kopya-onay-btn"
-                                onclick="fillAllOtherEvraks()" data-evrak-type="">Kopyayı Tüm Evrak Formlarına
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" id="kopya-onay-btn"
+                                onclick="fillAllOtherEvraks()" data-evrak-type="">Kopyayı Tüm Evrak
+                                Formlarına
                                 Uygula</button>
                         </div>
                     </div>
@@ -932,49 +934,178 @@
         function fillAllOtherEvraks() {
             let modal_div = document.getElementById("kopya-evrak-modal");
             let tüm_formların_div = document.getElementById("formContainer");
-
             let tüm_formların_div_listesi = tüm_formların_div.querySelectorAll(".form-step");
 
 
-            for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+            if (evraks_type == "İthalat") {
 
-                let form = tüm_formların_div_listesi[i];
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
 
-                let siraNo = form.querySelector(`#siraNo_${i}`);
-                let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
-                let ss_no = form.querySelector(`#ss_no_${i}`);
-                let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
-                let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
-                let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
-                let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
-                let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
-                let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
-                let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
-                let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
-                let arac_plaka_kg = form.querySelector(`#jsonData_${i}`);
-                let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
-                let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
-
-
-
-                // Kopya evraktan alınan verileri tüm formlara yapıştırma
-                siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
-                vgbOnBildirimNo.value = modal_div.querySelector("input[name='vgbOnBildirimNo']").value;
-                ss_no.value = modal_div.querySelector("input[name='ss_no']").value;
-                ss_miktar.value = modal_div.querySelector("input[name='ss_miktar']").value;
-                vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
-                urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
-                urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
-                gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
-                urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
-                sevkUlke.value = modal_div.querySelector("input[name='sevkUlke']").value;
-                orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
-                arac_plaka_kg.value = modal_div.querySelector("input[name='arac_plaka_kg']").value;
-                girisGumruk.value = modal_div.querySelector("input[name='girisGumruk']").value;
-                cıkısGumruk.value = modal_div.querySelector("input[name='cıkısGumruk']").value;
+                    // oluşturulan evrak formlarının değerleri
+                    let form = tüm_formların_div_listesi[i];
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let arac_plaka_kg = form.querySelector(`#jsonData_${i}`);
+                    let dataList = form.querySelector(`#dataList_${i}`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
 
 
 
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    vgbOnBildirimNo.value = modal_div.querySelector("input[name='vgbOnBildirimNo']").value;
+                    ss_no.value = modal_div.querySelector("input[name='ss_no']").value;
+                    ss_miktar.value = modal_div.querySelector("input[name='ss_miktar']").value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                    urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
+                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
+                    sevkUlke.value = modal_div.querySelector("input[name='sevkUlke']").value;
+                    orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
+                    arac_plaka_kg.value = modal_div.querySelector("input[name='arac_plaka_kg']").value;
+                    girisGumruk.value = modal_div.querySelector("input[name='girisGumruk']").value;
+                    cıkısGumruk.value = modal_div.querySelector("input[name='cıkısGumruk']").value;
+
+                    // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
+                    let datas = JSON.parse(arac_plaka_kg.value);
+                    let netMiktar = 0;
+
+                    datas.forEach(json_data => {
+
+                        let val1 = json_data.plaka;
+                        let val2 = json_data.miktar;
+
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        console.log(listItem);
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            arac_plaka_kg.value = JSON.stringify(datas);
+                        });
+
+                        dataList.appendChild(listItem);
+                        arac_plaka_kg.value = JSON.stringify(datas);
+
+                    });
+
+
+
+
+
+                }
+
+
+            } else if (evraks_type == "Transit") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+
+                    siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
+                    vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
+                    ss_no.value = modal_div.querySelector(`input[name='ss_no']`).value;
+                    ss_miktar.value = modal_div.querySelector(`input[name='ss_miktar']`).value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    cıkısGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+
+
+
+
+                }
+            } else if (evraks_type == "Antrepo Giriş") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let giris_antrepo_id = form.querySelector(`[name="giris_antrepo_id_${i}"]`);
+
+                    siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
+                    vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
+                    ss_no.value = modal_div.querySelector(`input[name='ss_no']`).value;
+                    ss_miktar.value = modal_div.querySelector(`input[name='ss_miktar']`).value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    giris_antrepo_id.value = modal_div.querySelector(`select[name="giris_antrepo_id"]`).value;
+
+
+                    /*
+                        EVRAK KAYITTA GİRİŞ SIRASINDA KULLANILAN SELECT2 TÜRÜNDEKİ
+                        SELECT YERİNE NORMAL SELECT KULLANILACAK!!! 
+                    */
+
+                }
+
+            } else if (evraks_type == "") {
+
+            } else if (evraks_type == "") {
+
+            } else if (evraks_type == "") {
+
+            } else if (evraks_type == "") {
+
+            } else if (evraks_type == "") {
+
+            } else {
+                alert("Kopya evrak oluşturma hatası: Evrak türü hatası!");
             }
 
 
@@ -1062,17 +1193,282 @@
 
             } else if (evrak_type == "Transit") {
 
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+
+
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
             } else if (evrak_type == "Antrepo Giriş") {
+
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+
+
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
 
             } else if (evrak_type == "Antrepo Varış") {
 
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+
+
+                let inputBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
+                    `#urunlerinBulunduguAntrepo_input`);
+                let selectBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
+                    `#urunlerinBulunduguAntrepo_select`);
+
+
+                let data = [];
+                let netMiktar = 0;
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            netMiktarInput.value = netMiktar;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        netMiktarInput.value = netMiktar;
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                    }
+                });
+
             } else if (evrak_type == "Antrepo Sertifika") {
+
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+
+                let data = [];
+                let netMiktar = 0;
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            netMiktarInput.value = netMiktar;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        netMiktarInput.value = netMiktar;
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
 
             } else if (evrak_type == "Antrepo Çıkış") {
 
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let usks_miktari = modal_div.querySelector(`#usks_miktar`);
+
+                let data = [];
+                let netMiktar = 0;
+
+                usks_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = usks_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
             } else if (evrak_type == "Canlı Hayvan") {
 
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+
+                let data = [];
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
             } else if (evrak_type == "Canlı Hayvan(GEMİ)") {
+
+                // Bir işleme gerek yok
 
             } else {
                 alert("Kopya evrak oluşturma hatası: Evrak türü hatası!");
@@ -1225,18 +1621,6 @@
 
 
                 create_kopya_evrak_modal(evraks_type);
-
-                /* creacted_forms = document.querySelectorAll(".form-step");
-                                                                                                                                                                                                                                        console.log(creacted_forms[0]);
-
-                                                                                                                                                                                                                                        for (let index = 0; index < creacted_forms.length; index++) {
-                                                                                                                                                                                                                                            const element = creacted_forms[index].querySelector(`
-            #ss_no_$ {
-                index
-            }
-            `);
-                                                                                                                                                                                                                                            console.log(element);
-                                                                                                                                                                                                                                        } */
 
 
             } else {
@@ -2114,7 +2498,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value}KG < button type = "button" class = "delete-btn" > ✖️ < /button>`;
+                            `${val1} - ${input2.value}KG <button type = "button" class = "delete-btn" > ✖️ </button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
@@ -2377,7 +2761,7 @@
         function EventListenersFor_5_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
-            console.log(forms);
+
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
                 let dataList = formStep.querySelector(`#dataList_${index}`);
@@ -2477,7 +2861,10 @@
 
         function EventListenersFor_7_ToForm() {
 
-            const forms = document.querySelectorAll(".form-step");
+
+            //Bir işleme gerek yok
+
+            /* const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
                 let hayvan_sayisi = formStep.querySelector(`#hayvan_sayisi_${index}`);
                 let veteriner_id = formStep.querySelector(`#veteriner_id_${index}`);
@@ -2485,7 +2872,7 @@
                 let day_count = formStep.querySelector(`#day_count_${index}`);
 
 
-            });
+            }); */
 
 
         }
