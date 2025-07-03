@@ -185,8 +185,10 @@
 
                         </div>
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-primary" id="kopya-onay-btn"
+                                onclick="fillAllOtherEvraks()" data-evrak-type="">Kopyayı Tüm Evrak Formlarına
+                                Uygula</button>
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -256,42 +258,42 @@
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-6 form-control" type="text" name="ss_no"
+                        <input class="col-sm-6 form-control  ithalat" type="text" name="ss_no"
                             id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar"
+                        <input class="col-sm-5 form-control ithalat" type="text" oninput="formatNumber(this)" name="ss_miktar"
                             id="ss_miktar" placeholder="Miktarı" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control ithalat" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
-                            <option selected value = "" > Ürün Kategorileri < /option>
+                            <option selected value = "" > Ürün Kategorileri </option>
                             @foreach ($uruns as $urun)
-                                <option value = "{{ $urun->id }}" > {{ $urun->name }} < /option>
+                                <option value = "{{ $urun->id }}" > {{ $urun->name }} </option>
                             @endforeach
                         @endif
 
@@ -300,22 +302,22 @@
 
                 <div class="form-group">
                     <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <input type="number" name="gtipNo" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control" required readonly />
+                    <input id="net_miktar" name="urunKG" class="form-control ithalat" required readonly />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control" required />
+                    <input name="sevkUlke" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
@@ -330,7 +332,7 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="arac_plaka_kg" id="jsonData" class="form-control" required />
+                    <input type="hidden" name="arac_plaka_kg" id="jsonData" class="form-control ithalat" required />
                 </div>
 
                 <div class="form-group">
@@ -342,7 +344,7 @@
                             <option value="Taşucu">Taşucu</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk"
+                        <input class="col-sm-5 form-control ithalat" type="text" name="girisGumruk"
                             id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
                 </div>
@@ -356,7 +358,7 @@
                             <option value="Cilvegözü">Cilvegözü</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk"
+                        <input class="col-sm-5 form-control ithalat" type="text" name="cıkısGumruk"
                             id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
                     </div>
                 </div>`;
@@ -918,6 +920,163 @@
             let kopya_evrak_modal = document.getElementById("kopya-evrak-modal");
             kopya_evrak_modal.innerHTML = kopya_modal_html;
 
+            addEventListenersForKopyaEvrak(evraks_type);
+
+            let kopya_onay_btn = document.getElementById("kopya-onay-btn");
+            kopya_onay_btn.setAttribute("data-evrak-type", evraks_type);
+
+
+
+        }
+
+        function fillAllOtherEvraks() {
+            let modal_div = document.getElementById("kopya-evrak-modal");
+            let tüm_formların_div = document.getElementById("formContainer");
+
+            let tüm_formların_div_listesi = tüm_formların_div.querySelectorAll(".form-step");
+
+
+            for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                let form = tüm_formların_div_listesi[i];
+
+                let siraNo = form.querySelector(`#siraNo_${i}`);
+                let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                let ss_no = form.querySelector(`#ss_no_${i}`);
+                let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                let arac_plaka_kg = form.querySelector(`#jsonData_${i}`);
+                let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+
+
+
+                // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                vgbOnBildirimNo.value = modal_div.querySelector("input[name='vgbOnBildirimNo']").value;
+                ss_no.value = modal_div.querySelector("input[name='ss_no']").value;
+                ss_miktar.value = modal_div.querySelector("input[name='ss_miktar']").value;
+                vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
+                gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
+                sevkUlke.value = modal_div.querySelector("input[name='sevkUlke']").value;
+                orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
+                arac_plaka_kg.value = modal_div.querySelector("input[name='arac_plaka_kg']").value;
+                girisGumruk.value = modal_div.querySelector("input[name='girisGumruk']").value;
+                cıkısGumruk.value = modal_div.querySelector("input[name='cıkısGumruk']").value;
+
+
+
+            }
+
+
+        }
+
+        function addEventListenersForKopyaEvrak(evrak_type) {
+            let modal_div = document.getElementById("kopya-evrak-modal");
+
+            if (evrak_type == "İthalat") {
+
+                let addBtn = modal_div.querySelector("#addBtn");
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let data = [];
+                let netMiktar = 0;
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            plaka: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        console.log(listItem);
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+
+                // ss girilen miktarı direkt toplam miktara yazdır
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Transit") {
+
+            } else if (evrak_type == "Antrepo Giriş") {
+
+            } else if (evrak_type == "Antrepo Varış") {
+
+            } else if (evrak_type == "Antrepo Sertifika") {
+
+            } else if (evrak_type == "Antrepo Çıkış") {
+
+            } else if (evrak_type == "Canlı Hayvan") {
+
+            } else if (evrak_type == "Canlı Hayvan(GEMİ)") {
+
+            } else {
+                alert("Kopya evrak oluşturma hatası: Evrak türü hatası!");
+            }
 
 
 
@@ -961,8 +1120,7 @@
                 div.style.backgroundColor = "#ababab";
 
                 let description = document.createElement("p");
-                description.textContent = `
-            Sayfadaki Tüm Evrak Formlarını Temizle: `;
+                description.textContent = `Sayfadaki Tüm Evrak Formlarını Temizle: `;
 
                 let removeBtn = document.createElement("button");
                 removeBtn.textContent = "Temizle-Sıfırla";
@@ -1069,16 +1227,16 @@
                 create_kopya_evrak_modal(evraks_type);
 
                 /* creacted_forms = document.querySelectorAll(".form-step");
-                                                                                                console.log(creacted_forms[0]);
+                                                                                                                                                                                                                                        console.log(creacted_forms[0]);
 
-                                                                                                for (let index = 0; index < creacted_forms.length; index++) {
-                                                                                                    const element = creacted_forms[index].querySelector(`
+                                                                                                                                                                                                                                        for (let index = 0; index < creacted_forms.length; index++) {
+                                                                                                                                                                                                                                            const element = creacted_forms[index].querySelector(`
             #ss_no_$ {
                 index
             }
             `);
-                                                                                                    console.log(element);
-                                                                                                } */
+                                                                                                                                                                                                                                            console.log(element);
+                                                                                                                                                                                                                                        } */
 
 
             } else {
@@ -1956,8 +2114,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value}
-            KG < button type = "button" class = "delete-btn" > ✖️ < /button>`;
+                            `${val1} - ${input2.value}KG < button type = "button" class = "delete-btn" > ✖️ < /button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
