@@ -313,10 +313,8 @@ class EvrakController extends Controller
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
                     'urunKG' => 'required',
-                    'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
-                    'girisGumruk' => 'required',
                     'cıkısGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
@@ -326,10 +324,8 @@ class EvrakController extends Controller
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
-                    'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                    'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
                     'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
@@ -623,7 +619,7 @@ class EvrakController extends Controller
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
 
-                    
+
                     // yeni bir antrepo girilmiş ise bunu db ekle
                     $gelen_antrepo = GirisAntrepo::where('name', $formData[$i]["giris_antrepo_id"])->first();
                     if (!$gelen_antrepo) {    // DB de yoksa ekle
@@ -869,10 +865,8 @@ class EvrakController extends Controller
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
-                    $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
-                    $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
                     $evrak_saved = $yeni_evrak->save();
                     if (!$evrak_saved) {

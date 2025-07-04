@@ -494,10 +494,8 @@ class VeterinerController extends Controller
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
                 'urunKG' => 'required',
-                'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'girisGumruk' => 'required',
                 'cikisGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
@@ -507,10 +505,8 @@ class VeterinerController extends Controller
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
-                'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
                 'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
@@ -740,6 +736,8 @@ class VeterinerController extends Controller
                 $sertifika->toplam_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->save();
+
+                
             } elseif ($request->type == "EvrakTransit") {
                 $evrak = EvrakTransit::find($request->input('id'));
 
@@ -931,10 +929,8 @@ class VeterinerController extends Controller
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
                 $evrak->urunKG = $request->urunKG;
-                $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
-                $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->save();
 
@@ -1034,6 +1030,7 @@ class VeterinerController extends Controller
                             'antrepo_sertifika',
                             'antrepo_sertifika'
                         );
+                    $user_evrak->user_id = (int)$request->veterinerId;
                 }
                 $user_evrak->evrak()->associate($evrak);
 

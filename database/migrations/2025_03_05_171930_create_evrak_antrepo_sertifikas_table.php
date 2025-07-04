@@ -19,10 +19,8 @@ return new class extends Migration
             $table->string('urunAdi');
             $table->string('gtipNo');
             $table->integer('urunKG');
-            $table->string('sevkUlke');
             $table->string('orjinUlke');
             $table->string('aracPlaka');
-            $table->string('girisGumruk');
             $table->string('cikisGumruk');
             $table->integer('difficulty_coefficient')->default(2);
 

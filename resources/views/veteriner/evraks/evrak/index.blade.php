@@ -8,7 +8,7 @@
         <div class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('veteriner.evraks.index') }}">Geri dön</a>
 
                     <div class="col-sm-6">
                         <h1 class="m-0"><b>Evrak Detayları</b></h1>

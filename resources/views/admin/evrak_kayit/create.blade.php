@@ -669,10 +669,7 @@
                     <input id="net_miktar" name="urunKG" class="form-control" required />
                 </div>
 
-                <div class="form-group">
-                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control" required />
-                </div>
+
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
@@ -684,18 +681,7 @@
                     <input name="aracPlaka" class="form-control" required />
                 </div>
 
-                <div class="form-group">
-                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
-                    <div class="row" style="display: flex; align-items: center;">
-                        <select class="col-sm-6 form-control" id="giris_g_select">
-                            <option selected value="">Gümrükler(Seç)</option>
-                            <option value="Mersin">Mersin</option>
-                            <option value="Taşucu">Taşucu</option>
-                        </select>
-                        <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
-                    </div>
-                </div>
+
 
                 <div class="form-group">
                     <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
@@ -1164,9 +1150,7 @@
                     let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
-                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
-                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
                     let cikisGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
                     let dataList = form.querySelector(`#dataList_${i}`);
 
@@ -1175,12 +1159,10 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
-                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
                     gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     aracPlaka.value = modal_div.querySelector("input[name='aracPlaka']").value;
-                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
                     cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
 
                     vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
@@ -1551,8 +1533,6 @@
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
-                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
-                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
                 let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
                 let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
 
@@ -1605,12 +1585,7 @@
                     }
                 });
 
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_g.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_g.value = this.value;
-                    }
-                });
+
 
             } else if (evrak_type == "Antrepo Çıkış") {
 
@@ -2395,10 +2370,7 @@
                                             <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke_${i}" class="form-control" required />
-                                        </div>
+
 
                                         <div class="form-group">
                                             <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
@@ -2411,23 +2383,7 @@
                                             <input name="aracPlaka_${i}" class="form-control" required />
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
@@ -2941,8 +2897,6 @@
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
-                let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
-                let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
@@ -2996,12 +2950,7 @@
                     }
                 });
 
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_g.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_g.value = this.value;
-                    }
-                });
+
             });
         }
 
@@ -3270,10 +3219,8 @@
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
                         urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
                         cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
                     };
                     allFormData.push(formData);
