@@ -125,7 +125,7 @@
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
 
@@ -335,7 +335,7 @@
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
 
@@ -526,7 +526,7 @@
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
 
@@ -725,7 +725,7 @@
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
 
@@ -902,7 +902,7 @@
 
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
-                                            <input name="oncekiVGBOnBildirimNo" type="number" class="form-control"
+                                            <input name="oncekiVGBOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->oncekiVGBOnBildirimNo }}" required />
                                         </div>
 
@@ -1241,7 +1241,7 @@
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input name="vgbOnBildirimNo" type="number" class="form-control"
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
 
