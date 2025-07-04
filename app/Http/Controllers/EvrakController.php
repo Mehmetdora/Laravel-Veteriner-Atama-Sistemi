@@ -632,7 +632,17 @@ class EvrakController extends Controller
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
-                    $yeni_evrak->giris_antrepo_id = $formData[$i]["giris_antrepo_id"];
+
+                    // yeni bir antrepo girilmiş ise bunu db ekle
+                    $gelen_antrepo = GirisAntrepo::where('name', $formData[$i]["giris_antrepo_id"])->first();
+                    if (!$gelen_antrepo) {    // DB de yoksa ekle
+                        $gelen_antrepo = new GirisAntrepo;
+                        $gelen_antrepo->name = $formData[$i]["giris_antrepo_id"];
+                        $gelen_antrepo->save();
+                    }
+                    $yeni_evrak->giris_antrepo_id = $gelen_antrepo->id;
+
+
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -698,7 +708,27 @@ class EvrakController extends Controller
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
                     $yeni_evrak->urunlerinBulunduguAntrepo = $formData[$i]["urunlerinBulunduguAntrepo"];
+
+                    // yeni bir antrepo girilmiş ise bunu db ekle
+                    $gelen_antrepo = GirisAntrepo::where('name', $formData[$i]["urunlerinBulunduguAntrepo"])->first();
+                    if (!$gelen_antrepo) {    // DB de yoksa ekle
+                        $gelen_antrepo = new GirisAntrepo;
+                        $gelen_antrepo->name = $formData[$i]["urunlerinBulunduguAntrepo"];
+                        $gelen_antrepo->save();
+                    }
+                    $yeni_evrak->urunlerinBulunduguAntrepo = $gelen_antrepo->name;
+
+
                     $yeni_evrak->save();
+
+                    // yeni bir antrepo girilmiş ise bunu db ekle
+                    $gelen_antrepo = GirisAntrepo::where('name', $yeni_evrak->urunlerinBulunduguAntrepo)->exists();
+                    if (!$gelen_antrepo) {    // DB de yoksa ekle
+                        $antrepo = new GirisAntrepo;
+                        $antrepo->name = $yeni_evrak->urunlerinBulunduguAntrepo;
+                        $antrepo->save();
+                    }
+
 
 
 
@@ -1637,6 +1667,15 @@ class EvrakController extends Controller
                 $evrak->giris_antrepo_id = $request->giris_antrepo_id;
                 $evrak->save();
 
+
+                // yeni bir antrepo girilmiş ise bunu db ekle
+                $gelen_antrepo = GirisAntrepo::where('name', $request->urunlerinBulunduguAntrepo)->exists();
+                if (!$gelen_antrepo) {    // DB de yoksa ekle
+                    $antrepo = new GirisAntrepo;
+                    $antrepo->name = $request->urunlerinBulunduguAntrepo;
+                    $antrepo->save();
+                }
+
                 // İlişkili modelleri bağlama
                 $urun = Urun::find($request->urun_kategori_id);
 
@@ -1690,6 +1729,14 @@ class EvrakController extends Controller
                 $evrak->urunKG = $request->urunKG;
                 $evrak->urunlerinBulunduguAntrepo = $request->urunlerinBulunduguAntrepo;
                 $evrak->save();
+
+                // yeni bir antrepo girilmiş ise bunu db ekle
+                $gelen_antrepo = GirisAntrepo::where('name', $request->urunlerinBulunduguAntrepo)->exists();
+                if (!$gelen_antrepo) {    // DB de yoksa ekle
+                    $antrepo = new GirisAntrepo;
+                    $antrepo->name = $request->urunlerinBulunduguAntrepo;
+                    $antrepo->save();
+                }
 
                 // Veteriner ile evrak kaydetme
                 $user_evrak = $evrak->veteriner;

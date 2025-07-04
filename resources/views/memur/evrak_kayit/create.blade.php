@@ -98,7 +98,10 @@
                                 Birden fazla evrak oluştururken aynı verileri her evrağa tekrar tekrar girmek yerine
                                 istenilen yerleri bir kopya evrak oluşturarak doldurabilirsiniz:
                             </p>
-                            <button class="btn btn-primary">Kopya Evrak Oluştur</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#modal-kopya-evrak">Kopya
+                                Evrak Oluştur</button>
+
                         </div>
 
                     </div>
@@ -162,6 +165,38 @@
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
+
+
+            {{-- kopya evrak form modal --}}
+            <div class="modal fade" id="modal-kopya-evrak">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="kopya-evrak-modal-title"></h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Bu kopya evrağa doldurulan bilgiler oluşturulmuş tüm evrak formlarına kopyalanacaktır. Boş
+                                bırakılan yerler yine tüm evrak formlarında da boş kalacaktır.</p>
+                            <div id="kopya-evrak-modal"></div>
+
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">İptal</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" id="kopya-onay-btn"
+                                onclick="fillAllOtherEvraks()" data-evrak-type="">Kopyayı Tüm Evrak
+                                Formlarına
+                                Uygula</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
+
         </section>
         <!-- /.content -->
     </div>
@@ -212,6 +247,1467 @@
             });
         }
 
+        function create_kopya_evrak_modal(evraks_type) {
+
+            let kopya_modal_html = null;
+
+            if (evraks_type == "İthalat") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <input class="col-sm-6 form-control  ithalat" type="text" name="ss_no"
+                            id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control ithalat" type="text" oninput="formatNumber(this)" name="ss_miktar"
+                            id="ss_miktar" placeholder="Miktarı" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control ithalat" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value = "" > Ürün Kategorileri </option>
+                            @foreach ($uruns as $urun)
+                                <option value = "{{ $urun->id }}" > {{ $urun->name }} </option>
+                            @endforeach
+                        @endif
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" name="urunKG" class="form-control ithalat" required readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="arac_plaka_kg" class="control-label">Araç Plakası ve Yük Miktarı(KG)</label>
+                    <button type="button" id="addBtn">➕</button>
+
+                    <div id="inputContainer" class="inputs hidden">
+                        <input type="text" id="input1" placeholder="Araç Plakası">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Yük Miktarı(KG)">
+                        <button type="button" id="confirmBtn">✔️</button>
+                    </div>
+
+                    <ul id="dataList" class="list"></ul>
+
+                    <input type="hidden" name="arac_plaka_kg" id="jsonData" class="form-control ithalat" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur):*</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Mersin">Mersin</option>
+                            <option value="Taşucu">Taşucu</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control ithalat" type="text" name="girisGumruk"
+                            id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur):*</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="cikis_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Habur">Habur</option>
+                            <option value="Cilvegözü">Cilvegözü</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control ithalat" type="text" name="cıkısGumruk"
+                            id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Transit") {
+                kopya_modal_html = `
+
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı: *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value="">Ürün Kategorileri</option>
+                            @foreach ($uruns as $urun)
+                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" name="urunKG" class="form-control" required readonly />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
+                    <input name="aracPlaka" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Mersin">Mersin</option>
+                            <option value="Taşucu">Taşucu</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="cikis_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Habur">Habur</option>
+                            <option value="Cilvegözü">Cilvegözü</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Antrepo Giriş") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı: *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value="">Ürün Kategorileri</option>
+                            @foreach ($uruns as $urun)
+                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
+                    <input name="aracPlaka" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Mersin">Mersin</option>
+                            <option value="Taşucu">Taşucu</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_antrepo_id_select">Varış Antrepo:*</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_antrepo_id_select">
+                            @if (isset($giris_antrepos))
+                                @foreach ($giris_antrepos as $giris_antrepo)
+                                    <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="giris_antrepo_id"
+                            id="giris_antrepo_id" placeholder="Giriş Antreposu" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Antrepo Varış") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="oncekiVGBOnBildirimNo" class="control-label">Önceki VGB Numarası</label>
+                    <input id="oncekiVGBOnBildirimNo" name="oncekiVGBOnBildirimNo" type="number" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <button type="button" id="addBtn">➕</button>
+
+                    <div id="inputContainer" class="inputs hidden">
+                        <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <button type="button" id="confirmBtn">✔️</button>
+                    </div>
+
+                    <ul id="dataList" class="list"></ul>
+
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" oninput="formatNumber(this)" name="urunKG" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunlerinBulunduguAntrepo_input">Giriş Antrepo(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select">
+                            @if (isset($giris_antrepos))
+                                @foreach ($giris_antrepos as $giris_antrepo)
+                                    <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo" id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Antrepo Sertifika") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <button type="button" id="addBtn">➕</button>
+
+                    <div id="inputContainer" class="inputs hidden">
+                        <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <button type="button" id="confirmBtn">✔️</button>
+                    </div>
+
+                    <ul id="dataList" class="list"></ul>
+
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value="">Ürün Kategorileri</option>
+                            @foreach ($uruns as $urun)
+                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
+                    <input name="aracPlaka" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Mersin">Mersin</option>
+                            <option value="Taşucu">Taşucu</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="cikis_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Habur">Habur</option>
+                            <option value="Cilvegözü">Cilvegözü</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Antrepo Çıkış") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="usks">USKS Numarası ve Miktarı: *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <input class="col-sm-5 form-control" type="text" name="usks_no" id="usks_no" placeholder="USKS Numarası" required>
+                        <div class="col-sm-2"></div>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar" id="usks_miktar" placeholder="USKS Miktarı" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value="">Ürün Kategorileri</option>
+                            @foreach ($uruns as $urun)
+                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" value="Türkiye" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
+                    <input name="aracPlaka" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="cikis_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Habur">Habur</option>
+                            <option value="Cilvegözü">Cilvegözü</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Canlı Hayvan") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="number" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <button type="button" id="addBtn">➕</button>
+
+                    <div id="inputContainer" class="inputs hidden">
+                        <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <button type="button" id="confirmBtn">✔️</button>
+                    </div>
+
+                    <ul id="dataList" class="list"></ul>
+
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                        @if (isset($uruns))
+                            <option selected value="">Ürün Kategorileri</option>
+                            @foreach ($uruns as $urun)
+                                <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="hayvanSayisi" class="control-label">Başvuru Yapılan Hayvan Sayısı(Baş Sayısı)</label>
+                    <input id="hayvanSayisi" name="hayvanSayisi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                    <input name="sevkUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="orjinUlke" class="control-label">Orjin Ülke</label>
+                    <input name="orjinUlke" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="giris_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Mersin">Mersin</option>
+                            <option value="Taşucu">Taşucu</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="cikis_g_select">
+                            <option selected value="">Gümrükler(Seç)</option>
+                            <option value="Habur">Habur</option>
+                            <option value="Cilvegözü">Cilvegözü</option>
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                    </div>
+                </div>`;
+            } else if (evraks_type == "Canlı Hayvan(GEMİ)") {
+                kopya_modal_html = `
+                <div class="form-group">
+                    <label for="hayvan_sayisi" class="control-label">Hayvan Sayısı: *</label>
+                    <input id="hayvan_sayisi" oninput="formatNumber(this)" name="hayvan_sayisi" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="veteriner_id" class="control-label">Veteriner Hekim: *</label>
+                    <select class="form-control" name="veteriner_id" id="veteriner_id" required>
+                        @if (isset($veteriners))
+                            @foreach ($veteriners as $veteriner)
+                                <option value="{{ $veteriner->id }}">{{ $veteriner->name }}</option>
+                            @endforeach
+                        @endif
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Başlangıç Tarihi: *</label>
+                    <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                        <input name="start_date" placeholder="Ör. Tarih Formatı: gg/aa/YY" type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                        <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="day_count" class="control-label">Kaç Günlük: * (Tam Sayı Giriniz!)</label>
+                    <input id="day_count" name="day_count" type="number" class="form-control" required />
+                </div>
+                `;
+            } else {
+                alert("Kopya evrak oluşturulamadı,tekrar deneyiniz!");
+            }
+
+
+            let kopya_evrak_modal_title = document.getElementById("kopya-evrak-modal-title");
+            kopya_evrak_modal_title.textContent = `Kopya Evrak - ${evraks_type}`;
+
+            let kopya_evrak_modal = document.getElementById("kopya-evrak-modal");
+            kopya_evrak_modal.innerHTML = kopya_modal_html;
+
+            addEventListenersForKopyaEvrak(evraks_type);
+
+            let kopya_onay_btn = document.getElementById("kopya-onay-btn");
+            kopya_onay_btn.setAttribute("data-evrak-type", evraks_type);
+
+
+
+        }
+
+        function fillAllOtherEvraks() {
+            let modal_div = document.getElementById("kopya-evrak-modal");
+            let tüm_formların_div = document.getElementById("formContainer");
+            let tüm_formların_div_listesi = tüm_formların_div.querySelectorAll(".form-step");
+
+
+            if (evraks_type == "İthalat") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    // oluşturulan evrak formlarının değerleri
+                    let form = tüm_formların_div_listesi[i];
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let arac_plaka_kg = form.querySelector(`#jsonData_${i}`);
+                    let dataList = form.querySelector(`#dataList_${i}`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+
+
+
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    vgbOnBildirimNo.value = modal_div.querySelector("input[name='vgbOnBildirimNo']").value;
+                    ss_no.value = modal_div.querySelector("input[name='ss_no']").value;
+                    ss_miktar.value = modal_div.querySelector("input[name='ss_miktar']").value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                    urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
+                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
+                    sevkUlke.value = modal_div.querySelector("input[name='sevkUlke']").value;
+                    orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
+                    arac_plaka_kg.value = modal_div.querySelector("input[name='arac_plaka_kg']").value;
+                    girisGumruk.value = modal_div.querySelector("input[name='girisGumruk']").value;
+                    cıkısGumruk.value = modal_div.querySelector("input[name='cıkısGumruk']").value;
+
+                    // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
+                    let datas = JSON.parse(arac_plaka_kg.value);
+                    let netMiktar = 0;
+
+                    datas.forEach(json_data => {
+
+                        let val1 = json_data.plaka;
+                        let val2 = json_data.miktar;
+
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        console.log(listItem);
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            arac_plaka_kg.value = JSON.stringify(datas);
+                        });
+
+                        dataList.appendChild(listItem);
+                        arac_plaka_kg.value = JSON.stringify(datas);
+
+                    });
+
+
+
+
+
+                }
+
+            } else if (evraks_type == "Transit") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+
+                    siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
+                    vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
+                    ss_no.value = modal_div.querySelector(`input[name='ss_no']`).value;
+                    ss_miktar.value = modal_div.querySelector(`input[name='ss_miktar']`).value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    cıkısGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+
+
+
+
+                }
+            } else if (evraks_type == "Antrepo Giriş") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let ss_no = form.querySelector(`#ss_no_${i}`);
+                    let ss_miktar = form.querySelector(`#ss_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let giris_antrepo_id = form.querySelector(`#giris_antrepo_id_${i}`);
+                    let giris_antrepo_id_select = form.querySelector(`#giris_antrepo_id_select_${i}`);
+
+                    siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
+                    vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
+                    ss_no.value = modal_div.querySelector(`input[name='ss_no']`).value;
+                    ss_miktar.value = modal_div.querySelector(`input[name='ss_miktar']`).value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    giris_antrepo_id.value = modal_div.querySelector(`input[name="giris_antrepo_id"]`).value;
+                    giris_antrepo_id_select.value = modal_div.querySelector(`input[name="giris_antrepo_id"]`).value;
+
+
+
+
+                }
+            } else if (evraks_type == "Antrepo Varış") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let oncekiVGBOnBildirimNo = form.querySelector(`#oncekiVGBOnBildirimNo_${i}`);
+                    let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let urunlerinBulunduguAntrepo_input = form.querySelector(`#urunlerinBulunduguAntrepo_input${i}`);
+                    let urunlerinBulunduguAntrepo_select = form.querySelector(`#urunlerinBulunduguAntrepo_select${i}`);
+                    let dataList = form.querySelector(`#dataList_${i}`);
+
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    oncekiVGBOnBildirimNo.value = modal_div.querySelector("input[name='oncekiVGBOnBildirimNo']").value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
+                    urunlerinBulunduguAntrepo_input.value = modal_div.querySelector(
+                        `#urunlerinBulunduguAntrepo_input`).value;
+                    urunlerinBulunduguAntrepo_select.value = modal_div.querySelector(
+                        `#urunlerinBulunduguAntrepo_select`).value;
+                    vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
+
+                    // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
+                    let datas = JSON.parse(vetSaglikSertifikasiNo.value);
+                    let netMiktar = 0;
+
+                    datas.forEach(json_data => {
+
+                        let val1 = json_data.ssn;
+                        let val2 = json_data.miktar;
+
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+                        });
+
+                        dataList.appendChild(listItem);
+                        vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                    });
+
+                }
+
+            } else if (evraks_type == "Antrepo Sertifika") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`[name="urun_kategori_id_${i}"]`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let cikisGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+                    let dataList = form.querySelector(`#dataList_${i}`);
+
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
+                    aracPlaka.value = modal_div.querySelector("input[name='aracPlaka']").value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+
+                    vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
+
+                    // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
+                    let datas = JSON.parse(vetSaglikSertifikasiNo.value);
+                    let netMiktar = 0;
+
+                    datas.forEach(json_data => {
+
+                        let val1 = json_data.ssn;
+                        let val2 = json_data.miktar;
+
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+                        });
+
+                        dataList.appendChild(listItem);
+                        vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                    });
+
+                }
+
+            } else if (evraks_type == "Antrepo Çıkış") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let usks_no = form.querySelector(`#usks_no_${i}`);
+                    let usks_miktar = form.querySelector(`#usks_miktar_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
+                    let cikisGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+
+
+                    siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
+                    vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
+                    usks_no.value = modal_div.querySelector(`input[name='usks_no']`).value;
+                    usks_miktar.value = modal_div.querySelector(`input[name='usks_miktar']`).value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
+                    urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
+                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
+                    cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+
+
+
+                }
+
+            } else if (evraks_type == "Canlı Hayvan") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+                    let form = tüm_formların_div_listesi[i];
+
+                    let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
+                    let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
+                    let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
+                    let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
+                    let urun_kategori_id = form.querySelector(`[name="urun_kategori_id_${i}"]`);
+                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let hayvanSayisi = form.querySelector(`[name="hayvanSayisi_${i}"]`);
+                    let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
+                    let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
+                    let cikisGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+                    let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
+                    let dataList = form.querySelector(`#dataList_${i}`);
+
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    vgbOnBildirimNo.value = modal_div.querySelector("input[name='vgbOnBildirimNo']").value;
+                    vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
+                    urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
+                    urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
+                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    hayvanSayisi.value = modal_div.querySelector("input[name='hayvanSayisi']").value;
+                    sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
+                    orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
+                    girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
+                    cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+                    vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
+
+                    // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
+                    let datas = JSON.parse(vetSaglikSertifikasiNo.value);
+                    let netMiktar = 0;
+
+                    datas.forEach(json_data => {
+
+                        let val1 = json_data.ssn;
+                        let val2 = json_data.miktar;
+
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+                        });
+
+                        dataList.appendChild(listItem);
+                        vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                    });
+
+                }
+
+            } else if (evraks_type == "Canlı Hayvan(GEMİ)") {
+                for (let i = 0; i < tüm_formların_div_listesi.length; i++) {
+
+                    let form = tüm_formların_div_listesi[i];
+
+                    let hayvan_sayisi = form.querySelector(`[name="hayvan_sayisi_${i}"]`);
+                    let veteriner_id = form.querySelector(`[name="veteriner_id_${i}"]`);
+                    let start_date = form.querySelector(`[name='start_date_${i}'`);
+                    let day_count = form.querySelector(`#day_count_${i}`);
+
+                    // Kopya evraktan alınan verileri tüm formlara yapıştırma
+                    hayvan_sayisi.value = modal_div.querySelector("input[name='hayvan_sayisi']").value;
+                    veteriner_id.value = modal_div.querySelector("#veteriner_id").value;
+                    start_date.value = modal_div.querySelector("input[name='start_date']").value;
+                    day_count.value = modal_div.querySelector("input[name='day_count']").value;
+                }
+
+            } else {
+                alert("Kopya evrak oluşturma hatası: Evrak türü hatası!");
+            }
+
+
+        }
+
+        function addEventListenersForKopyaEvrak(evrak_type) {
+            let modal_div = document.getElementById("kopya-evrak-modal");
+
+            if (evrak_type == "İthalat") {
+
+                let addBtn = modal_div.querySelector("#addBtn");
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let data = [];
+                let netMiktar = 0;
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            plaka: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        console.log(listItem);
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+
+                // ss girilen miktarı direkt toplam miktara yazdır
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Transit") {
+
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+
+
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Antrepo Giriş") {
+
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let ss_miktari = modal_div.querySelector(`#ss_miktar`);
+                let varis_ant_select = modal_div.querySelector(`#giris_antrepo_id_select`);
+                let varis_ant_input = modal_div.querySelector(`#giris_antrepo_id`);
+
+
+                ss_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = ss_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
+                varis_ant_select.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        varis_ant_input.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Antrepo Varış") {
+
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+
+
+                let inputBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
+                    `#urunlerinBulunduguAntrepo_input`);
+                let selectBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
+                    `#urunlerinBulunduguAntrepo_select`);
+
+
+                let data = [];
+                let netMiktar = 0;
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            netMiktarInput.value = netMiktar;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        netMiktarInput.value = netMiktar;
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Antrepo Sertifika") {
+
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+
+                let data = [];
+                let netMiktar = 0;
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+                        netMiktar += val2;
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            netMiktarInput.value = netMiktar;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        netMiktarInput.value = netMiktar;
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Antrepo Çıkış") {
+
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let netMiktarInput = modal_div.querySelector(`#net_miktar`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let usks_miktari = modal_div.querySelector(`#usks_miktar`);
+
+                let data = [];
+                let netMiktar = 0;
+
+                usks_miktari.addEventListener("blur", function() {
+                    netMiktarInput.value = usks_miktari.value;
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+            } else if (evrak_type == "Canlı Hayvan") {
+
+                let addBtn = modal_div.querySelector(`#addBtn`);
+                let inputContainer = modal_div.querySelector(`#inputContainer`);
+                let input1 = modal_div.querySelector(`#input1`);
+                let input2 = modal_div.querySelector(`#input2`);
+                let confirmBtn = modal_div.querySelector(`#confirmBtn`);
+                let dataList = modal_div.querySelector(`#dataList`);
+                let jsonDataInput = modal_div.querySelector(`#jsonData`);
+                let inputBox_g = modal_div.querySelector(`#giris_g_input`);
+                let selectBox_g = modal_div.querySelector(`#giris_g_select`);
+                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
+                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+
+                let data = [];
+
+                addBtn.addEventListener("click", function() {
+                    inputContainer.classList.toggle("hidden");
+                    input1.value = "";
+                    input2.value = "";
+                });
+
+                confirmBtn.addEventListener("click", function() {
+                    let val1 = input1.value.trim();
+                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+
+                    if (val1 && val2) {
+                        let newItem = {
+                            ssn: val1,
+                            miktar: val2
+                        };
+                        data.push(newItem);
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            netMiktar -= val2;
+                            listItem.remove();
+                            jsonDataInput.value = JSON.stringify(data);
+                        });
+
+                        dataList.appendChild(listItem);
+                        jsonDataInput.value = JSON.stringify(data);
+                        inputContainer.classList.add("hidden");
+                    } else {
+                        alert("Lütfen her iki alanı da doldurun!");
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_c.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_c.value = this.value;
+                    }
+                });
+
+                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                selectBox_g.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        inputBox_g.value = this.value;
+                    }
+                });
+            } else if (evrak_type == "Canlı Hayvan(GEMİ)") {
+
+                // Bir işleme gerek yok
+
+            } else {
+                alert("Kopya evrak oluşturma hatası: Evrak türü hatası!");
+            }
+
+
+
+
+        }
+
         function updateEvrakList() {
             let info_tab = document.getElementById("info-tab");
             let formButtons = document.getElementsByClassName("formButtons");
@@ -249,7 +1745,7 @@
                 div.style.backgroundColor = "#ababab";
 
                 let description = document.createElement("p");
-                description.textContent = `Sayfadaki Tüm Evrak Formlarını Temizle:`;
+                description.textContent = `Sayfadaki Tüm Evrak Formlarını Temizle: `;
 
                 let removeBtn = document.createElement("button");
                 removeBtn.textContent = "Temizle-Sıfırla";
@@ -353,13 +1849,7 @@
                 empty_div.style.display = "none";
 
 
-                /* creacted_forms = document.querySelectorAll(".form-step");
-                console.log(creacted_forms[0]);
-
-                for (let index = 0; index < creacted_forms.length; index++) {
-                    const element = creacted_forms[index].querySelector(`#ss_no_${index}`);
-                    console.log(element);
-                } */
+                create_kopya_evrak_modal(evraks_type);
 
 
             } else {
@@ -738,14 +2228,19 @@
 
 
                                         <div class="form-group">
-                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
-                                            <select class="form-control select2" name="giris_antrepo_id_${i}" style="width: 100%;">
-                                                @if (isset($giris_antrepos))
-                                                    @foreach ($giris_antrepos as $giris_antrepo)
-                                                        <option value="{{ $giris_antrepo->id }}">{{ $giris_antrepo->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
+                                            <label for="giris_antrepo_id_select_${i}">Varış Antrepo:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_antrepo_id_select_${i}">
+                                                    @if (isset($giris_antrepos))
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text" name="giris_antrepo_id_${i}"
+                                                    id="giris_antrepo_id_${i}" placeholder="Giriş Antreposu" required>
+                                            </div>
                                         </div>
         `;
             } else if (type == 3) {
@@ -1187,7 +2682,7 @@
                     <div class="form-group">
                         <label>Başlangıç Tarihi:*</label>
                         <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                            <input name="start_date_${i}" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <input name="start_date_${i}" placeholder="Ör. Tarih Formatı: gg/aa/YY" type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
                             <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -1237,10 +2732,11 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${input2.value}KG <button type = "button" class = "delete-btn" > ✖️ </button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
+                                val2);
                             netMiktar -= val2;
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
@@ -1332,9 +2828,8 @@
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
                 let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
-
-                let data = [];
-                let netMiktar = 0;
+                let varis_ant_select = formStep.querySelector(`#giris_antrepo_id_select_${index}`);
+                let varis_ant_input = formStep.querySelector(`#giris_antrepo_id_${index}`);
 
                 ss_miktari.addEventListener("blur", function() {
                     netMiktarInput.value = ss_miktari.value;
@@ -1344,6 +2839,12 @@
                 selectBox_g.addEventListener("change", function() {
                     if (this.value !== "") {
                         inputBox_g.value = this.value;
+                    }
+                });
+
+                varis_ant_select.addEventListener("change", function() {
+                    if (this.value !== "") {
+                        varis_ant_input.value = this.value;
                     }
                 });
             });
@@ -1395,7 +2896,8 @@
                             `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
+                                val2);
                             netMiktar -= val2;
                             netMiktarInput.value = netMiktar;
                             listItem.remove();
@@ -1425,7 +2927,6 @@
         function EventListenersFor_4_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
-            console.log(forms);
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
@@ -1466,7 +2967,8 @@
                             `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
+                                val2);
                             netMiktar -= val2;
                             netMiktarInput.value = netMiktar;
                             listItem.remove();
@@ -1501,7 +3003,7 @@
         function EventListenersFor_5_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
-            console.log(forms);
+
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
                 let dataList = formStep.querySelector(`#dataList_${index}`);
@@ -1569,7 +3071,8 @@
                             `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
+                                val2);
                             netMiktar -= val2;
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
@@ -1601,7 +3104,10 @@
 
         function EventListenersFor_7_ToForm() {
 
-            const forms = document.querySelectorAll(".form-step");
+
+            //Bir işleme gerek yok
+
+            /* const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
                 let hayvan_sayisi = formStep.querySelector(`#hayvan_sayisi_${index}`);
                 let veteriner_id = formStep.querySelector(`#veteriner_id_${index}`);
@@ -1609,7 +3115,7 @@
                 let day_count = formStep.querySelector(`#day_count_${index}`);
 
 
-            });
+            }); */
 
 
         }
@@ -1637,7 +3143,8 @@
 
         function updateButtonVisibility() {
 
-            document.getElementById("submitButton").style.display = currentFormIndex === totalForms - 1 ? "inline-block" :
+            document.getElementById("submitButton").style.display = currentFormIndex === totalForms - 1 ?
+                "inline-block" :
                 "none";
 
             for (let btn of document.getElementsByClassName("prevButtons")) {
@@ -1674,7 +3181,8 @@
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -1694,7 +3202,8 @@
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -1713,7 +3222,8 @@
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -1733,7 +3243,8 @@
                         oncekiVGBOnBildirimNo: document.querySelector(`#oncekiVGBOnBildirimNo_${i}`).value,
                         vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
                         urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
@@ -1748,7 +3259,8 @@
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -1768,7 +3280,8 @@
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         usks_no: document.querySelector(`#usks_no_${i}`).value,
                         usks_miktar: document.querySelector(`#usks_miktar_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -1787,7 +3300,8 @@
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`).value,
+                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                            .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
