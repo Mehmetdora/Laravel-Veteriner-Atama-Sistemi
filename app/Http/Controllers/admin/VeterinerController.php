@@ -442,7 +442,7 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'giris_antrepo_id' => 'required',
+                'varis_antrepo_id' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
@@ -456,7 +456,7 @@ class VeterinerController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
+                'varis_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -806,7 +806,7 @@ class VeterinerController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->giris_antrepo_id = $request->giris_antrepo_id;
+                $evrak->giris_antrepo_id = $request->varis_antrepo_id;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -930,7 +930,7 @@ class VeterinerController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
 
-                
+
                 // yeni bir antrepo girilmiş ise bunu db ekle
                 $gelen_antrepo = GirisAntrepo::where('name', $request->cikis_antrepo)->first();
                 if (!$gelen_antrepo) {    // DB de yoksa ekle

@@ -793,37 +793,51 @@ class EvrakController extends Controller
                     // Her sağlık sertifikasının hangi veterinere ait olduğunu belirle
                     foreach ($saglik_sertifikalari as $saglik_sertifika) {
 
-                        // girilen sertifikanın ssn numarası bakarak bu sertifika bir antrepo giriş
-                        // evrağı ile ilişkili ise bu sertifikayı alma
+                        /* girilen sertifikanın ssn numarası bakarak bu sertifika bir antrepo giriş
+                        evrağı ile ilişkili ise bu sertifikayı bul */
+
+                        /*
+                            Ayrıca bu sertifika dışarıdan girilmiş ,bir antrepo giriş evrağına bağlı olmadan da
+                            işlem yapılabiliyor olması gerekiyor. BAKILACAK
+                        */
                         $ss_saved = SaglikSertifika::whereHas('evraks_giris', function ($query) {})
                             ->where('ssn', $saglik_sertifika['ssn'])
                             ->with(['evraks_giris.veteriner.user'])
                             ->first();
 
-                        // Gelen sağlık sertifikasının ait olduğu antp giriş evrağının veterinerini al
-                        $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
+
+                        /*
+                            Girilen ss numarası ile bulunan sağlık sertifikasının miktarından
+                            fazla miktarda aynı ss numarası ile bir sağlık sertifikası girilmişse
+                            bunu kontrol et , hata ver
+                        */
+                        if ($ss_saved->kalan_miktar < $saglik_sertifika['miktar']) {
+
+                            throw new \Exception("{$saglik_sertifika['ssn']} numarası ile girilen
+                             sağlık sertifikasının miktar bilgisi sistemde kayıtlı kalan miktardan fazla girilmiş,
+                             lütfen sistemde kayıtlı sağlık sertifikasının kalan miktarını kontrol ederek
+                             tekrar deneyiniz. ");
+                        } else {  // sistemde girilende fazla miktar girmemiş ise(olması gereken)
+
+                            // Gelen sağlık sertifikasının ait olduğu antp giriş evrağının atandığı veterinerini al
+                            $veteriner = $ss_saved?->evraks_giris?->first()?->veteriner?->user;
 
 
-                        // Veterinerleri kaşılaştırmak için miktar ve ss sayısını tut
-                        if ($veteriner) {
-                            $vetId = $veteriner->id;
+                            // Veterinerleri kaşılaştırmak için miktar ve ss sayısını tut
+                            if ($veteriner) {
+                                $vetId = $veteriner->id;
 
-                            $antrepo_giris_saglik_sertifikalari[] = $ss_saved;
+                                $antrepo_giris_saglik_sertifikalari[] = $ss_saved;
 
-                            // Veterinerin sahip olduğu sertifika sayısını artır
-                            $veterinerSayilari[$vetId] = ($veterinerSayilari[$vetId] ?? 0) + 1;
+                                // Veterinerin sahip olduğu sertifika sayısını artır
+                                $veterinerSayilari[$vetId] = ($veterinerSayilari[$vetId] ?? 0) + 1;
 
-                            // Veterinerin toplam sağlık sertifikası miktarını artır
-                            $veterinerSertifikaMiktarlari[$vetId] = ($veterinerSertifikaMiktarlari[$vetId] ?? 0) + $saglik_sertifika['miktar'];
-                        } else {
-                            throw new \Exception("Sağlık Sertifikası Numarası Bulunamadı, Sistemde Kayıtlı Olduğundan Emin Olduktan Sonra Tekrar Deneyiniz!");
+                                // Veterinerin toplam sağlık sertifikası miktarını artır
+                                $veterinerSertifikaMiktarlari[$vetId] = ($veterinerSertifikaMiktarlari[$vetId] ?? 0) + $saglik_sertifika['miktar'];
+                            } else {
+                                throw new \Exception("Sağlık Sertifikası Numarası Kaydı Sistemde Bulunamadı, Sistemde Kayıtlı Olduğundan Emin Olduktan Sonra Tekrar Deneyiniz!");
+                            }
                         }
-                    }
-
-
-                    // Sağlık sertifikaları hatalı ise
-                    if (empty($veterinerSayilari)) {
-                        throw new \Exception("Hiçbir veteriner için sağlık sertifikası bulunamadı!");
                     }
 
 
@@ -843,15 +857,15 @@ class EvrakController extends Controller
 
                         // Veterinerin 50 den fazla elinde işi bitmemiş iş varsa o zaman random bir veteriner seç
                         if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
-                            $veteriner = $this->atanacak_veteriner;
+                            $veteriner = $this->atanacak_veteriner; // random seçilen veterineri atadık
                             $veterinerId = $veteriner->id;
                         }
 
 
-                        // Eğer birden fazla veteriner eşitse, miktar toplamına göre karar ver
+                        // Eğer birden fazla veteriner eşitse, miktar toplamına göre fazla olana karar ver
                     } else {
 
-                        // en fazla ss'da miktara sahip olan veterineri bulma
+                        // sağlık sertifika miktar değeri en fazla olan veterineri bulma
                         $veterinerId = collect($enCokSertifikaSahipleri)
                             ->sortByDesc(fn($vetId) => $veterinerSertifikaMiktarlari[$vetId])
                             ->first();
@@ -860,12 +874,12 @@ class EvrakController extends Controller
                         // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa 2. sıradakini seç
                         if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
 
+                            // 2. sıradaki veterineri al
                             $veterinerId = $enCokSertifikaSahipleri[1];
 
-                            // Eğer seçilen veterinerin elinde bitmemiş bir evrak varsa sistem atama yapsın
+                            // Seçilen veterinerin elinde 50den fazla iş varsa sistem atama yapsın
                             if ($this->workloads_service->vet_işlemde_worklaod_count($veterinerId) > 50) {
-
-                                $veteriner = $this->atanacak_veteriner;
+                                $veteriner = $this->atanacak_veteriner; // random seçilen veterineri atadık
                                 $veterinerId = $veteriner->id;
                             }
                         }
@@ -956,7 +970,7 @@ class EvrakController extends Controller
                         */
                         foreach ($antrepo_giris_saglik_sertifikalari as $sertifika) {
                             if ($sertifika->ssn == $value['ssn']) {
-                                $sertifika->kalan_miktar = $sertifika->toplam_miktar - $value['miktar'];
+                                $sertifika->kalan_miktar = $sertifika->kalan_miktar - $value['miktar'];
                                 $sertifika->save();
                             }
                         }
@@ -981,7 +995,7 @@ class EvrakController extends Controller
                         ->with('evrak_antrepo_sertifika')->first();
 
                     if (!$usks) {
-                        throw new \Exception('Girilen USKS bilgilerinin doğru olduğundan emin olduktan sonra tekrar deneyiniz!');
+                        throw new \Exception('Girilen USKS bilgileri doğru değil, sistemden kontrol edip doğru olduğundan emin olduktan sonra tekrar deneyiniz.');
                     }
 
                     $veteriner = $usks->evrak_antrepo_sertifika->veteriner->user;
@@ -1303,7 +1317,7 @@ class EvrakController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'giris_antrepo_id' => 'required',
+                'varis_antrepo_id' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
@@ -1317,7 +1331,7 @@ class EvrakController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
+                'varis_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -1669,17 +1683,8 @@ class EvrakController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->giris_antrepo_id = $request->giris_antrepo_id;
+                $evrak->giris_antrepo_id = $request->varis_antrepo_id;
                 $evrak->save();
-
-
-                // yeni bir antrepo girilmiş ise bunu db ekle
-                $gelen_antrepo = GirisAntrepo::where('name', $request->urunlerinBulunduguAntrepo)->exists();
-                if (!$gelen_antrepo) {    // DB de yoksa ekle
-                    $antrepo = new GirisAntrepo;
-                    $antrepo->name = $request->urunlerinBulunduguAntrepo;
-                    $antrepo->save();
-                }
 
                 // İlişkili modelleri bağlama
                 $urun = Urun::find($request->urun_kategori_id);

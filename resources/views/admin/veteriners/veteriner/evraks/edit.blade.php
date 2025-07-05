@@ -821,27 +821,16 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Varış Antrepo(Seç yada yeni bir tane oluştur):*</label>
-                                            <select class="form-control select2" name="giris_antrepo_id"
+                                            <label>Varış Antreposu:*</label>
+                                            <select class="form-control select2" name="varis_antrepo_id"
                                                 style="width: 100%;">
                                                 @if (isset($giris_antrepos))
-                                                    @if (!in_array($evrak->giris_antrepo->id, Arr::pluck($giris_antrepos, 'id')))
-                                                        <option selected value="{{ $evrak->giris_antrepo->id }}">
-                                                            {{ $evrak->giris_antrepo->name }}
+                                                    @foreach ($giris_antrepos as $giris_antrepo)
+                                                        <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
+                                                            value="{{ $giris_antrepo->id }}">
+                                                            {{ $giris_antrepo->name }}
                                                         </option>
-                                                        @foreach ($giris_antrepos as $giris_antrepo)
-                                                            <option value="{{ $giris_antrepo->id }}">
-                                                                {{ $giris_antrepo->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    @else
-                                                        @foreach ($giris_antrepos as $giris_antrepo)
-                                                            <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
-                                                                value="{{ $giris_antrepo->id }}">
-                                                                {{ $giris_antrepo->name }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endif
+                                                    @endforeach
                                                 @endif
                                             </select>
                                         </div>

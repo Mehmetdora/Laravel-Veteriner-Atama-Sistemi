@@ -14,7 +14,7 @@
                 alert.style.transition = "opacity 0.5s ease";
                 alert.style.opacity = "0";
                 setTimeout(() => alert.remove(), 500); // tamamen DOM'dan sil
-            }, 8000); // 5 saniye sonra kaybolsun
+            }, 10000); // 5 saniye sonra kaybolsun
         });
     });
 </script>
