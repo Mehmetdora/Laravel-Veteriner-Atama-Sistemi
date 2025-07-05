@@ -712,7 +712,7 @@
                 <div class="form-group">
                     <label for="usks">USKS Numarası ve Miktarı: *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-5 form-control" type="text" name="usks_no" id="usks_no" placeholder="USKS Numarası" required>
+                        <input class="col-sm-5 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                         <div class="col-sm-2"></div>
                         <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar" id="usks_miktar" placeholder="USKS Miktarı" required>
                     </div>
@@ -2421,10 +2421,10 @@
 
 
                                         <div class="form-group">
-                                            <label for="usks_${i}">USKS Numarası ve Miktarı:*</label>
+                                            <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
-                                                    id="usks_no_${i}" placeholder="USKS Numarası" required>
+                                                    id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                                                 <div class="col-sm-2"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
                                                     id="usks_miktar_${i}" placeholder="USKS Miktarı" required>

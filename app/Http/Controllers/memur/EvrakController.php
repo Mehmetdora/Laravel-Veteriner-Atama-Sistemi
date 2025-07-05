@@ -122,6 +122,11 @@ class EvrakController extends Controller
     public function create()
     {
 
+        $today = now()->setTimezone('Europe/Istanbul'); // tam saat
+        $yil = $today->year; // Değişecek kısım
+        $ornek_usks = sprintf('33VSKN01.USKS.%d-', $yil); // sondaki numarayı 1 arttırma
+
+        $data['ornek_usks'] = $ornek_usks;
         $data['uruns'] = Urun::all();
         $data['giris_antrepos'] = GirisAntrepo::actives();
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
@@ -878,7 +883,7 @@ class EvrakController extends Controller
                     }
                     $yeni_evrak->cikisAntrepo = $gelen_antrepo->name;
 
-                    
+
                     $evrak_saved = $yeni_evrak->save();
                     if (!$evrak_saved) {
                         throw new \Exception("Evrak Bilgileri Yanlış Yada Hatalı! Lüsfen Bilgileri Kontrol Edip Tekrar Deneyiniz.");

@@ -132,6 +132,12 @@ class EvrakController extends Controller
 
     public function create()
     {
+
+        $today = now()->setTimezone('Europe/Istanbul'); // tam saat
+        $yil = $today->year; // Değişecek kısım
+        $ornek_usks = sprintf('33VSKN01.USKS.%d-', $yil); // sondaki numarayı 1 arttırma
+
+        $data['ornek_usks'] = $ornek_usks;
         $data['giris_antrepos'] = GirisAntrepo::actives();
         $data['uruns'] = Urun::all();
         $data['veteriners'] = User::role('veteriner')->where('status', 1)->get();
