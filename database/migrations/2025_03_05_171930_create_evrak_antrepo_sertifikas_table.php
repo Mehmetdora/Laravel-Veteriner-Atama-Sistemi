@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('urunKG');
             $table->string('orjinUlke');
             $table->string('aracPlaka');
-            $table->string('cikisGumruk');
+            $table->string('cikisAntrepo');
             $table->integer('difficulty_coefficient')->default(2);
 
             $table->timestamps();

@@ -496,7 +496,7 @@ class VeterinerController extends Controller
                 'urunKG' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'cikisGumruk' => 'required',
+                'cikis_antrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
@@ -507,7 +507,7 @@ class VeterinerController extends Controller
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cikis_antrepo.required' => 'Çıkış Antreposu, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -736,8 +736,6 @@ class VeterinerController extends Controller
                 $sertifika->toplam_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->save();
-
-                
             } elseif ($request->type == "EvrakTransit") {
                 $evrak = EvrakTransit::find($request->input('id'));
 
@@ -931,7 +929,16 @@ class VeterinerController extends Controller
                 $evrak->urunKG = $request->urunKG;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
-                $evrak->cikisGumruk = $request->cikisGumruk;
+
+                
+                // yeni bir antrepo girilmiş ise bunu db ekle
+                $gelen_antrepo = GirisAntrepo::where('name', $request->cikis_antrepo)->first();
+                if (!$gelen_antrepo) {    // DB de yoksa ekle
+                    $gelen_antrepo = new GirisAntrepo;
+                    $gelen_antrepo->name = $request->cikis_antrepo;
+                    $gelen_antrepo->save();
+                }
+                $evrak->cikisAntrepo = $gelen_antrepo->name;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama

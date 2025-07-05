@@ -1143,22 +1143,36 @@
 
 
                                         <div class="form-group">
-                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
+                                            <label for="cikis_antrepo">Çıkış Antreposu(Seç yada yeni bir tane oluştur):
+                                                *</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="cikis_g_select">
-                                                    <option selected value="{{ $evrak->cikisGumruk }}">
-                                                        {{ $evrak->cikisGumruk }}</option>
-                                                    <hr>
-                                                    <option value="Habur">Habur</option>
-                                                    <option value="Cilvegözü">Cilvegözü</option>
+                                                <select class="col-sm-6 form-control" id="cikis_antrepo_select">
 
+                                                    @if (isset($giris_antrepos))
+                                                        @if (!in_array($evrak->cikisAntrepo, Arr::pluck($giris_antrepos, 'name')))
+                                                            <option selected value="{{ $evrak->cikisAntrepo }}">
+                                                                {{ $evrak->cikisAntrepo }}
+                                                            </option>
+                                                            @foreach ($giris_antrepos as $giris_antrepo)
+                                                                <option value="{{ $giris_antrepo->name }}">
+                                                                    {{ $giris_antrepo->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($giris_antrepos as $giris_antrepo)
+                                                                <option @if ($evrak->cikisAntrepo == $giris_antrepo->name) selected @endif
+                                                                    value="{{ $giris_antrepo->name }}">
+                                                                    {{ $giris_antrepo->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+
+                                                    @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
-                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                                                <input class="col-sm-5 form-control" value="{{ $evrak->cikisAntrepo }}"
+                                                    type="text" name="cikis_antrepo" id="cikis_antrepo_input"
+                                                    placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>
 
@@ -1258,8 +1272,7 @@
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün
                                                 Kategorisi</label>
-                                            <select class="form-control"
-                                                data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
                                                     @if (isset($evrak->urun->first()->id))
@@ -1603,15 +1616,13 @@
                 }
             });
 
-            let inputBox_c = document.querySelector(`#cikis_g_input`);
-            let selectBox_c = document.querySelector(`#cikis_g_select`);
-            selectBox_c.addEventListener("change", function() {
+            let cikis_antrepo_input = document.querySelector(`#cikis_antrepo_input`);
+            let cikis_antrepo_select = document.querySelector(`#cikis_antrepo_select`);
+            cikis_antrepo_select.addEventListener("change", function() {
                 if (this.value !== "") {
-                    inputBox_c.value = this.value;
+                    cikis_antrepo_input.value = this.value;
                 }
             });
-
-            
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoCikis')
         <script>

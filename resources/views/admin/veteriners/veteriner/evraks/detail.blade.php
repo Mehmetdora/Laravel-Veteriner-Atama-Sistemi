@@ -197,10 +197,10 @@
                                                 <td>{{ $evrak->giris_antrepo->name }}</td>
                                             </tr>
                                         @endif
-                                        @if ($evrak->cikisAntreposu)
+                                        @if ($evrak->cikisAntrepo)
                                             <tr>
                                                 <th>Çıkış Antreposu:</th>
-                                                <td>{{ $evrak->cikisAntreposu }}</td>
+                                                <td>{{ $evrak->cikisAntrepo }}</td>
                                             </tr>
                                         @endif
                                         @if (isset($evrak->girisGumruk))

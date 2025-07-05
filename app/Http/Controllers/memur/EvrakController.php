@@ -315,7 +315,7 @@ class EvrakController extends Controller
                     'urunKG' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
-                    'cıkısGumruk' => 'required',
+                    'cikis_antrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
@@ -326,7 +326,7 @@ class EvrakController extends Controller
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                    'cikis_antrepo.required' => 'Çıkış Antreposu, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -867,7 +867,18 @@ class EvrakController extends Controller
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
-                    $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
+
+
+                    // yeni bir antrepo girilmiş ise bunu db ekle
+                    $gelen_antrepo = GirisAntrepo::where('name', $formData[$i]["cikis_antrepo"])->first();
+                    if (!$gelen_antrepo) {    // DB de yoksa ekle
+                        $gelen_antrepo = new GirisAntrepo;
+                        $gelen_antrepo->name = $formData[$i]["cikis_antrepo"];
+                        $gelen_antrepo->save();
+                    }
+                    $yeni_evrak->cikisAntrepo = $gelen_antrepo->name;
+
+                    
                     $evrak_saved = $yeni_evrak->save();
                     if (!$evrak_saved) {
                         throw new \Exception("Evrak Bilgileri Yanlış Yada Hatalı! Lüsfen Bilgileri Kontrol Edip Tekrar Deneyiniz.");

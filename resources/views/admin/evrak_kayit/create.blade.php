@@ -684,15 +684,17 @@
 
 
                 <div class="form-group">
-                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur): *</label>
+                    <label for="cikis_antrepo">Çıkış Antreposu(Seç yada yeni bir tane oluştur): *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <select class="col-sm-6 form-control" id="cikis_g_select">
-                            <option selected value="">Gümrükler(Seç)</option>
-                            <option value="Habur">Habur</option>
-                            <option value="Cilvegözü">Cilvegözü</option>
+                        <select class="col-sm-6 form-control" id="cikis_antrepo_select">
+                            @if (isset($giris_antrepos))
+                                @foreach ($giris_antrepos as $giris_antrepo)
+                                    <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                @endforeach
+                            @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control" type="text" name="cikis_antrepo_input" id="cikis_antrepo_input" placeholder="Çıkış Antreposu" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Antrepo Çıkış") {
@@ -1151,7 +1153,8 @@
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
-                    let cikisGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
+                    let cikis_antrepo_select = form.querySelector(`#cikis_antrepo_select_${i}`);
+                    let cikis_antrepo_input = form.querySelector(`[name="cikis_antrepo_input_${i}"]`);
                     let dataList = form.querySelector(`#dataList_${i}`);
 
                     // Kopya evraktan alınan verileri tüm formlara yapıştırma
@@ -1163,7 +1166,8 @@
                     gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     aracPlaka.value = modal_div.querySelector("input[name='aracPlaka']").value;
-                    cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+                    cikis_antrepo_input.value = modal_div.querySelector(`input[name="cikis_antrepo_input"]`).value;
+                    cikis_antrepo_select.value = modal_div.querySelector(`#cikis_antrepo_select`).value;
 
                     vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
 
@@ -1533,8 +1537,8 @@
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
-                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
-                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
+                let cikis_antrepo_input = modal_div.querySelector(`#cikis_antrepo_input`);
+                let cikis_antrepo_select = modal_div.querySelector(`#cikis_antrepo_select`);
 
                 let data = [];
                 let netMiktar = 0;
@@ -1579,9 +1583,9 @@
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_c.addEventListener("change", function() {
+                cikis_antrepo_select.addEventListener("change", function() {
                     if (this.value !== "") {
-                        inputBox_c.value = this.value;
+                        cikis_antrepo_input.value = this.value;
                     }
                 });
 
@@ -2386,20 +2390,17 @@
 
 
                                         <div class="form-group">
-                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
+                                            <label for="cikis_antrepo_${i}">Çıkış Antreposu(Seç yada yeni bir tane oluştur): *</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Habur">Habur</option>
-                                                    <option value="Cilvegözü">Cilvegözü</option>
-
+                                                <select class="col-sm-6 form-control" id="cikis_antrepo_select_${i}">
+                                                    @if (isset($giris_antrepos))
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                                        @endforeach
+                                                    @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
+                                                <input class="col-sm-5 form-control" type="text" name="cikis_antrepo_input_${i}" id="cikis_antrepo_input_${i}" placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>
         `;
@@ -2897,8 +2898,8 @@
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
-                let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
-                let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
+                let cikis_antrepo_input = formStep.querySelector(`#cikis_antrepo_input_${index}`);
+                let cikis_antrepo_select = formStep.querySelector(`#cikis_antrepo_select_${index}`);
 
                 let data = [];
                 let netMiktar = 0;
@@ -2944,9 +2945,9 @@
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_c.addEventListener("change", function() {
+                cikis_antrepo_select.addEventListener("change", function() {
                     if (this.value !== "") {
-                        inputBox_c.value = this.value;
+                        cikis_antrepo_input.value = this.value;
                     }
                 });
 
@@ -3221,7 +3222,7 @@
                         urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                        cikis_antrepo: document.querySelector(`[name="cikis_antrepo_input_${i}"]`).value
                     };
                     allFormData.push(formData);
                 }
