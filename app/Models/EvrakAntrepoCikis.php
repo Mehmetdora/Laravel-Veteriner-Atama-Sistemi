@@ -7,8 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakAntrepoCikis extends Model
 {
 
-    public function evrak_adi(){
+    public function evrak_adi()
+    {
         return "Antrepo Çıkış";
+    }
+
+    public function getUsks()
+    {
+        $usks = UsksNo::find($this->usks_id);
+        return $usks;
     }
 
     public function setUrun(Urun $urun)
@@ -32,5 +39,4 @@ class EvrakAntrepoCikis extends Model
     {
         return $this->morphToMany(Urun::class, 'evrak', 'urun_evrak');
     }
-
 }

@@ -26,15 +26,16 @@ use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\EvrakCanliHayvanGemi;
+use App\Models\EvrakAntrepoVarisDis;
 
+use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
+use function PHPUnit\Framework\isEmpty;
+
+use Illuminate\Support\Facades\Validator;
 use App\Providers\CanliHGemiIzinDuzenleme;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
-
-use function PHPUnit\Framework\isEmpty;
-use Illuminate\Support\Facades\Validator;
 
 class VeterinerController extends Controller
 {
@@ -284,11 +285,19 @@ class VeterinerController extends Controller
                 }),
             ],
             'password' => 'Nullable|min:6',
+        ], [
+            'username.required' => 'Ad-Soyad, alanı eksik!',
+            'name.required' => 'Kullanıcı adı, alanı eksik!',
+            'email.required' => 'Kullanıcı Email, alanı eksik!',
+            'email.email' => 'Lütfen girilen email in doğru formatta olduğunu kontrol ediniz!',
+            'phone_number.required' => 'Telefon numarası, alanı eksik!',
+
         ]);
 
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            $message = 'Eksik Veri Kaydı! Lütfen Bilgileri Kontrol Edip Tekrar Deneyiniz';
+
+        // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
+        $errors = $validator->errors()->all();
+        if (!empty($errors)) {
             return redirect()->back()->with('error', $errors);
         }
 
@@ -328,6 +337,10 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakAntrepoVaris") {
             $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoVarisDis") {
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
+                ->find($evrak_id);
+            $data['giris_antrepo'] = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
@@ -587,6 +600,30 @@ class VeterinerController extends Controller
                 'veteriner_id' => 'Veteriner Hekim, alanı eksik!',
                 'start_date' => 'Başlangıç Tarihi, alanı eksik!',
                 'day_count' => 'Kaç Günlük, alanı eksik!',
+            ]);
+            if ($validator->fails()) {
+                $errors[] = $validator->errors()->all();
+            }
+        } elseif ($request->type == "EvrakAntrepoVarisDis") {  //Evrak Antrepo Varış(DIŞ)
+            $validator = Validator::make($request->all(), [
+                'siraNo' => 'required',
+                'oncekiVGBOnBildirimNo' => 'required',
+                'vetSaglikSertifikasiNo' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
+                'urunAdi' => 'required',
+                'gtipNo' => 'required',
+                'urunKG' => 'required',
+                'urunlerinBulunduguAntrepo' => 'required',
+            ], [
+                'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
+                'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
+                'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
+                'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
+
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -873,6 +910,81 @@ class VeterinerController extends Controller
                             (int)$request->veterinerId,
                             'antrepo_varis',
                             'antrepo_varis'
+                        );
+                }
+                $user_evrak->user_id = (int)$request->veterinerId;
+                $user_evrak->evrak()->associate($evrak);
+
+                $saved = $user_evrak->save();
+                if (!$saved) {
+                    throw new \Exception("Evrak kaydedilemedi!");
+                }
+
+                // Evrak durumunu kaydetme
+                $evrak_durum = $evrak->evrak_durumu;
+                $evrak_durum->evrak_durum = $request->evrak_durum;
+                $evrak->evrak_durumu()->save($evrak_durum);
+
+                //Sağlık sertifikalarını kaydetme
+                // Sağlık sertifikalarını silmeden önce hangilerinin silinip hangilerinin kalacağına karar verme
+
+                // Gelen sağlık sertifikalarının ID'lerini al
+                $yeni_sertifikalar = [];
+                $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
+                $sertifika_ids = [];
+                foreach ($sertifikalar as $sertifika) {
+                    if (!isset($sertifika->id) || $sertifika->id == -1) {
+                        $yeni_sertifikalar[] = $sertifika;
+                    } else {
+                        $sertifika_ids[] = $sertifika->id;
+                    }
+                }
+
+                // Silinmesi gerekenleri silme
+                $evrak->saglikSertifikalari()
+                    ->whereNotIn('saglik_sertifikas.id', $sertifika_ids)
+                    ->delete();
+
+                foreach ($yeni_sertifikalar as $sertifika) {
+
+                    $evrak->saglikSertifikalari()->create([
+                        'ssn' => $sertifika->ssn,
+                        'toplam_miktar' => $sertifika->miktar,
+                        'kalan_miktar' => $sertifika->miktar,
+                    ]);
+                }
+            } elseif ($request->type == "EvrakAntrepoVarisDis") {  //Evrak Antrepo Varış Dış
+
+                $evrak = EvrakAntrepoVarisDis::find($request->input('id'));
+
+                $evrak->evrakKayitNo = $request->siraNo;
+                $evrak->oncekiVGBOnBildirimNo = $request->oncekiVGBOnBildirimNo;
+                $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
+                $evrak->urunAdi = $request->urunAdi;
+                $evrak->gtipNo = $request->gtipNo;
+                $evrak->urunKG = $request->urunKG;
+
+                // yeni bir antrepo girilmiş ise bunu db ekle
+                $gelen_antrepo = GirisAntrepo::where('name', $request->urunlerinBulunduguAntrepo)->first();
+                if (!$gelen_antrepo) {    // DB de yoksa ekle
+                    $gelen_antrepo = new GirisAntrepo;
+                    $gelen_antrepo->name = $request->urunlerinBulunduguAntrepo;
+                    $gelen_antrepo->save();
+                }
+                $evrak->giris_antrepo_id = $gelen_antrepo->id;
+
+                $evrak->save();
+
+                // Veteriner ile evrak kaydetme
+                $user_evrak = $evrak->veteriner;
+                // Veteriner değişmişse worklaod güncelleme
+                if ($user_evrak->user_id != (int)$request->veterinerId) {
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            (int)$request->veterinerId,
+                            'antrepo_varis_dis',
+                            'antrepo_varis_dis'
                         );
                 }
                 $user_evrak->user_id = (int)$request->veterinerId;
@@ -1290,6 +1402,9 @@ class VeterinerController extends Controller
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
             $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoVarisDis") {
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])

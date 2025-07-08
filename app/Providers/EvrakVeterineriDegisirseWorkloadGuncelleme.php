@@ -13,6 +13,7 @@ class EvrakVeterineriDegisirseWorkloadGuncelleme
         'transit' => 5,
         'antrepo_giris' => 5,
         'antrepo_varis' => 1,
+        'antrepo_varis_dis' => 1,
         'antrepo_sertifika' => 2,
         'antrepo_cikis' => 5,
         'canli_hayvan' => 10,
@@ -99,6 +100,6 @@ class EvrakVeterineriDegisirseWorkloadGuncelleme
             $new_vet_worklaod->save();
         }
 
-        
+
     }
 }

@@ -13,7 +13,8 @@
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('admin.antrepo_stok_takip.index') }}">Geri dön</a>
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('admin.antrepo_stok_takip.index') }}">Geri
+                        dön</a>
                     <div class="col-sm-6">
                         <h1><b>Antrepo Stok Takip</b></h1>
                     </div><!-- /.col -->
@@ -32,7 +33,7 @@
                         <!-- Default box -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Antrepoya({{$antrepo->name}}) Ait Tüm Sağlık Sertifikaları</h3>
+                                <h3 class="card-title">Antrepoya({{ $antrepo->name }}) Ait Tüm Sağlık Sertifikaları</h3>
                             </div>
 
                             @include('admin.layouts.messages')
@@ -77,10 +78,10 @@
                                                         {{ $kayit['saglik_sertifika']->toplam_miktar }}
                                                     </td>
                                                     <td>
-                                                        @if ($kayit['evrak_type'] == 'Antrepo Giriş')
+                                                        @if ($kayit['evrak_type'] == 'Antrepo Giriş' || $kayit['evrak_type'] == 'Antrepo Varış(DIŞ)')
                                                             {{ $kayit['saglik_sertifika']->kalan_miktar }}
                                                         @else
-                                                        ---
+                                                            ---
                                                         @endif
                                                     </td>
                                                     <td>

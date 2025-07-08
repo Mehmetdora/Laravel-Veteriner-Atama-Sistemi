@@ -1,5 +1,5 @@
 @if (!empty(session('success')))
-    <div class = "alert alert-success "  role="alert">
+    <div class = "alert alert-success " role="alert">
         @if (is_string(session('success')))
             {{ session('success') }}
         @else
@@ -25,7 +25,7 @@
 @endif
 
 @if (!empty(session('payment-error')))
-    <div class = "alert alert-error "  role="alert">
+    <div class = "alert alert-error " role="alert">
         @if (is_string(session('payment-error')))
             {{ session('payment-error') }}
         @else
@@ -37,7 +37,7 @@
 @endif
 
 @if (!empty(session('warning')))
-    <div class = "alert alert-warning "  role="alert">
+    <div class = "alert alert-warning " role="alert">
         @if (is_string(session('warning')))
             {{ session('warning') }}
         @else
@@ -49,7 +49,7 @@
 @endif
 
 @if (!empty(session('info')))
-    <div class = "alert alert-info "  role="alert">
+    <div class = "alert alert-info " role="alert">
         @if (is_string(session('info')))
             {{ session('info') }}
         @else
@@ -67,13 +67,13 @@
 @endif
 
 @if (!empty(session('primary')))
-    <div class = "alert alert-primary "  role="alert">
+    <div class = "alert alert-primary " role="alert">
         {{ session('primary') }}
     </div>
 @endif
 
 @if (!empty(session('light')))
-    <div class = "alert alert-light "  role="alert">
+    <div class = "alert alert-light " role="alert">
         {{ session('light') }}
     </div>
 @endif

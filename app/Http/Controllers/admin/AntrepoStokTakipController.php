@@ -25,6 +25,11 @@ class AntrepoStokTakipController extends Controller
                 foreach ($evraks as $evrak) {
                     $sertifika_count += count($evrak->saglikSertifikalari);
                 }
+            }elseif ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
+                $evraks = $antrepo->evraks_antrepo_varis_dis;
+                foreach ($evraks as $evrak) {
+                    $sertifika_count += count($evrak->saglikSertifikalari);
+                }
             }
 
             return [
@@ -47,9 +52,20 @@ class AntrepoStokTakipController extends Controller
         $antrepo = GirisAntrepo::find($id);
         $sertifikas = [];
 
-        // seçilen antrepoya ait tüm sağlık sertifikarllını al
+        // seçilen antrepoya ait tüm sağlık sertifikarllını al (giriş ve varış(dış) gelen)
         if ($antrepo->evraks_antrepo_giris->isNotEmpty()) {
             $evraks = $antrepo->evraks_antrepo_giris;
+            foreach ($evraks as $evrak) {
+
+                // Evrağa ait tüm sertifikalarını al
+                if ($evrak->saglikSertifikalari->isNotEmpty()) {
+                    foreach ($evrak->saglikSertifikalari as $sertifika) {
+                        $sertifikas[] = $sertifika;
+                    }
+                }
+            }
+        }elseif ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
+            $evraks = $antrepo->evraks_antrepo_varis_dis;
             foreach ($evraks as $evrak) {
 
                 // Evrağa ait tüm sertifikalarını al
@@ -81,6 +97,9 @@ class AntrepoStokTakipController extends Controller
             } elseif ($sertifika->evraks_varis->isNotEmpty()) {
                 $evrak = $sertifika->evraks_varis->first();
                 $evrak_type = 'Antrepo Varış';
+            } elseif ($sertifika->evraks_varis_dis->isNotEmpty()) {
+                $evrak = $sertifika->evraks_varis_dis->first();
+                $evrak_type = 'Antrepo Varış(DIŞ)';
             } elseif ($sertifika->evraks_sertifika->isNotEmpty()) {
                 $evrak = $sertifika->evraks_sertifika->first();
                 $evrak_type = 'Antrepo Sertifika';

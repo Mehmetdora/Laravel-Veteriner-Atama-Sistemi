@@ -8,7 +8,7 @@ class Urun extends Model
 {
     protected $fillable = ['name'];
 
-    
+
     public function evraks_canli_hayvan()
     {
         return $this->morphToMany(EvrakCanliHayvan::class, 'evrak', 'urun_evrak');
@@ -29,6 +29,12 @@ class Urun extends Model
     {
         return $this->morphToMany(EvrakAntrepoVaris::class, 'evrak', 'urun_evrak');
     }
+
+    public function evraks_varis_dis()
+    {
+        return $this->morphToMany(EvrakAntrepoVarisDis::class, 'evrak', 'urun_evrak');
+    }
+
     public function evraks_sertifika()
     {
         return $this->morphToMany(EvrakAntrepoSertifika::class, 'evrak', 'urun_evrak');

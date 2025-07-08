@@ -122,10 +122,11 @@
                                             </tr>
                                         @endif
 
-                                        @if ($evrak->usks)
+                                        @if ($evrak->usks_id)
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
-                                                <td><b>{{ $evrak->usks->usks_no }} → {{ $evrak->usks->miktar }} KG</b>
+                                                <td><b>{{ $evrak->getUsks()->usks_no }} → {{ $evrak->getUsks()->miktar }}
+                                                        KG</b>
                                                 </td>
                                             </tr>
                                         @endif

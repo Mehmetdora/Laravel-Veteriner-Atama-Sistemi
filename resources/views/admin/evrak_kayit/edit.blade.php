@@ -1022,6 +1022,152 @@
                                                 class="btn btn-danger justify-content-end">SİL</button>
                                         </div>
                                     </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
+                                    <form method="post" action="{{ route('admin.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
+                                            <input name="oncekiVGBOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->oncekiVGBOnBildirimNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ $saglik_sertifika->toplam_miktar }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <input type="number" name="gtipNo" class="form-control"
+                                                value="{{ $evrak->gtipNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ $evrak->urunKG }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Ürünlerin Bulunduğu Antrepo(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control "
+                                                    id="urunlerinBulunduguAntrepo_select">
+                                                    <option selected value="{{ $evrak->urunlerinBulunduguAntrepo }}">
+                                                        {{ $evrak->urunlerinBulunduguAntrepo }}</option>
+                                                    <hr>
+                                                    <option value="Antrepo 1">Antrepo 1</option>
+                                                    <option value="Antrepo 2">Antrepo 2</option>
+                                                    <option value="Antrepo 3">Antrepo 3</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control "
+                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}"
+                                                    id="urunlerinBulunduguAntrepo_input" type="text"
+                                                    name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
+                                                    required>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="veterinerId" class="control-label">Evrak Durumu</label>
+                                            <select class="form-control" name="evrak_durum" id="evrak_durum" required>
+                                                @if (isset($evrak))
+                                                    <option value="{{ $evrak->evrak_durumu->evrak_durum }}">
+                                                        {{ $evrak->evrak_durumu->evrak_durum }}</option>
+                                                    <hr>
+                                                    <option value="İşlemde">İşlemde</option>
+                                                    <option value="Beklemede">Beklemede</option>
+                                                    <option value="Onaylandı">Onaylandı</option>
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="veterinerId" class="control-label">Veteriner</label>
+                                            <select class="form-control" data-id="{{ $evrak->veteriner->user->id }}"
+                                                name="veterinerId" id="veterinerId" required>
+                                                @if (isset($veteriners))
+                                                    <option value="{{ $evrak->veteriner->user->id }}">
+                                                        {{ $evrak->veteriner->user->name }}
+                                                    </option>
+                                                    <hr>
+                                                    @foreach ($veteriners as $veteriner)
+                                                        <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <br>
+                                            <hr>
+                                            <button type="button" data-toggle="modal" data-target="#modal-delete"
+                                                class="btn btn-danger justify-content-end">SİL</button>
+                                        </div>
+                                    </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoSertifika')
                                     <form method="post" action="{{ route('admin.evrak.edited') }}">
                                         @csrf
@@ -1158,8 +1304,9 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" value="{{ $evrak->cikisAntrepo }}"
-                                                    type="text" name="cikis_antrepo" id="cikis_antrepo_input"
+                                                <input class="col-sm-5 form-control"
+                                                    value="{{ $evrak->cikisAntrepo }}" type="text"
+                                                    name="cikis_antrepo" id="cikis_antrepo_input"
                                                     placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>
@@ -1235,8 +1382,8 @@
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
                                                     value="{{ $usks->miktar }}" name="usks_miktar"
-                                                    oninput="formatNumber(this)" id="usks_miktar" placeholder="Miktarı"
-                                                    required>
+                                                    oninput="formatNumber(this)" id="usks_miktar"
+                                                    placeholder="Miktarı" required>
                                             </div>
                                         </div>
 
@@ -1258,7 +1405,8 @@
                                         <div class="form-group">
                                             <label for="urun_kategori_id" class="control-label">Ürünün
                                                 Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                            <select class="form-control"
+                                                data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
                                                     @if (isset($evrak->urun->first()->id))
@@ -1587,10 +1735,18 @@
             ss_miktar_input.addEventListener('blur', function() {
                 net_miktar_input.value = ss_miktar_input.value;
             });
-
-
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVaris')
+        <script>
+            let inputBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_input`);
+            let selectBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_select`);
+            selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
         <script>
             let inputBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_input`);
             let selectBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_select`);
@@ -1668,7 +1824,11 @@
         });
 
         // Sağlık sertifika işlemleri
-        @if ($evrak_type == 'EvrakAntrepoVaris' || $evrak_type == 'EvrakAntrepoSertifika' || $evrak_type == 'EvrakCanliHayvan')
+        @if (
+            $evrak_type == 'EvrakAntrepoVarisDis' ||
+                $evrak_type == 'EvrakAntrepoVaris' ||
+                $evrak_type == 'EvrakAntrepoSertifika' ||
+                $evrak_type == 'EvrakCanliHayvan')
 
 
             let addBtn = document.querySelector(`#addBtn`);
