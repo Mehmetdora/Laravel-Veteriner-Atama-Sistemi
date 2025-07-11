@@ -545,6 +545,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <select class="col-sm-6 form-control" id="giris_antrepo_id_select">
                             @if (isset($giris_antrepos))
+                                <option selected value="">Antrepolar(Seçiniz)</option>
                                 @foreach ($giris_antrepos as $giris_antrepo)
                                     <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                 @endforeach
@@ -607,6 +608,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select">
                             @if (isset($giris_antrepos))
+                                <option selected value="">Antrepolar(Seçiniz)</option>
                                 @foreach ($giris_antrepos as $giris_antrepo)
                                     <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                 @endforeach
@@ -668,6 +670,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select">
                             @if (isset($giris_antrepos))
+                                <option selected value="">Antrepolar(Seçiniz)</option>
                                 @foreach ($giris_antrepos as $giris_antrepo)
                                     <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                 @endforeach
@@ -750,6 +753,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <select class="col-sm-6 form-control" id="cikis_antrepo_select">
                             @if (isset($giris_antrepos))
+                                <option selected value="">Antrepolar(Seçiniz)</option>
                                 @foreach ($giris_antrepos as $giris_antrepo)
                                     <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                 @endforeach
@@ -1213,9 +1217,10 @@
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
-                    let urunlerinBulunduguAntrepo_input = form.querySelector(`#urunlerinBulunduguAntrepo_input${i}`);
-                    let urunlerinBulunduguAntrepo_select = form.querySelector(`#urunlerinBulunduguAntrepo_select${i}`);
                     let dataList = form.querySelector(`#dataList_${i}`);
+                    let antrepo_input = form.querySelector(`#urunlerinBulunduguAntrepo_input_${i}`);
+                    let antrepo_select = form.querySelector(`#urunlerinBulunduguAntrepo_select_${i}`);
+
 
                     // Kopya evraktan alınan verileri tüm formlara yapıştırma
                     siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
@@ -1224,11 +1229,10 @@
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
-                    urunlerinBulunduguAntrepo_input.value = modal_div.querySelector(
-                        `#urunlerinBulunduguAntrepo_input`).value;
-                    urunlerinBulunduguAntrepo_select.value = modal_div.querySelector(
-                        `#urunlerinBulunduguAntrepo_select`).value;
                     vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
+                    antrepo_input.value = modal_div.querySelector("#urunlerinBulunduguAntrepo_input").value;
+                    antrepo_select.value = modal_div.querySelector("#urunlerinBulunduguAntrepo_input").value;
+
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(vetSaglikSertifikasiNo.value);
@@ -1255,6 +1259,13 @@
                         dataList.appendChild(listItem);
                         vetSaglikSertifikasiNo.value = JSON.stringify(datas);
 
+                    });
+
+                    // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
+                    antrepo_select.addEventListener("change", function() {
+                        if (this.value !== "") {
+                            antrepo_input.value = this.value;
+                        }
                     });
 
                 }
@@ -1656,13 +1667,8 @@
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
-
-
-                let inputBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
-                    `#urunlerinBulunduguAntrepo_input`);
-                let selectBox_urunlerinBulunduguAntrepo = modal_div.querySelector(
-                    `#urunlerinBulunduguAntrepo_select`);
-
+                let antrepo_input = modal_div.querySelector(`#urunlerinBulunduguAntrepo_input`);
+                let antrepo_select = modal_div.querySelector(`#urunlerinBulunduguAntrepo_select`);
 
                 let data = [];
                 let netMiktar = 0;
@@ -1707,11 +1713,12 @@
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                antrepo_select.addEventListener("change", function() {
                     if (this.value !== "") {
-                        inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                        antrepo_input.value = this.value;
                     }
                 });
+
 
             } else if (evrak_type == "Antrepo Sertifika") {
 
@@ -2045,6 +2052,7 @@
 
 
         function getFormHtml(type, i) {
+
             if (type == 0) {
                 return `
                                         <div class="form-group">
@@ -2406,6 +2414,7 @@
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <select class="col-sm-6 form-control" id="giris_antrepo_id_select_${i}">
                                                     @if (isset($giris_antrepos))
+                                                    <option selected value="">Antrepolar(Seçiniz)</option>
                                                         @foreach ($giris_antrepos as $giris_antrepo)
                                                             <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                                         @endforeach
@@ -2484,6 +2493,7 @@
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select${i}">
                                                     @if (isset($giris_antrepos))
+                                                    <option selected value="">Antrepolar(Seçiniz)</option>
                                                         @foreach ($giris_antrepos as $giris_antrepo)
                                                             <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                                         @endforeach
@@ -2584,6 +2594,7 @@
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <select class="col-sm-6 form-control" id="cikis_antrepo_select_${i}">
                                                     @if (isset($giris_antrepos))
+                                                    <option selected value="">Antrepolar(Seçiniz)</option>
                                                         @foreach ($giris_antrepos as $giris_antrepo)
                                                             <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
                                                         @endforeach
@@ -2846,84 +2857,69 @@
                         <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control" required />
                     </div>
                     `;
-            } else if (type == 8) { // Antrepo Varış(DIŞ)
+            } else if (type == 8) {
                 return `
-                                        <div class="form-group">
-                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                        </div>
+                <div class="form-group">
+                    <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                    <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                </div>
 
-                                        <div class="form-group">
-                                            <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
-                                            <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control" required />
-                                        </div>
+                <div class="form-group">
+                    <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
+                    <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control" required />
+                </div>
 
+                <div class="form-group">
+                    <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <button type="button" id="addBtn_${i}">➕</button>
 
+                    <div id="inputContainer_${i}" class="inputs hidden">
+                        <input type="text" id="input1_${i}" placeholder="Sağlık Sertifikası Numarası">
+                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                        <button type="button" id="confirmBtn_${i}">✔️</button>
+                    </div>
 
-                                        <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
-                                                Numarası Ve Miktarı(KG)</label>
-                                            <button type="button" id="addBtn_${i}">➕</button>
+                    <ul id="dataList_${i}" class="list"></ul>
 
-                                            <div id="inputContainer_${i}" class="inputs hidden">
-                                                <input type="text" id="input1_${i}"
-                                                    placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
-                                                <button type="button" id="confirmBtn_${i}">✔️</button>
-                                            </div>
+                    <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}" class="form-control" required />
+                </div>
 
-                                            <ul id="dataList_${i}" class="list"></ul>
+                <div class="form-group">
+                    <label for="vekaletFirmaKisiAdi_${i}" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
+                    <input type="text" id="vekaletFirmaKisiAdi_${i}" name="vekaletFirmaKisiAdi_${i}" class="form-control" required />
+                </div>
 
-                                            <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
-                                        </div>
+                <div class="form-group">
+                    <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                    <input name="urunAdi_${i}" class="form-control" required />
+                </div>
 
-                                        <div class="form-group">
-                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                                Kişi
-                                                İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                                required />
-                                        </div>
+                <div class="form-group">
+                    <label for="gtipNo_${i}" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
+                    <input type="number" name="gtipNo_${i}" class="form-control" required />
+                </div>
 
-                                        <div class="form-group">
-                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
-                                        </div>
+                <div class="form-group">
+                    <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
+                    <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
+                </div>
 
+                <div class="form-group">
+                    <label for="urunlerinBulunduguAntrepo_input_${i}">Giriş Antrepo(Seç yada yeni bir tane oluştur): *</label>
+                    <div class="row" style="display: flex; align-items: center;">
+                        <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select_${i}">
+                            @if (isset($giris_antrepos))
+                                <option selected value="">Antrepolar(Seçiniz)</option>
+                                @foreach ($giris_antrepos as $giris_antrepo)
+                                    <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                        <div class="col-sm-1"></div>
+                        <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}" id="urunlerinBulunduguAntrepo_input_${i}" placeholder="Giriş Antreposu" required>
+                    </div>
+                </div>`;
 
-
-                                        <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                                Miktarı</label>
-                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
-                                        </div>
-
-
-
-
-                                        <div class="form-group">
-                                            <label for="urunlerinBulunduguAntrepo_input${i}">Giriş Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="urunlerinBulunduguAntrepo_select${i}">
-                                                    @if (isset($giris_antrepos))
-                                                        @foreach ($giris_antrepos as $giris_antrepo)
-                                                            <option value="{{ $giris_antrepo->name }}">{{ $giris_antrepo->name }}</option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}"
-                                                    id="urunlerinBulunduguAntrepo_input${i}" placeholder="Giriş Antreposu" required>
-                                            </div>
-                                        </div>
-        `;
             }
         }
 
@@ -3347,6 +3343,7 @@
         function EventListenersFor_8_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
+
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
@@ -3356,12 +3353,9 @@
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
+                let antrepo_input = formStep.querySelector(`#urunlerinBulunduguAntrepo_input_${index}`);
+                let antrepo_select = formStep.querySelector(`#urunlerinBulunduguAntrepo_select_${index}`);
 
-
-                let inputBox_urunlerinBulunduguAntrepo = formStep.querySelector(
-                    `#urunlerinBulunduguAntrepo_input${index}`);
-                let selectBox_urunlerinBulunduguAntrepo = formStep.querySelector(
-                    `#urunlerinBulunduguAntrepo_select${index}`);
 
 
                 let data = [];
@@ -3408,9 +3402,9 @@
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                antrepo_select.addEventListener("change", function() {
                     if (this.value !== "") {
-                        inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                        antrepo_input.value = this.value;
                     }
                 });
 

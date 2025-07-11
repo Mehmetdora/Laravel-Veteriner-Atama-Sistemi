@@ -845,7 +845,11 @@ class EvrakController extends Controller
                             fazla miktarda aynı ss numarası ile bir sağlık sertifikası girilmişse
                             bunu kontrol et , hata ver
                         */
-                        if ($ss_saved->kalan_miktar < $saglik_sertifika['miktar']) {
+                        if ($ss_saved->kalan_miktar == 0) {
+                            throw new \Exception("{$saglik_sertifika['ssn']} numarası ile girilen
+                             sağlık sertifikasının kalan miktar bitmiştir(kalmamıştır). Lütfen sistemde kayıtlı sağlık sertifikasının kalan miktarını kontrol ederek
+                             tekrar deneyiniz. ");
+                        } elseif ($ss_saved->kalan_miktar < $saglik_sertifika['miktar']) {
 
                             throw new \Exception("{$saglik_sertifika['ssn']} numarası ile girilen
                              sağlık sertifikasının miktar bilgisi sistemde kayıtlı kalan miktardan fazla girilmiş,
@@ -1333,7 +1337,9 @@ class EvrakController extends Controller
         } else if ($type == "EvrakAntrepoVarisDis") {
             $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
-            $data['giris_antrepo'] = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
+
+            $antrepo = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
+            $data['antrepo_name'] = $antrepo->name;
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);

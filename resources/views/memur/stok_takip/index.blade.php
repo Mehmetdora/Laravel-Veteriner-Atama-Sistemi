@@ -75,7 +75,7 @@
                                                         {{ $kayit['saglik_sertifika']->toplam_miktar }}
                                                     </td>
                                                     <td>
-                                                        @if ($kayit['evrak_type'] == 'Antrepo Giriş')
+                                                        @if ($kayit['evrak_type'] == 'Antrepo Giriş' || $kayit['evrak_type'] == 'Antrepo Varış(DIŞ)')
                                                             {{ $kayit['saglik_sertifika']->kalan_miktar }}
                                                         @else
                                                             ---

@@ -20,6 +20,7 @@ class GirisAntrepo extends Model
         return $this->hasMany(EvrakAntrepoVarisDis::class);
     }
 
+
     // Static bir fonk yaparak direkt model üzerinden erişilebilir bir fonk haline geldi
     public static function actives()
     {

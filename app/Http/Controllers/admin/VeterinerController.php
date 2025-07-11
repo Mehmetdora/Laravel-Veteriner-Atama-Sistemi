@@ -340,7 +340,8 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakAntrepoVarisDis") {
             $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
-            $data['giris_antrepo'] = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
+            $antrepo = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
+            $data['antrepo_name'] = $antrepo->name;
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);

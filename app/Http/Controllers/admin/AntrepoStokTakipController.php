@@ -25,7 +25,9 @@ class AntrepoStokTakipController extends Controller
                 foreach ($evraks as $evrak) {
                     $sertifika_count += count($evrak->saglikSertifikalari);
                 }
-            }elseif ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
+            }
+
+            if ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
                 $evraks = $antrepo->evraks_antrepo_varis_dis;
                 foreach ($evraks as $evrak) {
                     $sertifika_count += count($evrak->saglikSertifikalari);
@@ -54,17 +56,23 @@ class AntrepoStokTakipController extends Controller
 
         // seçilen antrepoya ait tüm sağlık sertifikarllını al (giriş ve varış(dış) gelen)
         if ($antrepo->evraks_antrepo_giris->isNotEmpty()) {
+
             $evraks = $antrepo->evraks_antrepo_giris;
             foreach ($evraks as $evrak) {
 
                 // Evrağa ait tüm sertifikalarını al
                 if ($evrak->saglikSertifikalari->isNotEmpty()) {
+
+
                     foreach ($evrak->saglikSertifikalari as $sertifika) {
                         $sertifikas[] = $sertifika;
                     }
                 }
             }
-        }elseif ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
+        }
+
+        if ($antrepo->evraks_antrepo_varis_dis->isNotEmpty()) {
+
             $evraks = $antrepo->evraks_antrepo_varis_dis;
             foreach ($evraks as $evrak) {
 
@@ -77,10 +85,11 @@ class AntrepoStokTakipController extends Controller
             }
         }
 
-        $collection_s = collect($sertifikas);
+
+        $collection_s = collect($sertifikas)->sortByDesc('created_at');
 
         // Sağlık sertifikalarının bağlı olduğu tek evrağı bulma ve sıralama işlemi
-        $collection_s = $collection_s->map(function ($sertifika) use($antrepo) {
+        $collection_s = $collection_s->map(function ($sertifika) use ($antrepo) {
             $evrak = null;
             $evrak_type = null;
 
@@ -122,6 +131,5 @@ class AntrepoStokTakipController extends Controller
         $data['antrepo'] = $antrepo;
 
         return view('admin.antrepo_stok_takip.antrepo_detail', $data);
-
     }
 }

@@ -18,6 +18,7 @@ use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
+use App\Models\EvrakAntrepoVarisDis;
 use Illuminate\Support\Facades\Validator;
 
 class VeterinerController extends Controller
@@ -120,6 +121,9 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakAntrepoVaris") {
             $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
+        } else if ($type == "EvrakAntrepoVarisDis") {
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu'])
+                ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
@@ -184,6 +188,9 @@ class VeterinerController extends Controller
             } else if ($type == "EvrakAntrepoVaris") {
                 $evrak = EvrakAntrepoVaris::with('evrak_durumu')
                     ->find($id);
+            } else if ($type == "EvrakAntrepoVarisDis") {
+                $evrak = EvrakAntrepoVarisDis::with('evrak_durumu')
+                    ->find($id);
             } else if ($type == "EvrakAntrepoSertifika") {
                 $evrak = EvrakAntrepoSertifika::with('evrak_durumu')
                     ->find($id);
@@ -193,7 +200,7 @@ class VeterinerController extends Controller
             } else if ($type == "EvrakCanliHayvan") {
                 $evrak = EvrakCanliHayvan::with('evrak_durumu')
                     ->find($id);
-            }else{
+            } else {
                 $evrak = "bulunamadı";
             }
 

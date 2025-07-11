@@ -1102,29 +1102,34 @@
                                         </div>
 
 
-                                        <div class="form-group">
-                                            <label>Ürünlerin Bulunduğu Antrepo(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control "
-                                                    id="urunlerinBulunduguAntrepo_select">
-                                                    <option selected value="{{ $evrak->urunlerinBulunduguAntrepo }}">
-                                                        {{ $evrak->urunlerinBulunduguAntrepo }}</option>
-                                                    <hr>
-                                                    <option value="Antrepo 1">Antrepo 1</option>
-                                                    <option value="Antrepo 2">Antrepo 2</option>
-                                                    <option value="Antrepo 3">Antrepo 3</option>
 
+
+                                        <div class="form-group">
+                                            <label for="urunlerinBulunduguAntrepo_input">Ürünlerin Bulunduğu Antrepo(Seç
+                                                yada yeni bir tane
+                                                oluştur):
+                                                *</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control"
+                                                    id="urunlerinBulunduguAntrepo_select">
+
+                                                    @if (isset($giris_antrepos))
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option @if ($antrepo_name == $giris_antrepo->name) selected @endif
+                                                                value="{{ $giris_antrepo->name }}">
+                                                                {{ $giris_antrepo->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control "
-                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}"
-                                                    id="urunlerinBulunduguAntrepo_input" type="text"
-                                                    name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
+                                                <input class="col-sm-5 form-control" value="{{ $antrepo_name }}"
+                                                    type="text" name="urunlerinBulunduguAntrepo"
+                                                    id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu"
                                                     required>
-
                                             </div>
                                         </div>
+
 
 
 
