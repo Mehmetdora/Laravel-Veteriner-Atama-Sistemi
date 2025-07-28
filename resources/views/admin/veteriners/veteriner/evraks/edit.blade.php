@@ -256,26 +256,6 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="cikis_g_select">
-                                                    <option selected value="{{ $evrak->cikisGumruk }}">
-                                                        {{ $evrak->cikisGumruk }}</option>
-                                                    <hr>
-                                                    <option value="Habur">Habur</option>
-                                                    <option value="Cilvegözü">Cilvegözü</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
-                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
-
 
 
                                         <div class="form-group">
@@ -1631,14 +1611,6 @@
             options2.forEach(element => {
                 if (element.value == data_id2) {
                     element.setAttribute('selected', 'selected');
-                }
-            });
-
-            let inputBox_c = document.querySelector(`#cikis_g_input`);
-            let selectBox_c = document.querySelector(`#cikis_g_select`);
-            selectBox_c.addEventListener("change", function() {
-                if (this.value !== "") {
-                    inputBox_c.value = this.value;
                 }
             });
 

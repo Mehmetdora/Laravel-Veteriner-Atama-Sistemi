@@ -207,7 +207,6 @@ class EvrakController extends Controller
                     'orjinUlke' => 'required',
                     'arac_plaka_kg' => 'required',
                     'girisGumruk' => 'required',
-                    'cıkısGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
@@ -221,7 +220,6 @@ class EvrakController extends Controller
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
                     'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                    'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
                     $errors[] = $validator->errors()->all();
@@ -481,37 +479,41 @@ class EvrakController extends Controller
         // 4-> Atrepo sertifika
         // 5-> Atrepo çıkış
         // 6-> Canlı Hayvan
-        switch ($formData[0]['evrak_turu']) {
-            case 0:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat', $gelen_evrak_sayisi);
-                break;
-            case 1:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit', $gelen_evrak_sayisi);
-                break;
-            case 2:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris', $gelen_evrak_sayisi);
-                break;
-            case 3:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis', $gelen_evrak_sayisi);
-                break;
-            case 4:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika', $gelen_evrak_sayisi);
-                break;
-            case 5:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis', $gelen_evrak_sayisi);
-                break;
-            case 6:
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan', $gelen_evrak_sayisi);
-                break;
-            case 7;
-                // Veteriner seçmeye gerek yok
-                break;
-            case 8;     //Evrak antrepo Varış(DIŞ)
-                $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis_dis', $gelen_evrak_sayisi);
-                break;
+        try {
+            switch ($formData[0]['evrak_turu']) {
+                case 0:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('ithalat', $gelen_evrak_sayisi);
+                    break;
+                case 1:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('transit', $gelen_evrak_sayisi);
+                    break;
+                case 2:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_giris', $gelen_evrak_sayisi);
+                    break;
+                case 3:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis', $gelen_evrak_sayisi);
+                    break;
+                case 4:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_sertifika', $gelen_evrak_sayisi);
+                    break;
+                case 5:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_cikis', $gelen_evrak_sayisi);
+                    break;
+                case 6:
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('canli_hayvan', $gelen_evrak_sayisi);
+                    break;
+                case 7;
+                    // Veteriner seçmeye gerek yok
+                    break;
+                case 8;     //Evrak antrepo Varış(DIŞ)
+                    $this->atanacak_veteriner = $this->atamaServisi->assignVet('antrepo_varis_dis', $gelen_evrak_sayisi);
+                    break;
 
-            default:
-                return redirect()->back()->withErrors($errors)->with('error', 'Hatalı evrak türü seçiminden dolayı evrak oluşturulamamıştır, Lütfen tekrar deneyiniz!');
+                default:
+                    return redirect()->back()->withErrors($errors)->with('error', 'Hatalı evrak türü seçiminden dolayı evrak oluşturulamamıştır, Lütfen tekrar deneyiniz!');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
 
 
@@ -526,7 +528,6 @@ class EvrakController extends Controller
                 for ($i = 1; $i < count($formData); $i++) {
 
                     $yeni_evrak = new EvrakIthalat;
-
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
                     $yeni_evrak->vgbOnBildirimNo = $formData[$i]["vgbOnBildirimNo"];
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
@@ -536,7 +537,6 @@ class EvrakController extends Controller
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
-                    $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -1337,7 +1337,6 @@ class EvrakController extends Controller
         } else if ($type == "EvrakAntrepoVarisDis") {
             $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
-
             $antrepo = GirisAntrepo::find($data['evrak']->giris_antrepo_id);
             $data['antrepo_name'] = $antrepo->name;
         } else if ($type == "EvrakAntrepoSertifika") {
@@ -1387,7 +1386,6 @@ class EvrakController extends Controller
                 'orjinUlke' => 'required',
                 'arac_plaka_kg' => 'required',
                 'girisGumruk' => 'required',
-                'cikisGumruk' => 'required',
                 'is_numuneli' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
@@ -1402,7 +1400,6 @@ class EvrakController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 'is_numuneli.required' => 'Numuneli/Numunesiz, alanı eksik!',
             ]);
             if ($validator->fails()) {
@@ -1656,7 +1653,6 @@ class EvrakController extends Controller
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
                 if ($request->is_numuneli) {
                     $evrak->difficulty_coefficient = 40;

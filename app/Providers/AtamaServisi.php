@@ -30,7 +30,7 @@ class AtamaServisi
         'transit' => 5,
         'antrepo_giris' => 5,
         'antrepo_varis' => 1,
-        'antrepo_varis_dis' => 1,  
+        'antrepo_varis_dis' => 1,
         'antrepo_sertifika' => 2,
         'antrepo_cikis' => 5,
         'canli_hayvan' => 10,
@@ -177,10 +177,11 @@ class AtamaServisi
 
 
             // 3. Rastgele bir veterineri seç
-            $seciliVeteriner = $adayVeterinerler->random();
-            if (!$seciliVeteriner) {
+            if ($adayVeterinerler->isEmpty()) {
                 throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
             }
+            $seciliVeteriner = $adayVeterinerler->random();
+
 
             // Seçilen veterinerin workload ını veterinerin telafisi olmasına göre farklı şekilde güncellenmesi gerekiyor
             if (in_array($seciliVeteriner, $telafisi_olan_vets)) {

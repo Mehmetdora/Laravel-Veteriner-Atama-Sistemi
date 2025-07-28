@@ -346,21 +346,8 @@
                         <input class="col-sm-5 form-control ithalat" type="text" name="girisGumruk"
                             id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane oluştur):*</label>
-                    <div class="row" style="display: flex; align-items: center;">
-                        <select class="col-sm-6 form-control" id="cikis_g_select">
-                            <option selected value="">Gümrükler(Seç)</option>
-                            <option value="Habur">Habur</option>
-                            <option value="Cilvegözü">Cilvegözü</option>
-                        </select>
-                        <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control ithalat" type="text" name="cıkısGumruk"
-                            id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
-                    </div>
                 </div>`;
+
             } else if (evraks_type == "Transit") {
                 kopya_modal_html = `
 
@@ -1011,7 +998,6 @@
                     let arac_plaka_kg = form.querySelector(`#jsonData_${i}`);
                     let dataList = form.querySelector(`#dataList_${i}`);
                     let girisGumruk = form.querySelector(`[name="girisGumruk_${i}"]`);
-                    let cıkısGumruk = form.querySelector(`[name="cıkısGumruk_${i}"]`);
 
 
 
@@ -1029,7 +1015,6 @@
                     orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
                     arac_plaka_kg.value = modal_div.querySelector("input[name='arac_plaka_kg']").value;
                     girisGumruk.value = modal_div.querySelector("input[name='girisGumruk']").value;
-                    cıkısGumruk.value = modal_div.querySelector("input[name='cıkısGumruk']").value;
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(arac_plaka_kg.value);
@@ -1506,20 +1491,11 @@
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
                 let inputBox_g = modal_div.querySelector(`#giris_g_input`);
                 let selectBox_g = modal_div.querySelector(`#giris_g_select`);
-                let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
-                let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
                 let ss_miktari = modal_div.querySelector(`#ss_miktar`);
 
                 // ss girilen miktarı direkt toplam miktara yazdır
                 ss_miktari.addEventListener("blur", function() {
                     netMiktarInput.value = ss_miktari.value;
-                });
-
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_c.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_c.value = this.value;
-                    }
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
@@ -2159,28 +2135,9 @@
                                                     id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                                             </div>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Habur">Habur</option>
-                                                    <option value="Cilvegözü">Cilvegözü</option>
-
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
-
-                                            </div>
-                                        </div>
+                                        </div>`;
 
 
-        `;
             } else if (type == 1) {
                 return `
 
@@ -2976,21 +2933,11 @@
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
-                let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
-                let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
-
                 let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
 
 
                 ss_miktari.addEventListener("blur", function() {
                     netMiktarInput.value = ss_miktari.value;
-                });
-
-                // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
-                selectBox_c.addEventListener("change", function() {
-                    if (this.value !== "") {
-                        inputBox_c.value = this.value;
-                    }
                 });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
@@ -3479,8 +3426,7 @@
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         arac_plaka_kg: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                        cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value
                     };
                     allFormData.push(formData);
                 }

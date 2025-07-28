@@ -388,7 +388,6 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'arac_plaka_kg' => 'required',
                 'girisGumruk' => 'required',
-                'cikisGumruk' => 'required',
                 'is_numuneli' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
@@ -403,7 +402,6 @@ class VeterinerController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 'is_numuneli.required' => 'Numuneli/Numunesiz, alanı eksik!',
             ]);
             if ($validator->fails()) {
@@ -636,6 +634,7 @@ class VeterinerController extends Controller
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
 
+        dd($request->all());
 
 
         DB::beginTransaction();
@@ -657,7 +656,6 @@ class VeterinerController extends Controller
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
-                $evrak->cikisGumruk = $request->cikisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
                 if ($request->is_numuneli) {
                     $evrak->difficulty_coefficient = 40;

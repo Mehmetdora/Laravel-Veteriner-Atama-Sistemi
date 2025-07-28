@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('sevkUlke');
             $table->string('orjinUlke');
             $table->string('girisGumruk');
-            $table->string('cikisGumruk');
             $table->integer('difficulty_coefficient')->default(20);
             $table->boolean('is_numuneli')->default(0);
 
