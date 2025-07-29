@@ -66,7 +66,7 @@
 
                                         @if ($type != 'EvrakAntrepoSertifika' && $type != 'EvrakCanliHayvanGemi')
                                             <tr>
-                                                @if ($type == 'EvrakAntrepoVaris' || $type == 'EvrakAntrepoVarisDis')
+                                                @if ($type == 'EvrakAntrepoVaris' || $type == 'EvrakAntrepoVarisDis' || $type == 'EvrakAntrepoCikis')
                                                     <th>VGB Numarası:</th>
                                                 @else
                                                     <th>VGB Ön Bildirim Numarası:</th>

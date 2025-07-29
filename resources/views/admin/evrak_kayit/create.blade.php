@@ -759,7 +759,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
+                    <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
                     <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control" required />
                 </div>
 
@@ -2574,8 +2574,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
+                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Numarası</label>
                                             <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
                                         </div>
 

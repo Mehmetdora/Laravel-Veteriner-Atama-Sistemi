@@ -1289,9 +1289,8 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control"
-                                                    value="{{ $evrak->cikisAntrepo }}" type="text"
-                                                    name="cikis_antrepo" id="cikis_antrepo_input"
+                                                <input class="col-sm-5 form-control" value="{{ $evrak->cikisAntrepo }}"
+                                                    type="text" name="cikis_antrepo" id="cikis_antrepo_input"
                                                     placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>
@@ -1349,8 +1348,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
                                             <input name="vgbOnBildirimNo" type="text" class="form-control"
                                                 value="{{ $evrak->vgbOnBildirimNo }}" required />
                                         </div>
