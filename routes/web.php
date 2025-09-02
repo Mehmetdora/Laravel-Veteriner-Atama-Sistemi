@@ -58,7 +58,9 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/evrak/ekle', 'create')->name('admin.evrak.create');
         Route::post('/admin/evrak/eklendi', 'created')->name('admin.evrak.created');
 
-        Route::get('/admin/evrak/sil/{type}/{id}','delete')->name('admin.evrak.delete');
+        Route::get('/admin/evrak/sil/{type}/{id}', 'delete')->name('admin.evrak.delete');
+
+        Route::post("/admin/evrak/antrepo-sertifika", 'get_evrak_sertifika')->name("admin.get_evrak_sertifika");
     });
 
     // Stok Takip İşlemleri
@@ -75,7 +77,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     });
 
     // Antrepo İşlemleri
-    Route::controller(AntrepoController::class)->group(function(){
+    Route::controller(AntrepoController::class)->group(function () {
 
         Route::get('/admin/antrepolar/liste', 'index')->name('admin.antrepos.index');
         Route::get('/admin/antrepolar/{id}/sil', 'delete')->name('admin.antrepos.delete');
@@ -85,8 +87,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::get('/admin/antrepolar/ekle', 'create')->name('admin.antrepos.create');
         Route::post('/admin/antrepolar/eklendi', 'created')->name('admin.antrepos.created');
-
-
     });
 
     // Ürün İşlemleri
@@ -199,6 +199,8 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
 
         Route::get('/memur/evrak/ekle', 'create')->name('memur.evrak.create');
         Route::post('/memur/evrak/eklendi', 'created')->name('memur.evrak.created');
+
+        Route::post("/memur/evrak/antrepo-sertifika", 'get_evrak_sertifika')->name("memur.get_evrak_sertifika");
     });
 
 

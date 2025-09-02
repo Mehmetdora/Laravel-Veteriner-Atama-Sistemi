@@ -2508,4 +2508,26 @@ class EvrakController extends Controller
             return redirect()->back()->with('error', "Hata: " . $e->getMessage());
         }
     }
+
+
+    public function get_evrak_sertifika(Request $request)
+    {
+
+        try {
+            $usks = UsksNo::where('usks_no', $request->input("usks_no"))
+                ->where('miktar', (int)$request->input("usks_miktar"))
+                ->with(['evrak_antrepo_sertifika', 'evrak_antrepo_sertifika.saglikSertifikalari', 'evrak_antrepo_sertifika.urun', 'evrak_antrepo_sertifika.veteriner.user'])->first();
+
+            if (!$usks) {
+                return response()->json(['success' => false, 'message' => 'Girilen USKS bilgileri doğru değil, sistemden kontrol edip doğru olduğundan emin olduktan sonra tekrar deneyiniz.'], 404);
+            }
+
+            $sertifika = $usks->evrak_antrepo_sertifika;
+            $saglik_sertifikalari = $usks->evrak_antrepo_sertifika->saglikSertifikalari;
+
+            return response()->json(['success' => true, 'sertifika' => $sertifika, 'saglik_sertifikalari' => $saglik_sertifikalari]);
+        } catch (\Exception $exception) {
+            return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
+        }
+    }
 }

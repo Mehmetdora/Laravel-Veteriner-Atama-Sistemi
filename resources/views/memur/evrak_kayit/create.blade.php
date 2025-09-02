@@ -198,6 +198,33 @@
                 <!-- /.modal-dialog -->
             </div>
 
+            {{-- Antrepo sertifika evrak önizleme modal --}}
+            <div class="modal fade" id="modal-evrak-sertifika-preview">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="kopya-evrak-sertifika-preview-title">Antrepo Sertifika Önizleme
+                            </h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="evrak-sertifika-preview-modal-title"></p>
+                            <div id="evrak-sertifika-preview-content">
+
+                            </div>
+
+                        </div>
+                        <div class="modal-footer justify-content-end">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>
+                        </div>
+                    </div>
+                    <!-- /.modal-content -->
+                </div>
+                <!-- /.modal-dialog -->
+            </div>
+
 
         </section>
         <!-- /.content -->
@@ -1911,6 +1938,7 @@
                     totalForms = 0;
                     currentFormIndex = 0;
                     evrak_info_h4.innerHTML = "";
+                    evrak_sertifika_modal_contents = [];
 
                     document.querySelectorAll(".formButtons").forEach(el => {
                         el.style.setProperty('display', 'none', 'important');
@@ -2561,6 +2589,29 @@
             } else if (type == 5) {
                 return `
 
+
+                                        <div class="form-group">
+                                            <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
+                                                    id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
+                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
+                                                    id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
+                                                <div class="col-sm-2">
+
+
+                                                    <button id="preview-get-data-btn-${i}" onClick="getEvrakSertifika(${i})" type="button" class="btn btn-primary" >Sertifikayı Önizle
+                                                    </button>
+
+                                                    <button id="preview-open-modal-btn-${i}" type="button" class="btn btn-primary hidden" data-toggle="modal"
+                                                        data-target="#modal-evrak-sertifika-preview">Sertifikayı Önizle
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
                                             <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
@@ -2573,17 +2624,6 @@
 
 
 
-                                        <div class="form-group">
-                                            <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
-                                                    id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
-                                                <div class="col-sm-2"></div>
-                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
-                                                    id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
-
-                                            </div>
-                                        </div>
 
                                         <div class="form-group">
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
@@ -3394,6 +3434,146 @@
             evrak_info_h4.innerHTML =
                 `Evrak Türü: ${evraks_type}, <br>Oluşturulan ${totalForms} evraktan ${currentFormIndex +1}. evrak`;
         }
+
+
+        async function getEvrakSertifika(i) {
+            const usks_no = document.getElementById(`usks_no_${i}`);
+            const usks_miktar = document.getElementById(`usks_miktar_${i}`);
+            const modal_open_btn = document.getElementById(`preview-open-modal-btn-${i}`);
+            const get_data_btn = document.getElementById(`preview-get-data-btn-${i}`);
+
+            const result = await getAntrepoSertifika(usks_no.value, usks_miktar.value);
+
+            if (result && result.saglik_sertifikalari) {
+                const sertifika = result;
+                const saglik_sertifikalari = result.saglik_sertifikalari;
+
+                let modal_title = document.getElementById("evrak-sertifika-preview-modal-title");
+                let modal_content = document.getElementById("evrak-sertifika-preview-content");
+
+
+                modal_content.innerHTML = "";
+                modal_title.textContent = `Girilen "${usks_no.value}" usks numaralı sağlık sertifika bilgileri`;
+
+
+                let ss_string = '';
+                saglik_sertifikalari.forEach(ss => {
+                    ss_string += `
+                        <li class="setted-sertifika">
+                            <b>${ss.ssn} →
+                                ${ss.toplam_miktar} KG
+                            </b>
+                            ---- (KALAN MİKTAR → ${ss.kalan_miktar} KG)
+                        </li>
+                    `;
+                });
+
+                let div = document.createElement("div");
+                div.style.display = "block";
+
+
+                const date = new Date(sertifika.created_at);
+                const created_at = date.toLocaleDateString() + " - " + date.toLocaleTimeString();
+                div.innerHTML = `
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <th>İşlem Türü:</th>
+                                        <td><b>Antrepo Sertifika</b></td>
+                                    </tr>
+                                    <tr>
+                                        <th style="width:30%">Oluşturulma Tarihi:</th>
+                                        <td>${created_at}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Evrak Kayıt No:</th>
+                                        <td>${sertifika.evrakKayitNo}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Veteriner Sağlık Sertifikaları:</th>
+                                        <td>
+                                            <ul id="dataList" class="list">
+                                                ${ss_string}
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Vekalet Sahibi Firma/Kişi Adı:</th>
+                                        <td>${sertifika.vekaletFirmaKisiAdi}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ürünün Açık İsmi:</th>
+                                        <td>${sertifika.urunAdi}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ürünün Kategorisi:</th>
+                                        <td>${sertifika.urun.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>G.T.İ.P. No İlk 4 Rakamı:</th>
+                                        <td>${sertifika.gtipNo}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Ürünün KG Cinsinden Net Miktarı:</th>
+                                        <td>${sertifika.urunKG} KG</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Orjin Ülke:</th>
+                                        <td>${sertifika.orjinUlke}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Araç Plaka veya Konteyner No:</th>
+                                        <td>${sertifika.aracPlaka}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Çıkış Antreposu:</th>
+                                        <td>${sertifika.cikisAntrepo}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Veteriner Hekim Adı:</th>
+                                        <td>${sertifika.veteriner.user.name}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+
+                modal_content.appendChild(div);
+                modal_open_btn.click();
+            }
+
+
+        }
+
+        async function getAntrepoSertifika(usks_no, usks_miktar) {
+            try {
+                const response = await fetch(`{{ route('memur.get_evrak_sertifika') }}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        usks_no,
+                        usks_miktar
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    return data.sertifika;
+                } else {
+                    alert(data.message);
+                    return;
+                }
+
+            } catch (err) {
+                console.error("HATA: ", err);
+                return null;
+            }
+        };
+
 
 
         document.getElementById("dynamicForm").addEventListener("submit", function(event) {
