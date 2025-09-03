@@ -96,9 +96,25 @@ class RoleSeeder extends Seeder
         ])->assignRole('memur');
 
         User::create([
-            'name' => 'admin ',
-            'username' => 'admin123',
-            'email' => 'admin@gmail.com',
+            'name' => 'Harun Müdür',
+            'username' => 'admin1',
+            'email' => 'admin1@gmail.com',
+            'phone_number' => '1231232323',
+            'password' => bcrypt('123123')
+        ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Mustafa Uğur Beken',
+            'username' => 'admin2',
+            'email' => 'admin2@gmail.com',
+            'phone_number' => '1231232323',
+            'password' => bcrypt('123123')
+        ])->assignRole('admin');
+
+        User::create([
+            'name' => 'Erdem Teknisyen ',
+            'username' => 'admin3',
+            'email' => 'admin3@gmail.com',
             'phone_number' => '1231232323',
             'password' => bcrypt('123123')
         ])->assignRole('admin');
