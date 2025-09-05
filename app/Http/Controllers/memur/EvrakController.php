@@ -346,7 +346,6 @@ class EvrakController extends Controller
                     'siraNo' => 'required',
                     'vgbOnBildirimNo' => 'required',
                     'usks_no' => 'required',
-                    'usks_miktar' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
@@ -360,7 +359,6 @@ class EvrakController extends Controller
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'usks_no.required' => 'USKS Numarası, alanı eksik!',
-                    'usks_miktar.required' => 'USKS Miktarı, alanı eksik!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
@@ -1037,7 +1035,6 @@ class EvrakController extends Controller
 
                     // Veterineri usks numarası üzerinden antrepo sertifika bulunarak bu evrağı alan veterinere atanacak
                     $usks = UsksNo::where('usks_no', $formData[$i]['usks_no'])
-                        ->where('miktar', (int)str_replace('.', '', $formData[$i]['usks_miktar']))
                         ->with('evrak_antrepo_sertifika')->first();
                     if (!$usks) {
                         throw new \Exception('Girilen USKS bilgilerinin doğru olduğundan emin olduktan sonra tekrar deneyiniz!');
@@ -1297,7 +1294,6 @@ class EvrakController extends Controller
 
         try {
             $usks = UsksNo::where('usks_no', $request->input("usks_no"))
-                ->where('miktar', (int)$request->input("usks_miktar"))
                 ->with(['evrak_antrepo_sertifika', 'evrak_antrepo_sertifika.saglikSertifikalari', 'evrak_antrepo_sertifika.urun', 'evrak_antrepo_sertifika.veteriner.user'])->first();
 
             if (!$usks) {

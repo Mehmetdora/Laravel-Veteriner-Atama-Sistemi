@@ -788,9 +788,7 @@
                 <div class="form-group">
                     <label for="usks">USKS Numarası ve Miktarı: *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-5 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
-                        <div class="col-sm-2"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar" id="usks_miktar" placeholder="USKS Miktarı" required>
+                        <input class="col-sm-12 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                     </div>
                 </div>
 
@@ -1346,7 +1344,6 @@
                     let siraNo = form.querySelector(`#siraNo_${i}`);
                     let vgbOnBildirimNo = form.querySelector(`#vgbOnBildirimNo_${i}`);
                     let usks_no = form.querySelector(`#usks_no_${i}`);
-                    let usks_miktar = form.querySelector(`#usks_miktar_${i}`);
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
@@ -1361,7 +1358,6 @@
                     siraNo.value = modal_div.querySelector(`input[name='siraNo']`).value;
                     vgbOnBildirimNo.value = modal_div.querySelector(`input[name='vgbOnBildirimNo']`).value;
                     usks_no.value = modal_div.querySelector(`input[name='usks_no']`).value;
-                    usks_miktar.value = modal_div.querySelector(`input[name='usks_miktar']`).value;
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
@@ -1790,14 +1786,6 @@
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
                 let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
                 let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
-                let usks_miktari = modal_div.querySelector(`#usks_miktar`);
-
-                let data = [];
-                let netMiktar = 0;
-
-                usks_miktari.addEventListener("blur", function() {
-                    netMiktarInput.value = usks_miktari.value;
-                });
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_c.addEventListener("change", function() {
@@ -2593,10 +2581,9 @@
                                         <div class="form-group">
                                             <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-5 form-control" type="text" name="usks_no_${i}"
+                                                <input class="col-sm-10 form-control" type="text" name="usks_no_${i}"
                                                     id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
-                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="usks_miktar_${i}"
-                                                    id="usks_miktar_${i}" placeholder="USKS Miktarı" required>
+
                                                 <div class="col-sm-2">
 
 
@@ -3213,15 +3200,6 @@
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
-                let usks_miktari = formStep.querySelector(`#usks_miktar_${index}`);
-
-                let data = [];
-                let netMiktar = 0;
-
-                usks_miktari.addEventListener("blur", function() {
-                    netMiktarInput.value = usks_miktari.value;
-                });
-
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_c.addEventListener("change", function() {
                     if (this.value !== "") {
@@ -3438,11 +3416,10 @@
 
         async function getEvrakSertifika(i) {
             const usks_no = document.getElementById(`usks_no_${i}`);
-            const usks_miktar = document.getElementById(`usks_miktar_${i}`);
             const modal_open_btn = document.getElementById(`preview-open-modal-btn-${i}`);
             const get_data_btn = document.getElementById(`preview-get-data-btn-${i}`);
 
-            const result = await getAntrepoSertifika(usks_no.value, usks_miktar.value);
+            const result = await getAntrepoSertifika(usks_no.value);
 
             if (result && result.saglik_sertifikalari) {
                 const sertifika = result;
@@ -3546,7 +3523,7 @@
 
         }
 
-        async function getAntrepoSertifika(usks_no, usks_miktar) {
+        async function getAntrepoSertifika(usks_no) {
             try {
                 const response = await fetch(`{{ route('memur.get_evrak_sertifika') }}`, {
                     method: "POST",
@@ -3555,8 +3532,7 @@
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        usks_no,
-                        usks_miktar
+                        usks_no
                     })
                 });
 
@@ -3690,7 +3666,6 @@
                         siraNo: document.querySelector(`#siraNo_${i}`).value,
                         vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
                         usks_no: document.querySelector(`#usks_no_${i}`).value,
-                        usks_miktar: document.querySelector(`#usks_miktar_${i}`).value,
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
