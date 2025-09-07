@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('evrak_antrepo_sertifika_id')->constrained()->onDelete('cascade');
             $table->string('usks_no');
-            $table->integer('miktar');
+            $table->decimal('miktar',10,3);
             $table->timestamps();
         });
     }

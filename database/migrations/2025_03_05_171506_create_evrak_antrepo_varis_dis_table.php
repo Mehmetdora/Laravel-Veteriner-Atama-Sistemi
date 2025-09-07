@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');
-            $table->integer('urunKG');
+            $table->decimal('urunKG',10,3);
             $table->integer('difficulty_coefficient')->default(1);
             $table->foreignId('giris_antrepo_id')->constrained('giris_antrepos')->onDelete('cascade');
 

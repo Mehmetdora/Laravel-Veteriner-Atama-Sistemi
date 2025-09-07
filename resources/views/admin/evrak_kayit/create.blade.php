@@ -303,7 +303,7 @@
                             id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
                         <input class="col-sm-5 form-control ithalat" type="text" oninput="formatNumber(this)" name="ss_miktar"
-                            id="ss_miktar" placeholder="Miktarı" required>
+                            id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -356,7 +356,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Araç Plakası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Yük Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Yük Miktarı  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -398,7 +398,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -491,7 +491,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -589,7 +589,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -651,7 +651,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -708,7 +708,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -791,7 +791,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="usks">USKS Numarası ve Miktarı: *</label>
+                    <label for="usks">USKS Numarası: *</label>
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-12 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                     </div>
@@ -874,7 +874,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -1048,18 +1048,18 @@
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(arac_plaka_kg.value);
-                    let netMiktar = 0;
+                    let netMiktar = 0.0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.plaka;
-                        let val2 = json_data.miktar;
+                        let val2 = formatNumberValue(json_data.miktar);
 
                         netMiktar += val2;
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
                         console.log(listItem);
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
@@ -1476,7 +1476,7 @@
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
                     input1.value = "";
@@ -1485,7 +1485,7 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = formatNumberValue(input2.value);
 
                     if (val1 && val2) {
                         let newItem = {
@@ -1497,7 +1497,7 @@
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
                         console.log(listItem);
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
@@ -2072,7 +2072,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2134,7 +2134,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Araç Plakası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2186,7 +2186,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2307,7 +2307,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2426,7 +2426,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2505,7 +2505,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2588,7 +2588,7 @@
 
 
                                         <div class="form-group">
-                                            <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
+                                            <label for="usks_${i}">USKS Numarası:***</label>
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <input class="col-sm-10 form-control" type="text" name="usks_no_${i}"
                                                     id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
@@ -2719,7 +2719,7 @@
                         <div id="inputContainer_${i}" class="inputs hidden">
                             <input type="text" id="input1_${i}"
                                 placeholder="Sağlık Sertifikası Numarası">
-                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                             <button type="button" id="confirmBtn_${i}">✔️</button>
                         </div>
 
@@ -2865,7 +2865,7 @@
 
                     <div id="inputContainer_${i}" class="inputs hidden">
                         <input type="text" id="input1_${i}" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                         <button type="button" id="confirmBtn_${i}">✔️</button>
                     </div>
 
@@ -3595,7 +3595,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         arac_plaka_kg: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
@@ -3615,7 +3615,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3635,7 +3635,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3655,7 +3655,7 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
@@ -3672,7 +3672,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
                         cikis_antrepo: document.querySelector(`[name="cikis_antrepo_input_${i}"]`).value
@@ -3690,7 +3690,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3739,7 +3739,7 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
@@ -3760,17 +3760,142 @@
 
     <script>
         function formatNumber(input) {
-            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
-            if (value === "") return input.value = ""; // Boş girişe izin ver
+            let value = input.value;
 
-            // Sayıyı ters çevir, üçlü gruplara ayır ve noktalar ekleyerek tekrar çevir
-            value = value.split('').reverse().join('') // Önce ters çevir
-                .match(/\d{1,3}/g) // Üçlü gruplara ayır
-                .join('.') // Grupları noktayla birleştir
-                .split('').reverse().join(''); // Yeniden ters çevir
 
-            input.value = value;
+            // sadece , ve . kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3); // Ondalık kısmı en fazla 3 basamak
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa, boş bırak
+            if (value === "" || value === ",") {
+                input.value = "";
+                return;
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            if (integerPart === "") {
+                input.value = "";
+                return;
+            }
+
+            // Tam sayı kısmını formatla (sadece rakamları al)
+            let cleanInteger = integerPart.replace(/\D/g, '');
+
+            if (cleanInteger === "") {
+                input.value = decimalPart !== undefined ? "," + decimalPart : "";
+                return;
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                input.value = formattedInteger + ',' + decimalPart;
+            } else {
+                input.value = formattedInteger;
+            }
         }
+
+        function formatNumberValue(inputValue) {
+            let value = inputValue;
+
+
+            // sadece , ve . kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3); // Ondalık kısmı en fazla 3 basamak
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa, boş bırak
+            if (value === "" || value === ",") {
+                value = "";
+                return value;
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            if (integerPart === "") {
+                value = "";
+                return value;
+            }
+
+            // Tam sayı kısmını formatla (sadece rakamları al)
+            let cleanInteger = integerPart.replace(/\D/g, '');
+
+            if (cleanInteger === "") {
+                value = decimalPart !== undefined ? "," + decimalPart : "";
+                return value;
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                value = formattedInteger + ',' + decimalPart;
+            } else {
+                value = formattedInteger;
+            }
+
+            return value;
+        }
+
+
+        function getNumericValue(inputValue) {
+            let value = inputValue;
+
+            // Binlik ayracı noktalarını kaldır ve virgülü noktaya çevir
+            value = value.replace(/\./g, '').replace(',', '.');
+
+            // Sayısal değere çevir
+            return parseFloat(value) || 0;
+        }
+
 
         function scrollToTop() {
             window.scrollTo({

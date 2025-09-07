@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('arac_plaka_kgs', function (Blueprint $table) {
             $table->id();
-            
+
             $table->foreignId('evrak_ithalat_id')->constrained('evrak_ithalats')->onDelete('cascade');
             $table->string('arac_plaka');
-            $table->integer('miktar');
+            $table->decimal('miktar',10,3);
 
             $table->timestamps();
         });

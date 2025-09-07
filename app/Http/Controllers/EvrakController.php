@@ -525,6 +525,9 @@ class EvrakController extends Controller
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
 
+
+                    dd($formData);
+
                     $yeni_evrak = new EvrakIthalat;
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
                     $yeni_evrak->vgbOnBildirimNo = $formData[$i]["vgbOnBildirimNo"];

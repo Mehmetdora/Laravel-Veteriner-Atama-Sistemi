@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
 
             $table->string('ssn');
-            $table->integer('toplam_miktar');
-            $table->integer('kalan_miktar');
+            $table->decimal('toplam_miktar',10,3);
+            $table->decimal('kalan_miktar',10,3);
 
             $table->timestamps();
         });

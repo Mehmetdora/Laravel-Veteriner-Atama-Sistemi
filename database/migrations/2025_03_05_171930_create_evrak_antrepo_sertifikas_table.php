@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');
-            $table->integer('urunKG');
+            $table->decimal('urunKG',10,3);
             $table->string('orjinUlke');
             $table->string('aracPlaka');
             $table->string('cikisAntrepo');
