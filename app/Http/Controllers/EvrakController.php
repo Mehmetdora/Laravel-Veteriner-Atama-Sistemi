@@ -515,6 +515,9 @@ class EvrakController extends Controller
         }
 
 
+        dd($formData);
+
+
         // Veritabanı başlangıç durumu
         DB::beginTransaction();
 
@@ -526,7 +529,6 @@ class EvrakController extends Controller
                 for ($i = 1; $i < count($formData); $i++) {
 
 
-                    dd($formData);
 
                     $yeni_evrak = new EvrakIthalat;
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
