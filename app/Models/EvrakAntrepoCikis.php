@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakAntrepoCikis extends Model
 {
 
+    protected $casts = [
+        'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+    ];
+
     public function evrak_adi()
     {
         return "Antrepo Çıkış";

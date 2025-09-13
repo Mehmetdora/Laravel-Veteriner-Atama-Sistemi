@@ -255,6 +255,8 @@
         let evraks_type = "";
         let creacted_forms = [];
 
+
+
         function addEvrakType() {
             let type = document.getElementById("evrakType").value;
             let count = parseInt(document.getElementById("formCount").value) || 0;
@@ -299,7 +301,7 @@
                             id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
                         <input class="col-sm-5 form-control ithalat" type="text" oninput="formatNumber(this)" name="ss_miktar"
-                            id="ss_miktar" placeholder="Miktarı" required>
+                            id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -352,7 +354,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Araç Plakası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Yük Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Yük Miktarı  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -373,8 +375,9 @@
                         <input class="col-sm-5 form-control ithalat" type="text" name="girisGumruk"
                             id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
-                </div>`;
+                </div>
 
+                `;
             } else if (evraks_type == "Transit") {
                 kopya_modal_html = `
 
@@ -393,7 +396,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -486,7 +489,7 @@
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktarı" required>
+                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
@@ -584,7 +587,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -646,7 +649,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -703,7 +706,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -786,7 +789,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="usks">USKS Numarası ve Miktarı: *</label>
+                    <label for="usks">USKS Numarası: *</label>
                     <div class="row" style="display: flex; align-items: center;">
                         <input class="col-sm-12 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                     </div>
@@ -821,7 +824,7 @@
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                    <input id="net_miktar" name="urunKG" oninput="formatNumber(this)" placeholder="Miktar  (9.999.999,999)" class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -869,7 +872,7 @@
 
                     <div id="inputContainer" class="inputs hidden">
                         <input type="text" id="input1" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2" placeholder="Miktar  (9.999.999,999)">
                         <button type="button" id="confirmBtn">✔️</button>
                     </div>
 
@@ -1043,23 +1046,24 @@
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(arac_plaka_kg.value);
-                    let netMiktar = 0;
+                    let netMiktar = 0.0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.plaka;
-                        let val2 = json_data.miktar;
+                        let val2_num = json_data.miktar;
+                        let val2 = formatNumberValue(val2_num);
 
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
                         console.log(listItem);
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
                             listItem.remove();
                             arac_plaka_kg.value = JSON.stringify(datas);
                         });
@@ -1170,6 +1174,7 @@
                     let urunlerinBulunduguAntrepo_select = form.querySelector(`#urunlerinBulunduguAntrepo_select${i}`);
                     let dataList = form.querySelector(`#dataList_${i}`);
 
+
                     // Kopya evraktan alınan verileri tüm formlara yapıştırma
                     siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
                     oncekiVGBOnBildirimNo.value = modal_div.querySelector("input[name='oncekiVGBOnBildirimNo']").value;
@@ -1183,32 +1188,51 @@
                         `#urunlerinBulunduguAntrepo_select`).value;
                     vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
 
+
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(vetSaglikSertifikasiNo.value);
-                    let netMiktar = 0;
+                    let netMiktar = 0.0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.ssn;
-                        let val2 = json_data.miktar;
-
-                        netMiktar += val2;
+                        let val2_num = json_data.miktar;
+                        let val2 = formatNumberValue(val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+
+
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
+                                datas);
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                                val2_num);
+
+                            datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
+                                val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(getNumericValue(urunKG.value), val2_num);
+                            urunKG.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra datas:",
+                                datas);
+
                         });
 
                         dataList.appendChild(listItem);
                         vetSaglikSertifikasiNo.value = JSON.stringify(datas);
-
                     });
+
+
+
 
                 }
 
@@ -1242,24 +1266,43 @@
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(vetSaglikSertifikasiNo.value);
-                    let netMiktar = 0;
+                    let netMiktar = 0.0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.ssn;
-                        let val2 = json_data.miktar;
+                        let val2_num = json_data.miktar;
+                        let val2 = formatNumberValue(val2_num);
 
-                        netMiktar += val2;
+                        //netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
+                                datas);
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                                val2_num);
+
+
+                            datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
+                                val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(getNumericValue(urunKG.value), val2_num);
+                            urunKG.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra datas:",
+                                datas);
                         });
 
                         dataList.appendChild(listItem);
@@ -1309,24 +1352,42 @@
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(vetSaglikSertifikasiNo.value);
-                    let netMiktar = 0;
+                    let netMiktar = 0.0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.ssn;
-                        let val2 = json_data.miktar;
+                        let val2_num = json_data.miktar;
+                        let val2 = formatNumberValue(val2_num);
 
-                        netMiktar += val2;
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
+
+
+                        /* burada kaldın  */
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
+                                datas);
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                                val2_num);
+
+                            datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
+                                val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(getNumericValue(urunKG.value), val2_num);
+                            urunKG.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra datas:",
+                                datas);
                         });
 
                         dataList.appendChild(listItem);
@@ -1406,24 +1467,36 @@
 
                     // kopya evraktan oluşturulan araç plaka ve miktar bilgileri
                     let datas = JSON.parse(vetSaglikSertifikasiNo.value);
-                    let netMiktar = 0;
 
                     datas.forEach(json_data => {
 
                         let val1 = json_data.ssn;
-                        let val2 = json_data.miktar;
-
-                        netMiktar += val2;
+                        let val2_num = json_data.miktar;
+                        let val2 = formatNumberValue(val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${val2}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            datas = datas.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
+                                datas);
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                                val2_num);
+
+                            datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
+                                val1 || item.miktar !== val2_num);
+
                             listItem.remove();
                             vetSaglikSertifikasiNo.value = JSON.stringify(datas);
+
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra jsonData:",
+                                vetSaglikSertifikasiNo.value);
+                            console.log("Kopya evraktan eklenen s.s. silindikten sonra datas:",
+                                datas);
                         });
 
                         dataList.appendChild(listItem);
@@ -1471,7 +1544,7 @@
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
                     input1.value = "";
@@ -1480,24 +1553,24 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(input2.value);
 
                     if (val1 && val2) {
                         let newItem = {
                             plaka: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value}KG <button type="button" class="delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn" > ✖️ </button>`;
 
-                        console.log(listItem);
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
@@ -1520,6 +1593,8 @@
                 ss_miktari.addEventListener("blur", function() {
                     netMiktarInput.value = ss_miktari.value;
                 });
+
+
 
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_g.addEventListener("change", function() {
@@ -1604,7 +1679,7 @@
 
 
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -1614,31 +1689,36 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(input2.value);
+
+
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        console.log(formatNumberValue(netMiktar), netMiktar);
+
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
@@ -1666,7 +1746,7 @@
                 let antrepo_select = modal_div.querySelector(`#urunlerinBulunduguAntrepo_select`);
 
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -1676,31 +1756,32 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(input2.value);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
@@ -1729,7 +1810,7 @@
                 let cikis_antrepo_select = modal_div.querySelector(`#cikis_antrepo_select`);
 
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -1739,31 +1820,32 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
@@ -1787,6 +1869,7 @@
                 let inputBox_c = modal_div.querySelector(`#cikis_g_input`);
                 let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
 
+
                 // Kullanıcı dropdown'dan seçim yaparsa, input alanına yazdır
                 selectBox_c.addEventListener("change", function() {
                     if (this.value !== "") {
@@ -1809,6 +1892,7 @@
                 let selectBox_c = modal_div.querySelector(`#cikis_g_select`);
 
                 let data = [];
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -1818,22 +1902,24 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                            netMiktar -= val2;
+                            data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
@@ -1927,6 +2013,7 @@
                     currentFormIndex = 0;
                     evrak_info_h4.innerHTML = "";
                     evrak_sertifika_modal_contents = [];
+
 
                     document.querySelectorAll(".formButtons").forEach(el => {
                         el.style.setProperty('display', 'none', 'important');
@@ -2063,7 +2150,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2125,7 +2212,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Araç Plakası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Yük Miktarı (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2151,9 +2238,9 @@
                                                     id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                                             </div>
-                                        </div>`;
+                                        </div>
 
-
+        `;
             } else if (type == 1) {
                 return `
 
@@ -2177,7 +2264,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2298,7 +2385,7 @@
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktarı" required>
+                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
                                         </div>
@@ -2417,7 +2504,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2450,7 +2537,7 @@
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required  readonly/>
                                         </div>
 
 
@@ -2496,7 +2583,7 @@
                                             <div id="inputContainer_${i}" class="inputs hidden">
                                                 <input type="text" id="input1_${i}"
                                                     placeholder="Sağlık Sertifikası Numarası">
-                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                                                <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Max miktar (9.999.999,999)">
                                                 <button type="button" id="confirmBtn_${i}">✔️</button>
                                             </div>
 
@@ -2540,7 +2627,7 @@
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly/>
                                         </div>
 
 
@@ -2579,7 +2666,7 @@
 
 
                                         <div class="form-group">
-                                            <label for="usks_${i}">USKS Numarası ve Miktarı:***</label>
+                                            <label for="usks_${i}">USKS Numarası:***</label>
                                             <div class="row" style="display: flex; align-items: center;">
                                                 <input class="col-sm-10 form-control" type="text" name="usks_no_${i}"
                                                     id="usks_no_${i}" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
@@ -2590,7 +2677,7 @@
                                                     <button id="preview-get-data-btn-${i}" onClick="getEvrakSertifika(${i})" type="button" class="btn btn-primary" >Sertifikayı Önizle
                                                     </button>
 
-                                                    <button id="preview-open-modal-btn-${i}" type="button" class="btn btn-primary hidden" data-toggle="modal"
+                                                    <button id="preview-open-modal-btn-${i}" type="button"  class="btn btn-primary hidden" data-toggle="modal"
                                                         data-target="#modal-evrak-sertifika-preview">Sertifikayı Önizle
                                                     </button>
 
@@ -2598,6 +2685,7 @@
 
                                             </div>
                                         </div>
+
 
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
@@ -2608,6 +2696,7 @@
                                             <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Numarası</label>
                                             <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
                                         </div>
+
 
 
 
@@ -2646,7 +2735,7 @@
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" oninput="formatNumber(this)" placeholder="Max miktar (9.999.999,999)" class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2708,7 +2797,7 @@
                         <div id="inputContainer_${i}" class="inputs hidden">
                             <input type="text" id="input1_${i}"
                                 placeholder="Sağlık Sertifikası Numarası">
-                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                            <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                             <button type="button" id="confirmBtn_${i}">✔️</button>
                         </div>
 
@@ -2854,7 +2943,7 @@
 
                     <div id="inputContainer_${i}" class="inputs hidden">
                         <input type="text" id="input1_${i}" placeholder="Sağlık Sertifikası Numarası">
-                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktarı(KG)">
+                        <input type="text" oninput="formatNumber(this)" id="input2_${i}" placeholder="Miktar (9.999.999,999)">
                         <button type="button" id="confirmBtn_${i}">✔️</button>
                     </div>
 
@@ -2880,7 +2969,7 @@
 
                 <div class="form-group">
                     <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required />
+                    <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required readonly/>
                 </div>
 
                 <div class="form-group">
@@ -2902,6 +2991,7 @@
             }
         }
 
+        // İthalat
         function EventListenersFor_0_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -2916,33 +3006,37 @@
                 let confirmBtn = formStep.querySelector(`#confirmBtn_${index}`);
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
+
+
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
                     input1.value = "";
                     input2.value = "";
                 });
+
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             plaka: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
                         data.push(newItem);
-                        netMiktar += val2;
+                        netMiktar = hatasızFloatToplama(netMiktar, val2_num);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value}KG <button type = "button" class = "delete-btn" > ✖️ </button>`;
+                            `${val1} - ${val2} KG <button type = "button" class = "delete-btn" > ✖️ </button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
                             data = data.filter(item => item.ssn !== val1 || item.miktar !==
-                                val2);
-                            netMiktar -= val2;
+                                val2_num);
+                            netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
@@ -2959,6 +3053,7 @@
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
+
                 let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
 
 
@@ -2975,6 +3070,7 @@
             });
         }
 
+        // Transit
         function EventListenersFor_1_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -2987,9 +3083,6 @@
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
                 let ss_miktari = formStep.querySelector(`#ss_miktar_${index}`);
-
-                let data = [];
-                let netMiktar = 0;
 
 
                 ss_miktari.addEventListener("blur", function() {
@@ -3012,6 +3105,7 @@
             });
         }
 
+        // Antrepo Giriş
         function EventListenersFor_2_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -3045,6 +3139,8 @@
             });
         }
 
+
+        // Antrepo Varış
         function EventListenersFor_3_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -3065,44 +3161,94 @@
                     `#urunlerinBulunduguAntrepo_select${index}`);
 
 
+
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
                     input1.value = "";
                     input2.value = "";
+
                 });
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
-                        data.push(newItem);
-                        netMiktar += val2;
+
+                        console.log("Gelen veri eklenmeden önce: ", jsonDataInput.value);
+
+                        /* if (jsonDataInput.value && jsonDataInput.value != "") {
+                            data = JSON.parse(jsonDataInput.value);
+                            data.push(newItem);
+                        } */
+
+
+                        /*
+                        eğer ilk sertifika girişi normal bir şekilde olursa
+                        gelen sertifika bilgileri direkt boş arraye atılır, eğer ilk kopya evrak
+                        üzerinden sertifika eklenmişse eklenmiş olan verileri inputtan al ve arraye ekle
+                        sonra bu veriler üzerinde işlemleri yap. Her seferinde jsonData inputu da güncelle
+                        */
+                        if (jsonDataInput.value && jsonDataInput.value != "") {
+                            data = JSON.parse(jsonDataInput.value);
+                            data.push(newItem);
+                            console.log("veri eklemeden sonra data listesi: ", data);
+                            jsonDataInput.value = JSON.stringify(data);
+
+                        } else {
+                            data.push(newItem);
+                        }
+
+
+
+                        console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
+
+
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        console.log("eklenen yeni miktar ile", netMiktar);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
-                                val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+
+
+                            console.log("silerken kullanılan bilgiler val1-val2_num: ", val1,
+                                val2_num);
+                            console.log("silerken kullanılan bilgiler data: ", data);
+
+                            data = JSON.parse(jsonDataInput.value).filter(item => item.ssn !==
+                                val1 || item.miktar !==
+                                val2_num);
+
+                            console.log("silindikten sonra datas:", data);
+
+
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                                val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
+
+
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
+
+                        console.log("eklenen yeni kayıt ile birlikte :", jsonDataInput.value);
+
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
                     }
@@ -3119,6 +3265,7 @@
             });
         }
 
+        // Antrepo Sertifika
         function EventListenersFor_4_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -3134,8 +3281,19 @@
                 let cikis_antrepo_input = formStep.querySelector(`#cikis_antrepo_input_${index}`);
                 let cikis_antrepo_select = formStep.querySelector(`#cikis_antrepo_select_${index}`);
 
+
+
+                /*
+
+
+                formdan üretilen jsonDataInput verileri yani sertifika verileri kopya evrak tüm hepsine
+                uygulandığında gözükse de veriler toplam miktar inputunda gözükmüyor , yeni eklenenler üzerinden
+                işlemler yapılabiliyor.
+                */
+
+
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -3145,33 +3303,67 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
+
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
-                        data.push(newItem);
-                        netMiktar += val2;
+
+                        console.log("Gelen veri eklenmeden önce: ", jsonDataInput.value);
+
+                        if (jsonDataInput.value && jsonDataInput.value != "") {
+                            data = JSON.parse(jsonDataInput.value);
+                            data.push(newItem);
+                            console.log("veri eklemeden sonra data listesi: ", data);
+                            jsonDataInput.value = JSON.stringify(data);
+
+                        } else {
+                            data.push(newItem);
+                        }
+
+                        console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
+
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        console.log("eklenen yeni miktar ile", netMiktar);
+
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
-                                val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+
+                            console.log("silerken kullanılan bilgiler val1-val2_num: ", val1,
+                                val2_num);
+                            console.log("silerken kullanılan bilgiler data: ", data);
+
+
+
+                            data = JSON.parse(jsonDataInput.value).filter(item => item.ssn !==
+                                val1 || item.miktar !==
+                                val2_num);
+
+                            console.log("silindikten sonra datas:", data);
+
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                                val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
+
+
+                        console.log("eklenen yeni kayıt ile birlikte :", jsonDataInput.value);
+
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
                     }
@@ -3188,15 +3380,13 @@
             });
         }
 
+        // Antrepo Çıkış
         function EventListenersFor_5_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
 
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
-                let dataList = formStep.querySelector(`#dataList_${index}`);
-                let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
-                let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
@@ -3207,10 +3397,10 @@
                     }
                 });
 
-
             });
         }
 
+        // Canlı Hayvan
         function EventListenersFor_6_ToForm() {
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
@@ -3236,23 +3426,44 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
-                        data.push(newItem);
+
+                        console.log("Gelen veri eklenmeden önce: ", jsonDataInput.value);
+
+                        if (jsonDataInput.value && jsonDataInput.value != "") {
+                            data = JSON.parse(jsonDataInput.value);
+                            data.push(newItem);
+                            console.log("veri eklemeden sonra data listesi: ", data);
+                            jsonDataInput.value = JSON.stringify(data);
+
+                        } else {
+                            data.push(newItem);
+                        }
+                        console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
+
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
-                                val2);
-                            netMiktar -= val2;
+
+                            console.log("silerken kullanılan bilgiler val1-val2_num: ", val1,
+                                val2_num);
+                            console.log("silerken kullanılan bilgiler data: ", data);
+
+                            data = JSON.parse(jsonDataInput.value).filter(item => item.ssn !==
+                                val1 || item.miktar !==
+                                val2_num);
+                            console.log("silindikten sonra datas:", data);
+
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
@@ -3260,6 +3471,9 @@
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
                         inputContainer.classList.add("hidden");
+
+                        console.log("eklenen yeni kayıt ile birlikte :", jsonDataInput.value);
+
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
                     }
@@ -3281,6 +3495,7 @@
             });
         }
 
+        // Canlı Hayvan - Gemi
         function EventListenersFor_7_ToForm() {
 
 
@@ -3299,7 +3514,7 @@
 
         }
 
-        //Antrepo Varış(dış) eventListeners
+        //Antrepo Varış(dış)
         function EventListenersFor_8_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
@@ -3319,7 +3534,7 @@
 
 
                 let data = [];
-                let netMiktar = 0;
+                let netMiktar = 0.0;
 
                 addBtn.addEventListener("click", function() {
                     inputContainer.classList.toggle("hidden");
@@ -3329,33 +3544,69 @@
 
                 confirmBtn.addEventListener("click", function() {
                     let val1 = input1.value.trim();
-                    let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                    let val2 = input2.value;
+                    let val2_num = getNumericValue(val2);
 
                     if (val1 && val2) {
                         let newItem = {
                             ssn: val1,
-                            miktar: val2
+                            miktar: val2_num
                         };
-                        data.push(newItem);
-                        netMiktar += val2;
+
+                        console.log("Gelen veri eklenmeden önce: ", jsonDataInput.value);
+
+
+
+                        /*
+                        eğer ilk sertifika girişi normal bir şekilde olursa
+                        gelen sertifika bilgileri direkt boş arraye atılır, eğer ilk kopya evrak
+                        üzerinden sertifika eklenmişse eklenmiş olan verileri inputtan al ve arraye ekle
+                        sonra bu veriler üzerinde işlemleri yap. Her seferinde jsonData inputu da güncelle
+                        */
+                        if (jsonDataInput.value && jsonDataInput.value != "") {
+                            data = JSON.parse(jsonDataInput.value);
+                            data.push(newItem);
+                            console.log("veri eklemeden sonra data listesi: ", data);
+                            jsonDataInput.value = JSON.stringify(data);
+
+                        } else {
+                            data.push(newItem);
+                        }
+                        console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
+
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        console.log("eklenen yeni miktar ile", netMiktar);
 
                         let listItem = document.createElement("li");
                         listItem.innerHTML =
-                            `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                            `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                         listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                            data = data.filter(item => item.ssn !== val1 || item.miktar !==
-                                val2);
-                            netMiktar -= val2;
-                            netMiktarInput.value = netMiktar;
+
+                            console.log("silerken kullanılan bilgiler val1-val2_num: ", val1,
+                                val2_num);
+                            console.log("silerken kullanılan bilgiler data: ", data);
+
+                            data = JSON.parse(jsonDataInput.value).filter(item => item.ssn !==
+                                val1 || item.miktar !==
+                                val2_num);
+
+                            console.log("silindikten sonra datas:", data);
+
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                                val2_num);
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
                             jsonDataInput.value = JSON.stringify(data);
                         });
 
                         dataList.appendChild(listItem);
                         jsonDataInput.value = JSON.stringify(data);
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                         inputContainer.classList.add("hidden");
+
+                        console.log("eklenen yeni kayıt ile birlikte :", jsonDataInput.value);
+
                     } else {
                         alert("Lütfen her iki alanı da doldurun!");
                     }
@@ -3414,6 +3665,9 @@
         }
 
 
+
+
+        // sadece usks numarası üzerinden sertifikayı. bul
         async function getEvrakSertifika(i) {
             const usks_no = document.getElementById(`usks_no_${i}`);
             const modal_open_btn = document.getElementById(`preview-open-modal-btn-${i}`);
@@ -3438,9 +3692,9 @@
                     ss_string += `
                         <li class="setted-sertifika">
                             <b>${ss.ssn} →
-                                ${ss.toplam_miktar} KG
+                                ${formatNumberValue(ss.toplam_miktar)} KG
                             </b>
-                            ---- (KALAN MİKTAR → ${ss.kalan_miktar} KG)
+                            ---- (KALAN MİKTAR → ${formatNumberValue(ss.kalan_miktar)} KG)
                         </li>
                     `;
                 });
@@ -3493,7 +3747,7 @@
                                     </tr>
                                     <tr>
                                         <th>Ürünün KG Cinsinden Net Miktarı:</th>
-                                        <td>${sertifika.urunKG} KG</td>
+                                        <td>${formatNumberValue(sertifika.urunKG)} KG</td>
                                     </tr>
                                     <tr>
                                         <th>Orjin Ülke:</th>
@@ -3523,9 +3777,10 @@
 
         }
 
+
         async function getAntrepoSertifika(usks_no) {
             try {
-                const response = await fetch(`{{ route('memur.get_evrak_sertifika') }}`, {
+                const response = await fetch(`{{ route('admin.get_evrak_sertifika') }}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -3549,6 +3804,9 @@
                 return null;
             }
         };
+
+
+
 
 
 
@@ -3576,12 +3834,12 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         arac_plaka_kg: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
                             "[]"),
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value
+                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
                     };
                     allFormData.push(formData);
                 }
@@ -3596,7 +3854,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3616,7 +3874,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3636,7 +3894,7 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
@@ -3653,7 +3911,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
                         cikis_antrepo: document.querySelector(`[name="cikis_antrepo_input_${i}"]`).value
@@ -3671,7 +3929,7 @@
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3720,7 +3978,7 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
-                        urunKG: document.querySelector(`[name="urunKG_${i}"]`).value,
+                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
                     };
@@ -3737,24 +3995,177 @@
 
 
     <script>
+        // girilen input değerini anlaşılır virgüllü hale getirir
         function formatNumber(input) {
-            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
-            if (value === "") return input.value = ""; // Boş girişe izin ver
+            let value = input.value;
 
-            // Sayıyı ters çevir, üçlü gruplara ayır ve noktalar ekleyerek tekrar çevir
-            value = value.split('').reverse().join('') // Önce ters çevir
-                .match(/\d{1,3}/g) // Üçlü gruplara ayır
-                .join('.') // Grupları noktayla birleştir
-                .split('').reverse().join(''); // Yeniden ters çevir
 
-            input.value = value;
+            // sadece , ve . kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3); // Ondalık kısmı en fazla 3 basamak
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa, boş bırak
+            if (value === "" || value === ",") {
+                input.value = "";
+                return;
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            if (integerPart === "") {
+                input.value = "";
+                return;
+            }
+
+            // Tam sayı kısmını formatla (sadece rakamları al)
+            let cleanInteger = integerPart.replace(/\D/g, '');
+
+            if (cleanInteger === "") {
+                input.value = decimalPart !== undefined ? "," + decimalPart : "";
+                return;
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                input.value = formattedInteger + ',' + decimalPart;
+            } else {
+                input.value = formattedInteger;
+            }
         }
+
+        // sayıyı alaşılır virgüllü hale getirir
+        function formatNumberValue(inputValue) {
+            let value = String(inputValue);
+
+            // Sadece rakam, virgül ve nokta kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // *** YENİ: NOKTA İLE GELEN ONDALIK DEĞERLERI VİRGÜLE ÇEVİR ***
+            // Eğer değerde hem nokta hem virgül varsa, sorunlu durum
+            const hasComma = value.includes(',');
+            const hasDot = value.includes('.');
+
+            // Eğer sadece nokta var ve virgül yoksa, noktayı virgüle çevir (ondalık için)
+            if (hasDot && !hasComma) {
+                // Son noktayı bul (ondalık ayırıcısı olarak)
+                const lastDotIndex = value.lastIndexOf('.');
+                // Eğer son noktadan sonra 1-3 basamak varsa, bu ondalık ayırıcısıdır
+                const afterLastDot = value.substring(lastDotIndex + 1);
+                if (afterLastDot.length <= 3 && afterLastDot.length > 0) {
+                    // Son noktayı virgüle çevir
+                    value = value.substring(0, lastDotIndex) + ',' + afterLastDot;
+                }
+            }
+
+            // Tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3);
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa veya sadece virgülse, boş döndür
+            if (value === "" || value === ",") {
+                return "";
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            // Tam kısım boşsa, boş döndür
+            if (integerPart === "") {
+                return "";
+            }
+
+            // Tam sayı kısmından SADECE binlik ayracı noktalarını kaldır
+            let cleanInteger = integerPart.replace(/\./g, '');
+
+            // Temizlenmiş tam kısım boşsa
+            if (cleanInteger === "") {
+                if (decimalPart !== undefined && decimalPart.length > 0) {
+                    return "0," + decimalPart;
+                }
+                return "";
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                return formattedInteger + ',' + decimalPart;
+            } else {
+                return formattedInteger;
+            }
+        }
+
+
+        // okunaklı olan veriyi işlem türü float a çevirir
+        function getNumericValue(inputValue) {
+            let value = inputValue;
+
+            // Binlik ayracı noktalarını kaldır ve virgülü noktaya çevir
+            value = value.replace(/\./g, '').replace(',', '.');
+
+            // Sayısal değere çevir
+            return parseFloat(value) || 0;
+        }
+
 
         function scrollToTop() {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
             })
+        }
+
+
+        function hatasızFloatToplama(a, b, decimals = 3) {
+            return parseFloat((a + b).toFixed(decimals));
+        }
+
+        function hatasızFloatCikarma(a, b, decimals = 3) {
+            return parseFloat((a - b).toFixed(decimals));
         }
     </script>
 @endsection

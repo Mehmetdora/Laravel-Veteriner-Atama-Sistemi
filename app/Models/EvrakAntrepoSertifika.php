@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakAntrepoSertifika extends Model
 {
 
-    public function evrak_adi(){
+    protected $casts = [
+        'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+    ];
+    public function evrak_adi()
+    {
         return "Antrepo Sertifika";
     }
 
@@ -21,8 +25,9 @@ class EvrakAntrepoSertifika extends Model
     }
 
 
-    public function usks(){
-        return $this->hasOne(UsksNo::class,'evrak_antrepo_sertifika_id');
+    public function usks()
+    {
+        return $this->hasOne(UsksNo::class, 'evrak_antrepo_sertifika_id');
     }
 
     public function veteriner()

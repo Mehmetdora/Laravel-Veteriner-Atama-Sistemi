@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakIthalat extends Model
 {
 
+    protected $casts = [
+        'urunKG' => 'decimal:3', // 3 → virgülden sonra kaç basamak tutulsun
+    ];
 
     public function evrak_adi(){
 
@@ -27,7 +30,7 @@ class EvrakIthalat extends Model
         return $this->hasMany(AracPlakaKg::class,'evrak_ithalat_id');
     }
 
-    
+
 
 
     public function veteriner()

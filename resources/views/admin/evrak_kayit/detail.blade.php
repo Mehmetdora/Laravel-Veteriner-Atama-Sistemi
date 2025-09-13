@@ -91,12 +91,13 @@
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
                                                                 <b>{{ $saglik_sertifika->ssn }} →
-                                                                    {{ $saglik_sertifika->toplam_miktar }}
+                                                                    {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
                                                                     KG
                                                                 </b>
                                                                 @if ($type == 'EvrakAntrepoSertifika')
                                                                     ---- (KALAN MİKTAR →
-                                                                    {{ $saglik_sertifika->kalan_miktar }} KG)
+                                                                    {{ number_format($saglik_sertifika->kalan_miktar, 3, ',', '.') }}
+                                                                    KG)
                                                                 @endif
 
                                                             </li>
@@ -152,7 +153,7 @@
                                         @if (isset($evrak->urunKG))
                                             <tr>
                                                 <th>Ürünün KG Cinsinden Net Miktarı:</th>
-                                                <td>{{ $evrak->urunKG }} KG</td>
+                                                <td>{{ number_format($evrak->urunKG, 3, ',', '.') }} KG</td>
                                             </tr>
                                         @endif
 
@@ -182,7 +183,7 @@
                                                         @foreach ($evrak->aracPlakaKgs as $plaka_kg)
                                                             <li class="setted-sertifika">
                                                                 {{ $plaka_kg->arac_plaka }} →
-                                                                {{ $plaka_kg->miktar }}
+                                                                {{ number_format($plaka_kg->miktar, 3, ',', '.') }}
                                                                 KG
                                                             </li>
                                                         @endforeach

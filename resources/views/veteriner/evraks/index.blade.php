@@ -69,7 +69,7 @@
                                                     <td>{{ $kayit->evrak->evrak_adi() }}</td>
                                                     <td class="text-center">{{ $kayit->evrak->vekaletFirmaKisiAdi ?? "----" }}</td>
                                                     <td class="text-center">{{ $kayit->evrak->urunAdi ?? "----" }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->urunKG ?? "----" }}</td>
+                                                    <td class="text-center">{{ number_format($kayit->urunKG ?? 0, 3, ',', '.') }}</td>
 
                                                     <td>
                                                         <a

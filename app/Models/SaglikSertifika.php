@@ -8,6 +8,11 @@ class SaglikSertifika extends Model
 {
     protected $fillable = ['ssn', 'toplam_miktar', 'kalan_miktar'];
 
+    protected $casts = [
+        'toplam_miktar' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+        'kalan_miktar' => 'decimal:3',
+    ];
+
     public function evraks_canli_hayvan()
     {
         return $this->morphedByMany(EvrakCanliHayvan::class, 'evrak', 'evrak_saglik_sertifika');

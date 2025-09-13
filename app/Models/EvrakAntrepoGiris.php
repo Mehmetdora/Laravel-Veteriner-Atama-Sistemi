@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakAntrepoGiris extends Model
 {
 
-    public function evrak_adi(){
+    protected $casts = [
+        'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+    ];
+    public function evrak_adi()
+    {
         return "Antrepo Giriş";
     }
 
@@ -26,7 +30,8 @@ class EvrakAntrepoGiris extends Model
         return $this->morphOne(UserEvrak::class, 'evrak');
     }
 
-    public function giris_antrepo(){
+    public function giris_antrepo()
+    {
         return $this->belongsTo(GirisAntrepo::class);
     }
 

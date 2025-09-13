@@ -202,10 +202,14 @@ class EvrakController extends Controller
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'max:9999999.999'
+                    ],
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'arac_plaka_kg' => 'required',
+                    'arac_plaka_kg.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'girisGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
@@ -216,9 +220,11 @@ class EvrakController extends Controller
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
+                    'arac_plaka_kg.*.miktar.max' => 'Araç Plakası Yük Miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
                 ]);
                 if ($validator->fails()) {
@@ -235,7 +241,11 @@ class EvrakController extends Controller
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
@@ -250,9 +260,10 @@ class EvrakController extends Controller
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
-                    'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                    'aracPlaka.required' => 'Araç Plakası & Konteyner No, alanı eksik!',
                     'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
                     'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
                 ]);
@@ -270,7 +281,11 @@ class EvrakController extends Controller
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
@@ -285,6 +300,7 @@ class EvrakController extends Controller
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
@@ -301,19 +317,26 @@ class EvrakController extends Controller
                     'siraNo' => 'required',
                     'oncekiVGBOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
+                    'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'urunlerinBulunduguAntrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
 
                 ]);
@@ -326,22 +349,29 @@ class EvrakController extends Controller
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
+                    'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
                     'cikis_antrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                     'cikis_antrepo.required' => 'Çıkış Antreposu, alanı eksik!',
@@ -360,7 +390,11 @@ class EvrakController extends Controller
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'sevkUlke' => 'required',
                     'orjinUlke' => 'required',
                     'aracPlaka' => 'required',
@@ -374,6 +408,7 @@ class EvrakController extends Controller
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                     'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
@@ -389,6 +424,7 @@ class EvrakController extends Controller
                     'siraNo' => 'required',
                     'vgbOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
+                    'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'urun_kategori_id' => 'required',
@@ -402,6 +438,7 @@ class EvrakController extends Controller
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
@@ -439,19 +476,26 @@ class EvrakController extends Controller
                     'siraNo' => 'required',
                     'oncekiVGBOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
+                    'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'vekaletFirmaKisiAdi' => 'required',
                     'urunAdi' => 'required',
                     'gtipNo' => 'required',
-                    'urunKG' => 'required',
+                    'urunKG' => [
+                        'required',
+                        'numeric',
+                        'max:9999999.999'
+                    ],
                     'urunlerinBulunduguAntrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                     'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                    'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                    'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
 
                 ]);
@@ -477,6 +521,8 @@ class EvrakController extends Controller
         // 4-> Atrepo sertifika
         // 5-> Atrepo çıkış
         // 6-> Canlı Hayvan
+        // 7-> Canlı Hayvan(GEMİ)
+        // 8-> Antrepo Varış(Dış)
         try {
             switch ($formData[0]['evrak_turu']) {
                 case 0:
@@ -514,10 +560,6 @@ class EvrakController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
 
-
-        dd($formData);
-
-
         // Veritabanı başlangıç durumu
         DB::beginTransaction();
 
@@ -536,7 +578,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = $formData[$i]['urunKG'];
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
@@ -581,8 +623,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikasını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
-                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->kalan_miktar = $formData[$i]['urunKG'];
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -602,7 +644,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = $formData[$i]['urunKG'];
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -641,8 +683,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
-                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar = $formData[$i]['urunKG'];
+                    $saglik_sertfika->kalan_miktar = $formData[$i]['urunKG'];
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -664,7 +706,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = $formData[$i]['urunKG'];
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
@@ -713,8 +755,8 @@ class EvrakController extends Controller
                     //Sağlık sertifikalarını kaydetme
                     $saglik_sertfika = new SaglikSertifika;
                     $saglik_sertfika->ssn = $formData[$i]['ss_no'];
-                    $saglik_sertfika->toplam_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
-                    $saglik_sertfika->kalan_miktar = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $saglik_sertfika->toplam_miktar =  $formData[$i]['urunKG'];
+                    $saglik_sertfika->kalan_miktar = $formData[$i]['urunKG'];
                     $saglik_sertfika->save();
                     $yeni_evrak->saglikSertifikalari()->attach($saglik_sertfika->id);
 
@@ -1073,7 +1115,7 @@ class EvrakController extends Controller
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
-                    $yeni_evrak->urunKG = (int)str_replace('.', '', $formData[$i]['urunKG']);
+                    $yeni_evrak->urunKG = $formData[$i]['urunKG'];
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];

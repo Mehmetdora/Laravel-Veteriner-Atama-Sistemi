@@ -7,7 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class EvrakTransit extends Model
 {
 
-    public function evrak_adi(){
+    protected $casts = [
+        'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+    ];
+    public function evrak_adi()
+    {
         return "Transit";
     }
 
