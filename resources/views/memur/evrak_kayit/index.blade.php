@@ -77,7 +77,8 @@
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi ?? '---' }}</td>
                                                     <td>{{ $evrak->urunAdi ?? '---' }}</td>
                                                     <td>{{ $evrak->gtipNo ?? '---' }}</td>
-                                                    <td>{{ number_format($evrak->urunKG ?? 0, 3, ',', '.') }}</td>
+                                                    <td>{{ $evrak->urunKG != 0.0 ? number_format($evrak->urunKG ?? 0, 3, ',', '.') : '---' }}
+                                                    </td>
                                                     <td>{{ $evrak->usks?->usks_no ?? '---' }}</td>
                                                     <td>{{ $evrak->veteriner->user?->name ?? 'Atanmamış(Hata)' }}</td>
                                                     <td>{{ $evrak->girisGumruk ?? '---' }}</td>

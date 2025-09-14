@@ -3743,7 +3743,7 @@
                                     </tr>
                                     <tr>
                                         <th>Ürünün Kategorisi:</th>
-                                        <td>${sertifika.urun.name}</td>
+                                        <td>${sertifika.urun[0].name}</td>
                                     </tr>
                                     <tr>
                                         <th>G.T.İ.P. No İlk 4 Rakamı:</th>

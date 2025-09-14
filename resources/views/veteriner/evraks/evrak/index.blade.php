@@ -112,7 +112,8 @@
                                                                 </b>
                                                                 @if ($type == 'EvrakAntrepoSertifika')
                                                                     ---- (KALAN MİKTAR →
-                                                                    {{ number_format($saglik_sertifika->kalan_miktar, 3, ',', '.') }} KG)
+                                                                    {{ number_format($saglik_sertifika->kalan_miktar, 3, ',', '.') }}
+                                                                    KG)
                                                                 @endif
 
                                                             </li>
@@ -125,7 +126,8 @@
                                         @if ($evrak->usks_id)
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
-                                                <td><b>{{ $evrak->getUsks()->usks_no }} → {{ $evrak->getUsks()->miktar }}
+                                                <td><b>{{ $evrak->getUsks()->usks_no }} →
+                                                        {{ number_format($evrak->getUsks()->miktar, 3, ',', '.') }}
                                                         KG</b>
                                                 </td>
                                             </tr>

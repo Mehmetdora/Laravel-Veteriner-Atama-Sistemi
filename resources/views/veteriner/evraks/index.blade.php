@@ -62,15 +62,16 @@
                                                                 class="badge badge-warning">{{ $kayit->evrak->evrak_durumu->evrak_durum }}</span>
                                                         @endif
                                                     </td>
-                                                    <td>{{ $kayit->evrak->evrakKayitNo ?? "----" }}</td>
+                                                    <td>{{ $kayit->evrak->evrakKayitNo ?? '----' }}</td>
                                                     <td class="text-center">
-                                                        {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->VSKSSertifikaReferansNo ?: "----" }}
+                                                        {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->VSKSSertifikaReferansNo ?: '----' }}
                                                     </td>
                                                     <td>{{ $kayit->evrak->evrak_adi() }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->vekaletFirmaKisiAdi ?? "----" }}</td>
-                                                    <td class="text-center">{{ $kayit->evrak->urunAdi ?? "----" }}</td>
-                                                    <td class="text-center">{{ number_format($kayit->urunKG ?? 0, 3, ',', '.') }}</td>
-
+                                                    <td class="text-center">
+                                                        {{ $kayit->evrak->vekaletFirmaKisiAdi ?? '----' }}</td>
+                                                    <td class="text-center">{{ $kayit->evrak->urunAdi ?? '----' }}</td>
+                                                    <td>{{ $kayit->evrak->urunKG != 0.0 ? number_format($kayit->evrak->urunKG ?? 0, 3, ',', '.') : '---' }}
+                                                    </td>
                                                     <td>
                                                         <a
                                                             href="{{ route('veteriner.evraks.evrak.index', ['type' => $kayit->evrak->getMorphClass(), 'id' => $kayit->evrak->id]) }}">

@@ -139,12 +139,13 @@
                                                     id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->toplam_miktar }}"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
                                             </div>
                                         </div>
+
 
 
 
@@ -194,7 +195,8 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required readonly />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -225,7 +227,8 @@
                                                 @foreach ($evrak->aracPlakaKgs as $plaka_kg)
                                                     <li class="setted-plaka" data-plaka="{{ $plaka_kg->arac_plaka }}"
                                                         data-miktar="{{ $plaka_kg->miktar }}">
-                                                        {{ $plaka_kg->arac_plaka }} - {{ $plaka_kg->miktar }}
+                                                        {{ $plaka_kg->arac_plaka }} -
+                                                        {{ number_format($plaka_kg->miktar, 3, ',', '.') }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -330,7 +333,7 @@
                                                     required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->toplam_miktar }}"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
@@ -385,7 +388,8 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required readonly />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -531,7 +535,8 @@
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->miktar }}">
                                                         {{ $saglik_sertifika->ssn }} -
-                                                        {{ $saglik_sertifika->toplam_miktar }} KG
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
+                                                        KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
                                                 @endforeach
@@ -719,7 +724,7 @@
                                                     required>
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $evrak->saglikSertifikalari->first()->kalan_miktar }}"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
                                                     oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
                                                     placeholder="Miktarı" required>
 
@@ -772,7 +777,8 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required readonly />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
                                         </div>
 
                                         <div class="form-group">
@@ -894,7 +900,7 @@
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
                                                         {{ $saglik_sertifika->ssn }} -
-                                                        {{ $saglik_sertifika->toplam_miktar }}
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -932,7 +938,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
                                         </div>
 
 
@@ -1040,7 +1046,7 @@
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
                                                         {{ $saglik_sertifika->ssn }} -
-                                                        {{ $saglik_sertifika->toplam_miktar }}
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -1078,7 +1084,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
                                         </div>
 
 
@@ -1182,7 +1188,7 @@
                                                     <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
                                                         {{ $saglik_sertifika->ssn }} -
-                                                        {{ $saglik_sertifika->toplam_miktar }}
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
                                                         KG
                                                         <button type="button" class="delete-btn">✖️</button>
                                                     </li>
@@ -1238,7 +1244,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
                                         </div>
 
 
@@ -1363,8 +1369,8 @@
 
                                                 <div class="col-sm-1"></div>
                                                 <input class="col-sm-5 form-control" type="text"
-                                                    value="{{ $usks->miktar }}" name="usks_miktar"
-                                                    oninput="formatNumber(this)" id="usks_miktar"
+                                                    value="{{ number_format($usks->miktar, 3, ',', '.') }}"
+                                                    name="usks_miktar" oninput="formatNumber(this)" id="usks_miktar"
                                                     placeholder="Miktarı" required>
                                             </div>
                                         </div>
@@ -1416,7 +1422,7 @@
                                             <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
                                             <input name="urunKG" id="net_miktar" class="form-control"
-                                                value="{{ $evrak->urunKG }}" required />
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
                                         </div>
 
                                         <div class="form-group">

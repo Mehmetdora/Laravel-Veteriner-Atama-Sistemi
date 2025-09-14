@@ -72,11 +72,11 @@
                                                     </td>
 
                                                     <td>
-                                                        {{ $kayit['saglik_sertifika']->toplam_miktar }}
+                                                        {{ number_format($kayit['saglik_sertifika']->toplam_miktar, 3, ',', '.') }}
                                                     </td>
                                                     <td>
                                                         @if ($kayit['evrak_type'] == 'Antrepo Giriş' || $kayit['evrak_type'] == 'Antrepo Varış(DIŞ)')
-                                                            {{ $kayit['saglik_sertifika']->kalan_miktar }}
+                                                            {{ number_format($kayit['saglik_sertifika']->kalan_miktar, 3, ',', '.') }}
                                                         @else
                                                             ---
                                                         @endif

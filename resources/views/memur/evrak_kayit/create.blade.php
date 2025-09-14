@@ -3739,7 +3739,7 @@
                                     </tr>
                                     <tr>
                                         <th>Ürünün Kategorisi:</th>
-                                        <td>${sertifika.urun.name}</td>
+                                        <td>${sertifika.urun[0].name}</td>
                                     </tr>
                                     <tr>
                                         <th>G.T.İ.P. No İlk 4 Rakamı:</th>
@@ -3780,14 +3780,14 @@
 
         async function getAntrepoSertifika(usks_no) {
             try {
-                const response = await fetch(`{{ route('admin.get_evrak_sertifika') }}`, {
+                const response = await fetch(`{{ route('memur.get_evrak_sertifika') }}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        usks_no
+                        usks_no: usks_no,
                     })
                 });
 
