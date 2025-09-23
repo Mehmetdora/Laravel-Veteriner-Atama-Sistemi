@@ -218,6 +218,9 @@
                         </div>
                         <div class="modal-footer justify-content-end">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>
+                            <button type="button" class="btn btn-primary" onclick="fillEvrakInputs()"
+                                data-dismiss="modal">Bilgileri Evrağa Doldur</button>
+
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -254,6 +257,8 @@
         let totalForms = 0;
         let evraks_type = "";
         let creacted_forms = [];
+        let on_izleme_ant_sertifika = null;
+
 
 
 
@@ -3688,6 +3693,7 @@
             if (result && result.saglik_sertifikalari) {
                 const sertifika = result;
                 const saglik_sertifikalari = result.saglik_sertifikalari;
+                on_izleme_ant_sertifika = result;
 
                 let modal_title = document.getElementById("evrak-sertifika-preview-modal-title");
                 let modal_content = document.getElementById("evrak-sertifika-preview-content");
@@ -3731,6 +3737,11 @@
                                         <th>Evrak Kayıt No:</th>
                                         <td>${sertifika.evrakKayitNo}</td>
                                     </tr>
+                                    <tr>
+                                        <th>Antrepo Giriş VGB No:</th>
+                                        <td>${sertifika.vgbNo}</td>
+                                    </tr>
+
                                     <tr>
                                         <th>Veteriner Sağlık Sertifikaları:</th>
                                         <td>
@@ -3814,6 +3825,38 @@
                 return null;
             }
         };
+
+        // ön izleme ile açılan antrepo sertifika bilgilerini ilgili antrepo çıkış evrağına aktarma
+        function fillEvrakInputs() {
+
+            // siraNo_, vgbOnBildirimNo_,vekaletFirmaKisiAdi_,urunAdi_,urun_kategori_id_,gtipNo_,net_miktar_,sevkUlke_,orjinUlke_,aracPlaka_,cikis_g_select_
+
+            let siraNo = document.querySelector(`#siraNo_${currentFormIndex}`);
+            let vgb = document.querySelector(`#vgbOnBildirimNo_${currentFormIndex}`);
+            let firma_kisi_adi = document.querySelector(`[name="vekaletFirmaKisiAdi_${currentFormIndex}"]`);
+            let urun_adi = document.querySelector(`[name="urunAdi_${currentFormIndex}"]`);
+            let urun_kategori_id = document.querySelector(`#urun_kategori_id_${currentFormIndex}`);
+            let gtipNo = document.querySelector(`[name="gtipNo_${currentFormIndex}"]`);
+            let net_miktar = document.querySelector(`#net_miktar_${currentFormIndex}`);
+            let sevkUlke = document.querySelector(`[name="sevkUlke_${currentFormIndex}"]`);
+            let orjinUlke = document.querySelector(`[name="orjinUlke_${currentFormIndex}"]`);
+            let aracPlaka = document.querySelector(`[name="aracPlaka_${currentFormIndex}"]`);
+            let cikis_g_select = document.querySelector(`#cikis_g_select_${currentFormIndex}`);
+
+
+            if (siraNo) siraNo.value = on_izleme_ant_sertifika.evrakKayitNo;
+            if (vgb) vgb.value = on_izleme_ant_sertifika.vgbNo;
+            if (firma_kisi_adi) firma_kisi_adi.value = on_izleme_ant_sertifika.vekaletFirmaKisiAdi;
+            if (urun_adi) urun_adi.value = on_izleme_ant_sertifika.urunAdi;
+            if (urun_kategori_id) urun_kategori_id.value = on_izleme_ant_sertifika.urun?.[0]?.id || "";
+            if (gtipNo) gtipNo.value = on_izleme_ant_sertifika.gtipNo;
+            if (net_miktar) net_miktar.value = formatNumberValue(on_izleme_ant_sertifika.urunKG);
+            //if (sevkUlke) sevkUlke.value = on_izleme_ant_sertifika.saglik_sertifikalari?.[0]?.id || "";
+            if (orjinUlke) orjinUlke.value = on_izleme_ant_sertifika.orjinUlke;
+            if (aracPlaka) aracPlaka.value = on_izleme_ant_sertifika.aracPlaka;
+            //if (cikis_g_select) cikis_g_select.value = on_izleme_ant_sertifika.cikisAntrepo;
+
+        }
 
 
 
