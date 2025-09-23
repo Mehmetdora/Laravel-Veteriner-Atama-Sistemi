@@ -1169,6 +1169,12 @@
                                                 value="{{ $evrak->evrakKayitNo }}" required />
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="vgbNo" class="control-label">Antrepo Sertifika VGB No</label>
+                                            <input id="vgbNo" name="vgbNo" class="form-control"
+                                                value="{{ $evrak->vgbNo }}" required />
+                                        </div>
+
 
                                         <div class="form-group">
                                             <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
@@ -1331,7 +1337,8 @@
 
 
                                         <div class="form-group">
-                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                            <input id="submit-sertifika" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
                                             <br>
                                             <hr>
                                             <button type="button" data-toggle="modal" data-target="#modal-delete"
@@ -1731,6 +1738,10 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoSertifika')
         <script>
+            let submit_btn = document.getElementById('submit-sertifika');
+            let net_miktar_input = document.getElementById("net_miktar");
+
+
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
             var data_id2 = urun_kategori_id.getAttribute('data-id');
             var options2 = urun_kategori_id.childNodes;
@@ -1745,6 +1756,13 @@
             cikis_antrepo_select.addEventListener("change", function() {
                 if (this.value !== "") {
                     cikis_antrepo_input.value = this.value;
+                }
+            });
+
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
                 }
             });
         </script>
@@ -1813,7 +1831,7 @@
 
             // Sağlık Sertifikalarının Düzenlenmesi
             let data = [];
-            let netMiktar = 0;
+            let netMiktar = 0.0;
 
             @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
                 var item_{{ $saglik_sertifika->id }} = {
@@ -1822,7 +1840,7 @@
                     miktar: {{ $saglik_sertifika->toplam_miktar }}
                 }
                 data.push(item_{{ $saglik_sertifika->id }});
-                netMiktar += {{ $saglik_sertifika->toplam_miktar }};
+                netMiktar = parseFloat((netMiktar + {{ $saglik_sertifika->toplam_miktar }}).toFixed(3)); // tam toplama
                 jsonDataInput.value = JSON.stringify(data);
             @endforeach
 
@@ -1835,16 +1853,16 @@
             const list_item = document.querySelectorAll('.setted-sertifika');
             list_item.forEach(item => {
                 item.querySelector('.delete-btn').addEventListener("click", function() {
-                    const val = parseInt(item.getAttribute('data-miktar'));
+                    const val = parseFloat(item.getAttribute('data-miktar'));
                     const ssn = item.getAttribute('data-ssn');
 
                     const index = data.findIndex(item => item.ssn === ssn && item.miktar === val);
                     if (index !== -1) {
                         data.splice(index, 1); // Sadece ilk eşleşen öğeyi kaldırır
                     }
-                    netMiktar -= val;
+                    netMiktar = hatasızFloatCikarma(netMiktar, val);
                     if (netMiktarInput) {
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                     }
 
                     item.remove();
@@ -1855,40 +1873,40 @@
 
             confirmBtn.addEventListener("click", function() {
                 let val1 = input1.value.trim();
-                let val2 = parseInt(input2.value.replace(/\./g, ''), 10) || 0;
+                let val2 = input2.value;
+                let val2_num = getNumericValue(val2);
 
                 if (val1 && val2) {
                     let newItem = {
                         id: "-1",
                         ssn: val1,
-                        miktar: val2
+                        miktar: val2_num
                     };
                     data.push(newItem);
-                    netMiktar += val2;
+                    netMiktar = parseFloat((netMiktar + val2_num).toFixed(3));
                     if (netMiktarInput) {
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                     }
 
                     let listItem = document.createElement("li");
                     listItem.innerHTML =
-                        `${val1} - ${input2.value} KG <button type="button" class="delete-btn">✖️</button>`;
+                        `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
 
                     listItem.querySelector(".delete-btn").addEventListener("click", function() {
-                        data = data.filter(item => item.ssn !== val1 || item.miktar !== val2);
-                        netMiktar -= val2;
+                        data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                        netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
                         if (netMiktarInput) {
-                            netMiktarInput.value = netMiktar;
+                            netMiktarInput.value = formatNumberValue(netMiktar);
                         }
                         listItem.remove();
                         jsonDataInput.value = JSON.stringify(data);
-                        console.log(jsonDataInput.value);
 
                     });
 
                     dataList.appendChild(listItem);
                     jsonDataInput.value = JSON.stringify(data);
                     if (netMiktarInput) {
-                        netMiktarInput.value = netMiktar;
+                        netMiktarInput.value = formatNumberValue(netMiktar);
                     }
                     inputContainer.classList.add("hidden");
                 } else {
@@ -1976,17 +1994,169 @@
     </script>
 
     <script>
+        // girilen input değerini anlaşılır virgüllü hale getirir
         function formatNumber(input) {
-            let value = input.value.replace(/\D/g, ''); // Sadece rakamları al
-            if (value === "") return input.value = ""; // Boş girişe izin ver
+            let value = input.value;
 
-            // Sayıyı ters çevir, üçlü gruplara ayır ve noktalar ekleyerek tekrar çevir
-            value = value.split('').reverse().join('') // Önce ters çevir
-                .match(/\d{1,3}/g) // Üçlü gruplara ayır
-                .join('.') // Grupları noktayla birleştir
-                .split('').reverse().join(''); // Yeniden ters çevir
 
-            input.value = value;
+            // sadece , ve . kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3); // Ondalık kısmı en fazla 3 basamak
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa, boş bırak
+            if (value === "" || value === ",") {
+                input.value = "";
+                return;
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            if (integerPart === "") {
+                input.value = "";
+                return;
+            }
+
+            // Tam sayı kısmını formatla (sadece rakamları al)
+            let cleanInteger = integerPart.replace(/\D/g, '');
+
+            if (cleanInteger === "") {
+                input.value = decimalPart !== undefined ? "," + decimalPart : "";
+                return;
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                input.value = formattedInteger + ',' + decimalPart;
+            } else {
+                input.value = formattedInteger;
+            }
+        }
+
+        // sayıyı alaşılır virgüllü hale getirir
+        function formatNumberValue(inputValue) {
+            let value = String(inputValue);
+
+            // Sadece rakam, virgül ve nokta kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // *** YENİ: NOKTA İLE GELEN ONDALIK DEĞERLERI VİRGÜLE ÇEVİR ***
+            // Eğer değerde hem nokta hem virgül varsa, sorunlu durum
+            const hasComma = value.includes(',');
+            const hasDot = value.includes('.');
+
+            // Eğer sadece nokta var ve virgül yoksa, noktayı virgüle çevir (ondalık için)
+            if (hasDot && !hasComma) {
+                // Son noktayı bul (ondalık ayırıcısı olarak)
+                const lastDotIndex = value.lastIndexOf('.');
+                // Eğer son noktadan sonra 1-3 basamak varsa, bu ondalık ayırıcısıdır
+                const afterLastDot = value.substring(lastDotIndex + 1);
+                if (afterLastDot.length <= 3 && afterLastDot.length > 0) {
+                    // Son noktayı virgüle çevir
+                    value = value.substring(0, lastDotIndex) + ',' + afterLastDot;
+                }
+            }
+
+            // Tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3);
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa veya sadece virgülse, boş döndür
+            if (value === "" || value === ",") {
+                return "";
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            // Tam kısım boşsa, boş döndür
+            if (integerPart === "") {
+                return "";
+            }
+
+            // Tam sayı kısmından SADECE binlik ayracı noktalarını kaldır
+            let cleanInteger = integerPart.replace(/\./g, '');
+
+            // Temizlenmiş tam kısım boşsa
+            if (cleanInteger === "") {
+                if (decimalPart !== undefined && decimalPart.length > 0) {
+                    return "0," + decimalPart;
+                }
+                return "";
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                return formattedInteger + ',' + decimalPart;
+            } else {
+                return formattedInteger;
+            }
+        }
+
+
+        // okunaklı olan veriyi işlem türü float a çevirir
+        function getNumericValue(inputValue) {
+            let value = inputValue;
+
+            // Binlik ayracı noktalarını kaldır ve virgülü noktaya çevir
+            value = value.replace(/\./g, '').replace(',', '.');
+
+            // Sayısal değere çevir
+            return parseFloat(value) || 0;
+        }
+
+
+        function hatasızFloatToplama(a, b, decimals = 3) {
+            return parseFloat((a + b).toFixed(decimals));
+        }
+
+        function hatasızFloatCikarma(a, b, decimals = 3) {
+            return parseFloat((a - b).toFixed(decimals));
         }
     </script>
 @endsection

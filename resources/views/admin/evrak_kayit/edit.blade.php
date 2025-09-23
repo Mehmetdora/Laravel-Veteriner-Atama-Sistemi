@@ -1177,6 +1177,12 @@
                                                 value="{{ $evrak->evrakKayitNo }}" required />
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
+                                            <input id="vgbNo" name="vgbNo" class="form-control"
+                                                value="{{ $evrak->vgbNo }}" required />
+                                        </div>
+
 
                                         <div class="form-group">
                                             <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
@@ -1300,8 +1306,9 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" value="{{ $evrak->cikisAntrepo }}"
-                                                    type="text" name="cikis_antrepo" id="cikis_antrepo_input"
+                                                <input class="col-sm-5 form-control"
+                                                    value="{{ $evrak->cikisAntrepo }}" type="text"
+                                                    name="cikis_antrepo" id="cikis_antrepo_input"
                                                     placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>

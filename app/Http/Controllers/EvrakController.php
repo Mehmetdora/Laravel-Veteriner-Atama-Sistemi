@@ -187,6 +187,7 @@ class EvrakController extends Controller
         }
 
 
+
         // İlk gelen formdaki evrağın türü ne ise diğerleride aynı türde olduğunu
         // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı
         $errors = [];
@@ -348,6 +349,7 @@ class EvrakController extends Controller
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
                     'siraNo' => 'required',
+                    'vgbNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
                     'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                     'vekaletFirmaKisiAdi' => 'required',
@@ -364,6 +366,7 @@ class EvrakController extends Controller
                     'cikis_antrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'vgbNo.required' => 'Antrepo giriş VGB numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -990,6 +993,7 @@ class EvrakController extends Controller
                     $yeni_evrak = new EvrakAntrepoSertifika;
 
                     $yeni_evrak->evrakKayitNo = $formData[$i]["siraNo"];
+                    $yeni_evrak->vgbNo = $formData[$i]["vgbNo"];
                     $yeni_evrak->vekaletFirmaKisiAdi = $formData[$i]["vekaletFirmaKisiAdi"];
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
@@ -1416,7 +1420,6 @@ class EvrakController extends Controller
         $errors = [];
 
 
-
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
@@ -1565,6 +1568,7 @@ class EvrakController extends Controller
         } elseif ($request->type == "EvrakAntrepoSertifika") {
             $validator = Validator::make($request->all(), [
                 'siraNo' => 'required',
+                'vgbNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'vekaletFirmaKisiAdi' => 'required',
@@ -1581,6 +1585,7 @@ class EvrakController extends Controller
                 'cikis_antrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbNo.required' => 'Antrepo sertifika VGB No, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                 'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -1718,7 +1723,6 @@ class EvrakController extends Controller
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
-
 
 
         DB::beginTransaction();
@@ -2137,6 +2141,7 @@ class EvrakController extends Controller
                 $evrak->evrakKayitNo = $request->siraNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
+                $evrak->vgbNo = $request->vgbNo;
                 $evrak->gtipNo = $request->gtipNo;
                 $evrak->urunKG = $request->urunKG;
                 $evrak->orjinUlke = $request->orjinUlke;

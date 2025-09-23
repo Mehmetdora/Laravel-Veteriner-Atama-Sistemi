@@ -220,6 +220,9 @@
                         </div>
                         <div class="modal-footer justify-content-end">
                             <button type="button" class="btn btn-primary" data-dismiss="modal">Kapat</button>
+                            <button type="button" class="btn btn-primary" onclick="fillEvrakInputs()"
+                                data-dismiss="modal">Bilgileri Evrağa Doldur</button>
+
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -702,6 +705,11 @@
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
                     <input id="siraNo" name="siraNo" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
+                    <input id="vgbNo" name="vgbNo" type="text" class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -1328,6 +1336,7 @@
                     let form = tüm_formların_div_listesi[i];
 
                     let siraNo = form.querySelector(`#siraNo_${i}`);
+                    let vgb = form.querySelector(`#vgbNo_${i}`);
                     let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
@@ -1342,6 +1351,7 @@
 
                     // Kopya evraktan alınan verileri tüm formlara yapıştırma
                     siraNo.value = modal_div.querySelector("input[name='siraNo']").value;
+                    vgb.value = modal_div.querySelector("#vgbNo").value;
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
@@ -2132,6 +2142,18 @@
 
         function getFormHtml(type, i) {
 
+            /*
+
+            0 ithalat
+            1 Transit
+            2 giriş
+            3 Varış
+            4 sertifika
+            5 Çıkış
+            6
+            */
+
+
             if (type == 0) {
                 return `
                                         <div class="form-group">
@@ -2577,6 +2599,10 @@
                                             <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
+                                            <input id="vgbNo_${i}" name="vgbNo_${i}" type="text" class="form-control" required />
+                                        </div>
 
 
                                         <div class="form-group">
@@ -3677,7 +3703,7 @@
             const modal_open_btn = document.getElementById(`preview-open-modal-btn-${i}`);
             const get_data_btn = document.getElementById(`preview-get-data-btn-${i}`);
 
-            const result = await getAntrepoSertifika(usks_no.value);
+            const result = await getAntrepoSertifika(usks_no.value); // usks no ile sertifika bilgilerini al
 
             if (result && result.saglik_sertifikalari) {
                 const sertifika = result;
@@ -3912,6 +3938,7 @@
                             "[]"),
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
                             .value,
+                        vgbNo: document.querySelector(`#vgbNo_${i}`).value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
                         gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
@@ -3996,7 +4023,6 @@
             this.submit();
         });
     </script>
-
 
 
 

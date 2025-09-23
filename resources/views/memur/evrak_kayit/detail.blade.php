@@ -62,6 +62,13 @@
                                             </tr>
                                         @endif
 
+                                        @if ($evrak->vgbNo)
+                                            <tr>
+                                                <th>Antrepo Giriş VGB No:</th>
+                                                <td>{{ $evrak->vgbNo }}</td>
+                                            </tr>
+                                        @endif
+
 
                                         @if ($type != 'EvrakAntrepoSertifika' && $type != 'EvrakCanliHayvanGemi')
                                             <tr>

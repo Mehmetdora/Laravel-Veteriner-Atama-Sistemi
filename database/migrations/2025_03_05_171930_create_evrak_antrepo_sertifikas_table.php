@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('evrakKayitNo');
+            $table->string('vgbNo');
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->string('gtipNo');

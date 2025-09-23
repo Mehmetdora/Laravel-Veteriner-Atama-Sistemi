@@ -500,6 +500,7 @@ class VeterinerController extends Controller
         } elseif ($request->type == "EvrakAntrepoSertifika") {
             $validator = Validator::make($request->all(), [
                 'siraNo' => 'required',
+                'vgbNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
@@ -511,6 +512,7 @@ class VeterinerController extends Controller
                 'cikis_antrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'vgbNo.required' => 'Antrepo Giriş VGB No, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
@@ -633,8 +635,6 @@ class VeterinerController extends Controller
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
-
-        dd($request->all());
 
 
         DB::beginTransaction();
@@ -1037,6 +1037,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = $request->gtipNo;
+                $evrak->vgbNo = $request->vgbNo;
                 $evrak->urunKG = $request->urunKG;
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->aracPlaka = $request->aracPlaka;
