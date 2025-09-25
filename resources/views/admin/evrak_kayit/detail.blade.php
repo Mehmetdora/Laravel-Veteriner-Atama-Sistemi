@@ -93,7 +93,7 @@
                                                 <th>Veteriner Sağlık Sertifikaları:</th>
                                                 <td>
                                                     <ul id="dataList" class="list">
-                                                        @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                        @foreach ($evrak->saglikSertifikalari as $index => $saglik_sertifika)
                                                             <li class="setted-sertifika"
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
@@ -103,7 +103,7 @@
                                                                 </b>
                                                                 @if ($type == 'EvrakAntrepoSertifika')
                                                                     ---- (KALAN MİKTAR →
-                                                                    {{ number_format($saglik_sertifika->kalan_miktar, 3, ',', '.') }}
+                                                                    {{ number_format($ss_kalan_array[$index], 3, ',', '.') }}
                                                                     KG)
                                                                 @endif
 

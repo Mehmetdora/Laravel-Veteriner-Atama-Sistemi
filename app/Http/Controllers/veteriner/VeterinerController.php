@@ -9,16 +9,17 @@ use App\Models\NobetHafta;
 use App\Models\EvrakIthalat;
 use App\Models\EvrakTransit;
 use Illuminate\Http\Request;
+use App\Models\SaglikSertifika;
 use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use App\Http\Controllers\Controller;
+use App\Models\EvrakAntrepoVarisDis;
 use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
-use App\Models\EvrakAntrepoVarisDis;
 use Illuminate\Support\Facades\Validator;
 
 class VeterinerController extends Controller
@@ -127,6 +128,20 @@ class VeterinerController extends Controller
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
+
+                $ss_kalan_array = [];
+            foreach ($data['evrak']->saglikSertifikalari as $sertifika) {
+                $ssn = $sertifika->ssn;
+                $giris_varis_ss = SaglikSertifika::get_giris_varis_ss_with_ssn($ssn);
+                if (!$giris_varis_ss) {
+                    return redirect()->back()->with('error', 'Hata: İlgili evrağın sağlık sertfika numarası eksik yada hatalı olduğu için evrak görüntülenemiyor. Lütfen yöneticiniz ile iletişime geçiniz!');
+                }
+
+                $ss_kalan_array[] = $giris_varis_ss->kalan_miktar;
+            }
+
+            $data['ss_kalan_array'] = $ss_kalan_array;
+
         } else if ($type == "EvrakAntrepoCikis") {
             $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);

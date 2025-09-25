@@ -88,7 +88,7 @@
                                                 <th>Veteriner Sağlık Sertifikaları:</th>
                                                 <td>
                                                     <ul id="dataList" class="list">
-                                                        @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                        @foreach ($evrak->saglikSertifikalari as $index => $saglik_sertifika)
                                                             <li class="setted-sertifika"
                                                                 data-ssn="{{ $saglik_sertifika->ssn }}"
                                                                 data-miktar="{{ $saglik_sertifika->miktar }}">
@@ -98,7 +98,8 @@
                                                                 </b>
                                                                 @if ($type == 'EvrakAntrepoSertifika')
                                                                     ---- (KALAN MİKTAR →
-                                                                    {{ number_format($saglik_sertifika->kalan_miktar, 3, ',', '.') }} KG)
+                                                                    {{ number_format($ss_kalan_array[$index], 3, ',', '.') }}
+                                                                    KG)
                                                                 @endif
 
                                                             </li>
@@ -111,7 +112,8 @@
                                         @if ($evrak->usks_id)
                                             <tr>
                                                 <th>USKS Sertifika Referans Numarası ve Miktarı:</th>
-                                                <td><b>{{ $evrak->getUsks()->usks_no }} → {{number_format($evrak->getUsks()->miktar, 3, ',', '.') }}
+                                                <td><b>{{ $evrak->getUsks()->usks_no }} →
+                                                        {{ number_format($evrak->getUsks()->miktar, 3, ',', '.') }}
                                                         KG</b>
                                                 </td>
                                             </tr>

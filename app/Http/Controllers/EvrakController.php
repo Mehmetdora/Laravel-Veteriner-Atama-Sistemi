@@ -117,6 +117,20 @@ class EvrakController extends Controller
         } else if ($type == "EvrakAntrepoSertifika") {
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
+
+            $ss_kalan_array = [];
+            foreach ($data['evrak']->saglikSertifikalari as $sertifika) {
+                $ssn = $sertifika->ssn;
+                $giris_varis_ss = SaglikSertifika::get_giris_varis_ss_with_ssn($ssn);
+                if (!$giris_varis_ss) {
+                    return redirect()->back()->with('error', 'Hata: İlgili evrağın sağlık sertfika numarası eksik yada hatalı olduğu için evrak görüntülenemiyor. Lütfen yöneticiniz ile iletişime geçiniz!');
+                }
+
+                $ss_kalan_array[] = $giris_varis_ss->kalan_miktar;
+            }
+
+            $data['ss_kalan_array'] = $ss_kalan_array;
+
         } else if ($type == "EvrakAntrepoCikis") {
             $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
@@ -872,14 +886,8 @@ class EvrakController extends Controller
                             bu sayede oluşturulacak olan antrepo sertifika evrağının atanacağı
                             veteriner bulunacak
                         */
-                        $ss_saved = SaglikSertifika::where(function ($query) use ($saglik_sertifika) {
-                            $query->whereHas('evraks_giris', function ($q) use ($saglik_sertifika) {
-                                $q->where('ssn', $saglik_sertifika['ssn']);
-                            })->orWhereHas('evraks_varis_dis', function ($q) use ($saglik_sertifika) {
-                                $q->where('ssn', $saglik_sertifika['ssn']);
-                            });
-                        })->with(['evraks_giris.veteriner.user', 'evraks_varis_dis.veteriner.user'])
-                            ->first();
+
+                        $ss_saved = SaglikSertifika::get_giris_varis_ss_with_ssn($saglik_sertifika['ssn']);
 
                         if (!$ss_saved) {
                             throw new \Exception("Sağlık Sertifikası Numarası Kaydı Sistemde Bulunamadı, Sistemde Kayıtlı Olduğundan Emin Olduktan Sonra Tekrar Deneyiniz!");
