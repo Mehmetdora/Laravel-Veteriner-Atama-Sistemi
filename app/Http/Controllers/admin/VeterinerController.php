@@ -376,21 +376,25 @@ class VeterinerController extends Controller
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_ithalats,evrakKayitNo',
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'max:9999999.999'
+                ],
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'arac_plaka_kg' => 'required',
+                'arac_plaka_kg.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'girisGumruk' => 'required',
-                'is_numuneli' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                 'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -398,32 +402,38 @@ class VeterinerController extends Controller
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'arac_plaka_kg.required' => 'Araç Plakası ve Yük Miktarı(KG), alanı eksik!',
+                'arac_plaka_kg.*.miktar.max' => 'Araç Plakası Yük Miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'is_numuneli.required' => 'Numuneli/Numunesiz, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == 'EvrakTransit') {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_transits,evrakKayitNo', // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'cikisGumruk' => 'required',
+                'cıkısGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                 'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -431,32 +441,38 @@ class VeterinerController extends Controller
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
-                'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
+                'aracPlaka.required' => 'Araç Plakası & Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakAntrepoGiris") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_antrepo_giris,evrakKayitNo', // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'varis_antrepo_id' => 'required',
+                'giris_antrepo_id' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                 'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -464,33 +480,42 @@ class VeterinerController extends Controller
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'varis_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
+                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakAntrepoVaris") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_antrepo_varis,evrakKayitNo', // UNIQUE kuralı eklendi
                 'oncekiVGBOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
+                'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'urunlerinBulunduguAntrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                 'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
 
             ]);
@@ -499,26 +524,34 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoSertifika") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_antrepo_sertifikas,evrakKayitNo', // UNIQUE kuralı eklendi
                 'vgbNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
+                'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'cikis_antrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
-                'vgbNo.required' => 'Antrepo Giriş VGB No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
+                'vgbNo.required' => 'Antrepo sertifika VGB No, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                 'cikis_antrepo.required' => 'Çıkış Antreposu, alanı eksik!',
@@ -528,42 +561,47 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoCikis") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_antrepo_cikis,evrakKayitNo', // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
-                'vekaletFirmaKisiAdi' => 'required',
                 'usks_no' => 'required',
-                'usks_miktar' => 'required',
+                'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'cikisGumruk' => 'required',
+                'cıkısGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                 'usks_no.required' => 'USKS Numarası, alanı eksik!',
-                'usks_miktar.required' => 'USKS Miktarı, alanı eksik!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakCanliHayvan") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_canli_hayvans,evrakKayitNo', // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
+                'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'urun_kategori_id' => 'required',
@@ -572,11 +610,13 @@ class VeterinerController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
-                'cikisGumruk' => 'required',
+                'cıkısGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                 'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
@@ -585,7 +625,7 @@ class VeterinerController extends Controller
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -607,22 +647,30 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoVarisDis") {  //Evrak Antrepo Varış(DIŞ)
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required',
+                'siraNo' => 'required|unique:evrak_antrepo_varis_dis,evrakKayitNo', // UNIQUE kuralı eklendi
                 'oncekiVGBOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
+                'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
                 'vekaletFirmaKisiAdi' => 'required',
                 'urunAdi' => 'required',
                 'gtipNo' => 'required',
-                'urunKG' => 'required',
+                'urunKG' => [
+                    'required',
+                    'numeric',
+                    'max:9999999.999'
+                ],
                 'urunlerinBulunduguAntrepo' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
                 'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                 'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
+                'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                 'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                 'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                 'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
                 'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
+                'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                 'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
 
             ]);
@@ -1410,7 +1458,7 @@ class VeterinerController extends Controller
             $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
 
-                $ss_kalan_array = [];
+            $ss_kalan_array = [];
             foreach ($data['evrak']->saglikSertifikalari as $sertifika) {
                 $ssn = $sertifika->ssn;
                 $giris_varis_ss = SaglikSertifika::get_giris_varis_ss_with_ssn($ssn);
@@ -1422,7 +1470,6 @@ class VeterinerController extends Controller
             }
 
             $data['ss_kalan_array'] = $ss_kalan_array;
-            
         } else if ($type == "EvrakAntrepoCikis") {
             $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);

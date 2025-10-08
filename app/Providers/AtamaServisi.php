@@ -36,6 +36,13 @@ class AtamaServisi
         'canli_hayvan' => 10,
     ];
 
+
+    /*
+        Girdi olarak evrak türü ve evrak sayısı verilir, çıktı olarak atanması gereken veterinerlerin
+        listesinden random bir tanesini verir.
+
+    */
+
     public function assignVet(string $documentType, $evraks_count)
     {
 
@@ -238,6 +245,11 @@ class AtamaServisi
     }
 
 
+
+    /*
+        İlgili veterinerin evrak iş katsayısı * evrak sayısı kadar bu yılki iş yükü miktarı arttırılır.
+        Eğer veterinerin telafisi var ise temp_workload değeri de güncellenir telafisi bitene kadar.
+    */
     private function updateWorkload(User $vet, int $coefficient, $has_telafi, $evraks_count)
     {
 
@@ -271,7 +283,7 @@ class AtamaServisi
 
         try {
 
-            // 8. Nöbet Kontrolü (17:00 sonrası)
+            // 8. Nöbet Kontrolü (16:00 sonrası)
             if ($simdikiZaman->hour >= 16) {
 
                 $veterinerler = User::role('veteriner')

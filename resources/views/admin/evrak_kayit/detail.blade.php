@@ -43,6 +43,11 @@
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
                                             <td>{{ $evrak->created_at->format('d-m-Y') }}</td>
                                         </tr>
+
+                                        <tr>
+                                            <th style="width:30%">Son Düzenlenme Tarihi:</th>
+                                            <td>{{ $evrak->updated_at->format('d-m-Y') }}</td>
+                                        </tr>
                                         @if ($evrak->hayvan_sayisi)
                                             <tr>
                                                 <th>Hayvan Sayısı:</th>

@@ -182,11 +182,10 @@ class EvrakController extends Controller
         $errors = [];
 
         // Validations
-        // Validations
         if ($formData[0]['evrak_turu'] == 0) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_ithalats,evrakKayitNo',
                     'vgbOnBildirimNo' => 'required',
                     'ss_no' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
@@ -204,6 +203,7 @@ class EvrakController extends Controller
                     'girisGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -225,7 +225,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 1) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_transits,evrakKayitNo',
                     'vgbOnBildirimNo' => 'required',
                     'ss_no' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
@@ -244,6 +244,7 @@ class EvrakController extends Controller
                     'cıkısGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -265,7 +266,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 2) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_antrepo_giris,evrakKayitNo',
                     'vgbOnBildirimNo' => 'required',
                     'ss_no' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
@@ -284,6 +285,7 @@ class EvrakController extends Controller
                     'giris_antrepo_id' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'ss_no.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -305,7 +307,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 3) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_antrepo_varis,evrakKayitNo',
                     'oncekiVGBOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
                     'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -320,6 +322,7 @@ class EvrakController extends Controller
                     'urunlerinBulunduguAntrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
@@ -338,7 +341,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 4) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_antrepo_sertifikas,evrakKayitNo',
                     'vgbNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
                     'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -356,7 +359,8 @@ class EvrakController extends Controller
                     'cikis_antrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
-                    'vgbNNo.required' => 'Antrepo sertifika VGB No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
+                    'vgbNo.required' => 'Antrepo giriş VGB numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -376,7 +380,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 5) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_antrepo_cikis,evrakKayitNo',
                     'vgbOnBildirimNo' => 'required',
                     'usks_no' => 'required',
                     'vekaletFirmaKisiAdi' => 'required',
@@ -394,6 +398,7 @@ class EvrakController extends Controller
                     'cıkısGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'usks_no.required' => 'USKS Numarası, alanı eksik!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
@@ -414,7 +419,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 6) {
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_canli_hayvans,evrakKayitNo',
                     'vgbOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
                     'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -429,6 +434,7 @@ class EvrakController extends Controller
                     'cıkısGumruk' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'vgbOnBildirimNo.required' => 'VGB Ön Bildirim Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
@@ -466,7 +472,7 @@ class EvrakController extends Controller
         } elseif ($formData[0]['evrak_turu'] == 8) {    // Antrepo Varış(DIŞ)
             for ($i = 1; $i < count($formData); $i++) {
                 $validator = Validator::make($formData[$i], [
-                    'siraNo' => 'required',
+                    'siraNo' => 'required|unique:evrak_antrepo_varis_dis,evrakKayitNo',
                     'oncekiVGBOnBildirimNo' => 'required',
                     'vetSaglikSertifikasiNo' => 'required',
                     'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -481,6 +487,7 @@ class EvrakController extends Controller
                     'urunlerinBulunduguAntrepo' => 'required',
                 ], [
                     'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
+                    'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !',
                     'oncekiVGBOnBildirimNo.required' => 'Önceki VGB Numarası, alanı eksik!',
                     'vetSaglikSertifikasiNo.required' => 'Sağlık Sertifikası, alanı eksik!',
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
