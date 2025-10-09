@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('vgbOnBildirimNo');
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
-            $table->string('gtipNo');
+            $table->json('gtipNo');
             $table->decimal('urunKG',10,3); // artık girilen miktar 1111111.111 şeklinde girilebilir
             $table->string('sevkUlke');
             $table->string('orjinUlke');

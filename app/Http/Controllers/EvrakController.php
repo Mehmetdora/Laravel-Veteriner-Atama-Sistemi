@@ -202,6 +202,8 @@ class EvrakController extends Controller
         }
 
 
+        dd($formData);
+
 
         // İlk gelen formdaki evrağın türü ne ise diğerleride aynı türde olduğunu
         // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı

@@ -261,7 +261,6 @@
 
 
 
-
         function addEvrakType() {
             let type = document.getElementById("evrakType").value;
             let count = parseInt(document.getElementById("formCount").value) || 0;
@@ -335,7 +334,15 @@
 
                 <div class="form-group">
                     <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control ithalat" required />
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -428,8 +435,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -521,8 +536,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -612,8 +635,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -674,8 +705,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -748,8 +787,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -828,8 +875,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -914,8 +969,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo" class="form-control" required />
+                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn">✔️</button>
+                    </div>
+                    <ul id="gtip_list" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo" id="gtip_json_data"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -1029,7 +1092,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1047,7 +1111,7 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
-                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     sevkUlke.value = modal_div.querySelector("input[name='sevkUlke']").value;
                     orjinUlke.value = modal_div.querySelector("input[name='orjinUlke']").value;
@@ -1084,6 +1148,25 @@
                     });
 
 
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
 
 
 
@@ -1101,7 +1184,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1116,13 +1200,34 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
-                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
                     sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
                     aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
                     girisGumruk.value = modal_div.querySelector(`input[name="girisGumruk"]`).value;
                     cıkısGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
+
+
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
 
 
 
@@ -1140,7 +1245,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1156,7 +1262,7 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
-                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
                     sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
@@ -1165,6 +1271,25 @@
                     giris_antrepo_id.value = modal_div.querySelector(`input[name="giris_antrepo_id"]`).value;
                     giris_antrepo_id_select.value = modal_div.querySelector(`input[name="giris_antrepo_id"]`).value;
 
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
 
 
 
@@ -1178,7 +1303,8 @@
                     let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let urunlerinBulunduguAntrepo_input = form.querySelector(`#urunlerinBulunduguAntrepo_input${i}`);
                     let urunlerinBulunduguAntrepo_select = form.querySelector(`#urunlerinBulunduguAntrepo_select${i}`);
@@ -1190,7 +1316,7 @@
                     oncekiVGBOnBildirimNo.value = modal_div.querySelector("input[name='oncekiVGBOnBildirimNo']").value;
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
-                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     urunlerinBulunduguAntrepo_input.value = modal_div.querySelector(
                         `#urunlerinBulunduguAntrepo_input`).value;
@@ -1220,7 +1346,8 @@
                                 vetSaglikSertifikasiNo.value);
                             console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
                                 datas);
-                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num",
+                                val1,
                                 val2_num);
 
                             datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
@@ -1241,6 +1368,25 @@
                         vetSaglikSertifikasiNo.value = JSON.stringify(datas);
                     });
 
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
 
 
 
@@ -1255,7 +1401,8 @@
                     let vetSaglikSertifikasiNo = form.querySelector(`#jsonData_${i}`);
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let dataList = form.querySelector(`#dataList_${i}`);
                     let antrepo_input = form.querySelector(`#urunlerinBulunduguAntrepo_input_${i}`);
@@ -1267,7 +1414,7 @@
                     oncekiVGBOnBildirimNo.value = modal_div.querySelector("input[name='oncekiVGBOnBildirimNo']").value;
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
-                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     vetSaglikSertifikasiNo.value = modal_div.querySelector("#jsonData").value;
                     antrepo_input.value = modal_div.querySelector("#urunlerinBulunduguAntrepo_input").value;
@@ -1298,7 +1445,8 @@
                                 vetSaglikSertifikasiNo.value);
                             console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
                                 datas);
-                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num",
+                                val1,
                                 val2_num);
 
 
@@ -1327,6 +1475,28 @@
                         }
                     });
 
+
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
+
+
                 }
 
             } else if (evraks_type == "Antrepo Sertifika") {
@@ -1339,7 +1509,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`[name="urun_kategori_id_${i}"]`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let aracPlaka = form.querySelector(`[name="aracPlaka_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1354,7 +1525,7 @@
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
-                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector("input[name='urunKG']").value;
                     aracPlaka.value = modal_div.querySelector("input[name='aracPlaka']").value;
                     cikis_antrepo_input.value = modal_div.querySelector(`input[name="cikis_antrepo_input"]`).value;
@@ -1386,7 +1557,8 @@
                                 vetSaglikSertifikasiNo.value);
                             console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
                                 datas);
-                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num",
+                                val1,
                                 val2_num);
 
                             datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
@@ -1407,6 +1579,27 @@
 
                     });
 
+
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
+
                 }
 
             } else if (evraks_type == "Antrepo Çıkış") {
@@ -1420,7 +1613,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`#urun_kategori_id_${i}`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let urunKG = form.querySelector(`[name="urunKG_${i}"]`);
                     let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1434,13 +1628,32 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector(`input[name="urunAdi"]`).value;
                     urun_kategori_id.value = modal_div.querySelector(`select[name='urun_kategori_id']`).value;
-                    gtipNo.value = modal_div.querySelector(`input[name="gtipNo"]`).value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     urunKG.value = modal_div.querySelector(`input[name="urunKG"]`).value;
                     sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
                     aracPlaka.value = modal_div.querySelector(`input[name="aracPlaka"]`).value;
                     cikisGumruk.value = modal_div.querySelector(`input[name="cıkısGumruk"]`).value;
 
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
 
 
                 }
@@ -1455,7 +1668,8 @@
                     let vekaletFirmaKisiAdi = form.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`);
                     let urunAdi = form.querySelector(`[name="urunAdi_${i}"]`);
                     let urun_kategori_id = form.querySelector(`[name="urun_kategori_id_${i}"]`);
-                    let gtipNo = form.querySelector(`[name="gtipNo_${i}"]`);
+                    let gtip_list = form.querySelector(`#gtip_list_${i}`);
+                    let gtip_json_data = form.querySelector(`#gtip_json_data_${i}`);
                     let hayvanSayisi = form.querySelector(`[name="hayvanSayisi_${i}"]`);
                     let sevkUlke = form.querySelector(`[name="sevkUlke_${i}"]`);
                     let orjinUlke = form.querySelector(`[name="orjinUlke_${i}"]`);
@@ -1469,7 +1683,7 @@
                     vekaletFirmaKisiAdi.value = modal_div.querySelector("input[name='vekaletFirmaKisiAdi']").value;
                     urunAdi.value = modal_div.querySelector("input[name='urunAdi']").value;
                     urun_kategori_id.value = modal_div.querySelector("select[name='urun_kategori_id']").value;
-                    gtipNo.value = modal_div.querySelector("input[name='gtipNo']").value;
+                    gtip_json_data.value = modal_div.querySelector("#gtip_json_data").value;
                     hayvanSayisi.value = modal_div.querySelector("input[name='hayvanSayisi']").value;
                     sevkUlke.value = modal_div.querySelector(`input[name="sevkUlke"]`).value;
                     orjinUlke.value = modal_div.querySelector(`input[name="orjinUlke"]`).value;
@@ -1496,7 +1710,8 @@
                                 vetSaglikSertifikasiNo.value);
                             console.log("Kopya evraktan eklenen s.s. silinmeden önce datas:",
                                 datas);
-                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num", val1,
+                            console.log("Kopya evraktan eklenen s.s. silinme bilgileri val1-val2_num",
+                                val1,
                                 val2_num);
 
                             datas = JSON.parse(vetSaglikSertifikasiNo.value).filter(item => item.ssn !==
@@ -1514,6 +1729,27 @@
                         dataList.appendChild(listItem);
                         vetSaglikSertifikasiNo.value = JSON.stringify(datas);
 
+                    });
+
+
+                    // gtip numaralarını doldurma
+
+                    let gtip_array = JSON.parse(gtip_json_data.value);
+                    gtip_array.forEach(gtip => {
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${gtip} <button type="button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtip_array = gtip_array.filter(item => item !== gtip);
+                            gtip_json_data.value =
+                                JSON.stringify(gtip_array);
+                            listItem.remove();
+                        });
+
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtip_array);
                     });
 
                 }
@@ -1546,6 +1782,39 @@
             let modal_div = document.getElementById("kopya-evrak-modal");
 
             if (evrak_type == "İthalat") {
+
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
 
                 let addBtn = modal_div.querySelector("#addBtn");
                 let inputContainer = modal_div.querySelector(`#inputContainer`);
@@ -1617,6 +1886,39 @@
 
             } else if (evrak_type == "Transit") {
 
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
                 let inputBox_g = modal_div.querySelector(`#giris_g_input`);
                 let selectBox_g = modal_div.querySelector(`#giris_g_select`);
@@ -1644,6 +1946,40 @@
                 });
 
             } else if (evrak_type == "Antrepo Giriş") {
+
+
+                // Gtip no Scriptsss
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
 
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
@@ -1673,6 +2009,39 @@
                 });
 
             } else if (evrak_type == "Antrepo Varış") {
+
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
 
                 let addBtn = modal_div.querySelector(`#addBtn`);
                 let inputContainer = modal_div.querySelector(`#inputContainer`);
@@ -1746,6 +2115,39 @@
 
             } else if (evrak_type == "Antrepo Varış(DIŞ)") {
 
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
                 let addBtn = modal_div.querySelector(`#addBtn`);
                 let inputContainer = modal_div.querySelector(`#inputContainer`);
                 let input1 = modal_div.querySelector(`#input1`);
@@ -1809,6 +2211,40 @@
 
 
             } else if (evrak_type == "Antrepo Sertifika") {
+
+
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
 
                 let addBtn = modal_div.querySelector(`#addBtn`);
                 let inputContainer = modal_div.querySelector(`#inputContainer`);
@@ -1875,6 +2311,39 @@
 
             } else if (evrak_type == "Antrepo Çıkış") {
 
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
                 let dataList = modal_div.querySelector(`#dataList`);
                 let jsonDataInput = modal_div.querySelector(`#jsonData`);
                 let netMiktarInput = modal_div.querySelector(`#net_miktar`);
@@ -1890,6 +2359,40 @@
                 });
 
             } else if (evrak_type == "Canlı Hayvan") {
+
+
+                // Gtip no Scripts
+                let gtipBtn = document.querySelector(`#gtipBtn`);
+                let gtip_input = document.querySelector(`#gtip_input`);
+                let gtip_list = document.querySelector(`#gtip_list`);
+                let gtip_json_data = document.querySelector(`#gtip_json_data`);
+
+                let gtips = [];
+
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        gtips.push(val);
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
 
                 let addBtn = modal_div.querySelector(`#addBtn`);
                 let inputContainer = modal_div.querySelector(`#inputContainer`);
@@ -2140,6 +2643,18 @@
 
         function getFormHtml(type, i) {
 
+            /*
+
+            0 ithalat
+            1 Transit
+            2 giriş
+            3 Varış
+            4 sertifika
+            5 Çıkış
+            6
+            */
+
+
             if (type == 0) {
                 return `
                                         <div class="form-group">
@@ -2198,7 +2713,15 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn_${i}">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2256,122 +2779,130 @@
             } else if (type == 1) {
                 return `
 
-                                        <div class="form-group">
-                                            <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
-                                        </div>
+            <div class="form-group">
+                <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
+                <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
-                                                Numarası</label>
-                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
-                                        </div>
-
-
-
-                                        <div class="form-group">
-                                            <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
-                                                    id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
-                                                    id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
-
-                                            </div>
-                                        </div>
+            <div class="form-group">
+                <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
+                    Numarası</label>
+                <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+            </div>
 
 
 
+            <div class="form-group">
+                <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                <div class="row" style="display: flex; align-items: center;">
+                    <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                        id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
+                    <div class="col-sm-1"></div>
+                    <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                        id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
-                                        <div class="form-group">
-                                            <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
-                                                Kişi
-                                                İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
-                                                required />
-                                        </div>
+                </div>
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
-                                                required>
-                                                @if (isset($uruns))
-                                                    <option selected value="">Ürün Kategorileri</option>
-                                                    @foreach ($uruns as $urun)
-                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
-                                                    @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
-                                        </div>
 
-                                        <div class="form-group">
-                                            <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
-                                                Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
-                                        </div>
+            <div class="form-group">
+                <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
+                    Kişi
+                    İsmi</label>
+                <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                    required />
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke_${i}" class="form-control" required />
-                                        </div>
+            <div class="form-group">
+                <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
+                <input name="urunAdi_${i}" class="form-control" required />
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke_${i}" class="form-control" required />
-                                        </div>
+            <div class="form-group">
+                <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
+                <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                    required>
+                    @if (isset($uruns))
+                        <option selected value="">Ürün Kategorileri</option>
+                        @foreach ($uruns as $urun)
+                            <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
-                                                No</label>
-                                            <input name="aracPlaka_${i}" class="form-control" required />
-                                        </div>
+            <div class="form-group">
+                <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
 
-                                        <div class="form-group">
-                                            <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="giris_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Mersin">Mersin</option>
-                                                    <option value="Taşucu">Taşucu</option>
+                <div style="display:flex; justify-content=start;">
+                    <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                    <button type="button" id="gtipBtn_${i}">✔️</button>
+                </div>
+                <ul id="gtip_list_${i}" class="list"></ul>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
-                                                    id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+                <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                    class="form-control" required />
+            </div>
 
-                                            </div>
-                                        </div>
+            <div class="form-group">
+                <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
+                    Miktarı</label>
+                <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
+            </div>
 
-                                        <div class="form-group">
-                                            <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
-                                                oluştur):*</label>
-                                            <div class="row" style="display: flex; align-items: center;">
-                                                <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
-                                                    <option selected value="">Gümrükler(Seç)</option>
-                                                    <hr>
-                                                    <option value="Habur">Habur</option>
-                                                    <option value="Cilvegözü">Cilvegözü</option>
+            <div class="form-group">
+                <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
+                <input name="sevkUlke_${i}" class="form-control" required />
+            </div>
 
-                                                </select>
-                                                <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+            <div class="form-group">
+                <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
+                <input name="orjinUlke_${i}" class="form-control" required />
+            </div>
 
-                                            </div>
-                                        </div>
+            <div class="form-group">
+                <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
+                    No</label>
+                <input name="aracPlaka_${i}" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label for="giris_g_input_${i}">Giriş Gümrüğü(Seç yada yeni bir tane
+                    oluştur):*</label>
+                <div class="row" style="display: flex; align-items: center;">
+                    <select class="col-sm-6 form-control" id="giris_g_select_${i}">
+                        <option selected value="">Gümrükler(Seç)</option>
+                        <hr>
+                        <option value="Mersin">Mersin</option>
+                        <option value="Taşucu">Taşucu</option>
+
+                    </select>
+                    <div class="col-sm-1"></div>
+                    <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                        id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cikis_g_input_${i}">Çıkış Gümrüğü(Seç yada yeni bir tane
+                    oluştur):*</label>
+                <div class="row" style="display: flex; align-items: center;">
+                    <select class="col-sm-6 form-control" id="cikis_g_select_${i}">
+                        <option selected value="">Gümrükler(Seç)</option>
+                        <hr>
+                        <option value="Habur">Habur</option>
+                        <option value="Cilvegözü">Cilvegözü</option>
+
+                    </select>
+                    <div class="col-sm-1"></div>
+                    <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                        id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                </div>
+            </div>
         `;
             } else if (type == 2) {
                 return `
@@ -2432,7 +2963,15 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn_${i}">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2543,7 +3082,15 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn_${i}">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2589,6 +3136,7 @@
                                             <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
                                             <input id="vgbNo_${i}" name="vgbNo_${i}" type="text" class="form-control" required />
                                         </div>
+
 
                                         <div class="form-group">
                                             <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
@@ -2636,7 +3184,15 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn_${i}">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2744,7 +3300,15 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn_${i}">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list_${i}" class="list"></ul>
+
+                                            <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                                                class="form-control" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2850,7 +3414,15 @@
 
                     <div class="form-group">
                         <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                        <input type="number" name="gtipNo_${i}" class="form-control" required />
+
+                        <div style="display:flex; justify-content=start;">
+                            <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                            <button type="button" id="gtipBtn_${i}">✔️</button>
+                        </div>
+                        <ul id="gtip_list_${i}" class="list"></ul>
+
+                        <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                            class="form-control" required />
                     </div>
 
                     <div class="form-group">
@@ -2978,8 +3550,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo_${i}" class="control-label">G.T.İ.P.No İlk 4 Rakamı</label>
-                    <input type="number" name="gtipNo_${i}" class="form-control" required />
+                    <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                    <div style="display:flex; justify-content=start;">
+                        <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                        <button type="button" id="gtipBtn_${i}">✔️</button>
+                    </div>
+                    <ul id="gtip_list_${i}" class="list"></ul>
+
+                    <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
+                        class="form-control" required />
                 </div>
 
                 <div class="form-group">
@@ -3021,6 +3601,48 @@
                 let confirmBtn = formStep.querySelector(`#confirmBtn_${index}`);
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
+
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
 
 
                 let data = [];
@@ -3091,6 +3713,47 @@
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
+
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
                 let inputBox_g = formStep.querySelector(`#giris_g_input_${index}`);
                 let selectBox_g = formStep.querySelector(`#giris_g_select_${index}`);
@@ -3126,6 +3789,46 @@
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
                 let dataList = formStep.querySelector(`#dataList_${index}`);
                 let jsonDataInput = formStep.querySelector(`#jsonData_${index}`);
                 let netMiktarInput = formStep.querySelector(`#net_miktar_${index}`);
@@ -3154,12 +3857,55 @@
             });
         }
 
-
         // Antrepo Varış
         function EventListenersFor_3_ToForm() {
 
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
+
+
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
+
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
                 let input1 = formStep.querySelector(`#input1_${index}`);
@@ -3227,7 +3973,8 @@
                         console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
 
 
-                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value),
+                            val2_num);
                         console.log("eklenen yeni miktar ile", netMiktar);
 
                         let listItem = document.createElement("li");
@@ -3248,7 +3995,8 @@
                             console.log("silindikten sonra datas:", data);
 
 
-                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput
+                                    .value),
                                 val2_num);
                             netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
@@ -3285,6 +4033,47 @@
 
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
+
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
                 let input1 = formStep.querySelector(`#input1_${index}`);
@@ -3342,7 +4131,8 @@
 
                         console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
 
-                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value),
+                            val2_num);
                         console.log("eklenen yeni miktar ile", netMiktar);
 
 
@@ -3364,7 +4154,8 @@
 
                             console.log("silindikten sonra datas:", data);
 
-                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput
+                                    .value),
                                 val2_num);
                             netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
@@ -3402,6 +4193,46 @@
 
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
 
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
                 let inputBox_c = formStep.querySelector(`#cikis_g_input_${index}`);
                 let selectBox_c = formStep.querySelector(`#cikis_g_select_${index}`);
 
@@ -3419,6 +4250,47 @@
         function EventListenersFor_6_ToForm() {
             const forms = document.querySelectorAll(".form-step");
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
                 let input1 = formStep.querySelector(`#input1_${index}`);
@@ -3535,6 +4407,49 @@
             const forms = document.querySelectorAll(".form-step");
 
             document.querySelectorAll(".form-step").forEach((formStep, index) => {
+
+
+                // Gtip no Scripts
+                let gtipBtn = formStep.querySelector(`#gtipBtn_${index}`);
+                let gtip_input = formStep.querySelector(`#gtip_input_${index}`);
+                let gtip_list = formStep.querySelector(`#gtip_list_${index}`);
+                let gtip_json_data = formStep.querySelector(`#gtip_json_data_${index}`);
+
+                let gtips = [];
+                gtipBtn.addEventListener("click", function() {
+                    var val = gtip_input.value;
+
+                    if (val != "") {
+                        if (gtip_json_data.value && gtip_json_data.value != "") {
+                            gtips = JSON.parse(gtip_json_data.value);
+                            gtips.push(val);
+                            gtip_json_data.value = JSON.stringify(gtips);
+
+                        } else {
+                            gtips.push(val);
+                        }
+
+                        gtip_input.value = "";
+
+                        let listItem = document.createElement("li");
+                        listItem.innerHTML =
+                            `${val} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                        listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                            gtips = gtips.filter(item => item !== val);
+                            listItem.remove();
+                            gtip_json_data.value = JSON.stringify(gtips);
+                        });
+                        gtip_list.appendChild(listItem);
+                        gtip_json_data.value = JSON.stringify(gtips);
+
+                    } else {
+                        alert("Lütfen GTİP alanını doldurunuz!");
+                    }
+                });
+
+
+
                 let addBtn = formStep.querySelector(`#addBtn_${index}`);
                 let inputContainer = formStep.querySelector(`#inputContainer_${index}`);
                 let input1 = formStep.querySelector(`#input1_${index}`);
@@ -3589,7 +4504,8 @@
                         }
                         console.log("Güncel ss listesi jsonData: ", jsonDataInput.value);
 
-                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value), val2_num);
+                        netMiktar = hatasızFloatToplama(getNumericValue(netMiktarInput.value),
+                            val2_num);
                         console.log("eklenen yeni miktar ile", netMiktar);
 
                         let listItem = document.createElement("li");
@@ -3608,7 +4524,8 @@
 
                             console.log("silindikten sonra datas:", data);
 
-                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput.value),
+                            netMiktar = hatasızFloatCikarma(getNumericValue(netMiktarInput
+                                    .value),
                                 val2_num);
                             netMiktarInput.value = formatNumberValue(netMiktar);
                             listItem.remove();
@@ -3688,12 +4605,13 @@
             const modal_open_btn = document.getElementById(`preview-open-modal-btn-${i}`);
             const get_data_btn = document.getElementById(`preview-get-data-btn-${i}`);
 
-            const result = await getAntrepoSertifika(usks_no.value);
+            const result = await getAntrepoSertifika(usks_no.value); // usks no ile sertifika bilgilerini al
 
             if (result && result.saglik_sertifikalari) {
                 const sertifika = result;
                 const saglik_sertifikalari = result.saglik_sertifikalari;
                 on_izleme_ant_sertifika = result;
+
 
                 let modal_title = document.getElementById("evrak-sertifika-preview-modal-title");
                 let modal_content = document.getElementById("evrak-sertifika-preview-content");
@@ -3741,7 +4659,6 @@
                                         <th>Antrepo Giriş VGB No:</th>
                                         <td>${sertifika.vgbNo}</td>
                                     </tr>
-
                                     <tr>
                                         <th>Veteriner Sağlık Sertifikaları:</th>
                                         <td>
@@ -3801,14 +4718,14 @@
 
         async function getAntrepoSertifika(usks_no) {
             try {
-                const response = await fetch(`{{ route('memur.get_evrak_sertifika') }}`, {
+                const response = await fetch(`{{ route('admin.get_evrak_sertifika') }}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        usks_no: usks_no,
+                        usks_no
                     })
                 });
 
@@ -3825,6 +4742,7 @@
                 return null;
             }
         };
+
 
         // ön izleme ile açılan antrepo sertifika bilgilerini ilgili antrepo çıkış evrağına aktarma
         function fillEvrakInputs() {
@@ -3862,7 +4780,6 @@
 
 
 
-
         document.getElementById("dynamicForm").addEventListener("submit", function(event) {
 
             event.preventDefault();
@@ -3886,7 +4803,8 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
@@ -3906,7 +4824,8 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
@@ -3926,7 +4845,8 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
@@ -3946,7 +4866,8 @@
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
@@ -3964,7 +4885,8 @@
                         vgbNo: document.querySelector(`#vgbNo_${i}`).value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
                         aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
@@ -3982,7 +4904,8 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
@@ -4002,7 +4925,8 @@
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
                         urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         hayvanSayisi: document.querySelector(`[name="hayvanSayisi_${i}"]`).value,
                         sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
                         orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
@@ -4031,7 +4955,8 @@
                         vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
                             .value,
                         urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        gtipNo: document.querySelector(`[name="gtipNo_${i}"]`).value,
+                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                            "[]"),
                         urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
                         urunlerinBulunduguAntrepo: document.querySelector(
                             `[name="urunlerinBulunduguAntrepo_${i}"]`).value,

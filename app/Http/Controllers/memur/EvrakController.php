@@ -176,6 +176,8 @@ class EvrakController extends Controller
             return redirect()->back()->with('error', 'Geçersiz veri formatı!');
         }
 
+        dd($formData);
+
 
         // İlk gelen formdaki evrağın türü ne ise diğerleride aynı türde olduğunu
         // varsayarak evrak türünü belirleyip tüm evrakları for ile özel validate işlemi uygulandı
