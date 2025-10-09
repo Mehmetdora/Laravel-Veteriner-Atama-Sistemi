@@ -115,7 +115,39 @@
                 timePicker24Hour: true, // 24 saat formatı
                 timePickerIncrement: 30,
                 locale: {
-                    format: 'DD/MM/YYYY hh:mm A'
+                    format: 'DD/MM/YYYY HH:mm',
+                    applyLabel: 'Uygula',
+                    cancelLabel: 'İptal',
+                    fromLabel: 'Başlangıç',
+                    toLabel: 'Bitiş',
+                    customRangeLabel: 'Özel Aralık',
+                    weekLabel: 'Hf',
+
+                    daysOfWeek: [
+                        "Paz", // Sunday (Haftanın başlangıcına dikkat edin, 0: Pazar)
+                        "Pzt", // Monday
+                        "Sal", // Tuesday
+                        "Çar", // Wednesday
+                        "Per", // Thursday
+                        "Cum", // Friday
+                        "Cmt" // Saturday
+                    ],
+
+                    monthNames: [
+                        "Ocak",
+                        "Şubat",
+                        "Mart",
+                        "Nisan",
+                        "Mayıs",
+                        "Haziran",
+                        "Temmuz",
+                        "Ağustos",
+                        "Eylül",
+                        "Ekim",
+                        "Kasım",
+                        "Aralık"
+                    ],
+                    firstDay: 1 // Haftanın Pazartesi ile başlaması için (Pzt)
                 }
             })
         })
