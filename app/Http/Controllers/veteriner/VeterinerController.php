@@ -111,25 +111,25 @@ class VeterinerController extends Controller
         $type = end($type);
 
         if ($type == "EvrakIthalat") {
-            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakIthalat::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakTransit") {
-            $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakTransit::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoGiris") {
-            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
-            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVarisDis") {
-            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
-            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'kaydeden', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
 
-                $ss_kalan_array = [];
+            $ss_kalan_array = [];
             foreach ($data['evrak']->saglikSertifikalari as $sertifika) {
                 $ssn = $sertifika->ssn;
                 $giris_varis_ss = SaglikSertifika::get_giris_varis_ss_with_ssn($ssn);
@@ -141,17 +141,16 @@ class VeterinerController extends Controller
             }
 
             $data['ss_kalan_array'] = $ss_kalan_array;
-
         } else if ($type == "EvrakAntrepoCikis") {
-            $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $evrak = EvrakAntrepoCikis::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
             $data['evrak'] = $evrak;
             $data['usks'] = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
-            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvanGemi") {
-            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 

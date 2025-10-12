@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('aracPlaka');
             $table->string('cikisAntrepo');
             $table->integer('difficulty_coefficient')->default(2);
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
             $table->timestamps();
         });

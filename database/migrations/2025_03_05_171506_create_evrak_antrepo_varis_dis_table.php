@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('urunKG',10,3);
             $table->integer('difficulty_coefficient')->default(1);
             $table->foreignId('giris_antrepo_id')->constrained('giris_antrepos')->onDelete('cascade');
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
 
 

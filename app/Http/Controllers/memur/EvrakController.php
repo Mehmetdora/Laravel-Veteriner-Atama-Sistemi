@@ -20,10 +20,12 @@ use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
+use App\Providers\WorkloadsService;
 use App\Http\Controllers\Controller;
-use App\Models\EvrakCanliHayvanGemi;
-use App\Models\EvrakAntrepoSertifika;
 use App\Models\EvrakAntrepoVarisDis;
+use App\Models\EvrakCanliHayvanGemi;
+use Illuminate\Support\Facades\Auth;
+use App\Models\EvrakAntrepoSertifika;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\CanliHGemiIzniOlusturma;
 use App\Providers\YeniYilWorkloadsGuncelleme;
@@ -31,7 +33,6 @@ use App\Providers\VeterinerEvrakDurumularıKontrolu;
 use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
-use App\Providers\WorkloadsService;
 
 class EvrakController extends Controller
 {
@@ -89,31 +90,31 @@ class EvrakController extends Controller
         $type = end($type);
 
         if ($type == "EvrakIthalat") {
-            $data['evrak'] = EvrakIthalat::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakIthalat::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakTransit") {
-            $data['evrak'] = EvrakTransit::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakTransit::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoGiris") {
-            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoGiris::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
-            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user','kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVarisDis") {
-            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user','kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
-            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'veteriner.user',  'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoSertifika::with(['urun','kaydeden', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoCikis") {
-            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvan") {
-            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvan::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvanGemi") {
-            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user','kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 
@@ -584,6 +585,7 @@ class EvrakController extends Controller
                     $yeni_evrak->sevkUlke = $formData[$i]["sevkUlke"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -652,6 +654,7 @@ class EvrakController extends Controller
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -713,6 +716,7 @@ class EvrakController extends Controller
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
 
 
                     // yeni bir antrepo girilmiş ise bunu db ekle
@@ -790,6 +794,7 @@ class EvrakController extends Controller
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
                     $yeni_evrak->urunlerinBulunduguAntrepo = $formData[$i]["urunlerinBulunduguAntrepo"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
                     // yeni bir antrepo girilmiş ise bunu db ekle
@@ -1000,6 +1005,7 @@ class EvrakController extends Controller
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
 
 
                     // yeni bir antrepo girilmiş ise bunu db ekle
@@ -1124,6 +1130,7 @@ class EvrakController extends Controller
                     $yeni_evrak->aracPlaka = $formData[$i]["aracPlaka"];
                     $yeni_evrak->usks_id = $usks->id;   // Bulunan usks'nin id'sini tutmak için düzenleme sırasında
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
 
@@ -1164,6 +1171,7 @@ class EvrakController extends Controller
                     $yeni_evrak->orjinUlke = $formData[$i]["orjinUlke"];
                     $yeni_evrak->girisGumruk = $formData[$i]["girisGumruk"];
                     $yeni_evrak->cikisGumruk = $formData[$i]["cıkısGumruk"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -1217,6 +1225,7 @@ class EvrakController extends Controller
                     $yeni_evrak->hayvan_sayisi = $formData[$i]["hayvan_sayisi"];
                     $yeni_evrak->start_date = Carbon::createFromFormat('m/d/Y', $formData[$i]["start_date"]);
                     $yeni_evrak->day_count = (int)$formData[$i]["day_count"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
                     $yeni_evrak->save();
 
                     // İlişkili modelleri bağlama
@@ -1266,6 +1275,7 @@ class EvrakController extends Controller
                     $yeni_evrak->urunAdi = $formData[$i]["urunAdi"];
                     $yeni_evrak->gtipNo = $formData[$i]["gtipNo"];
                     $yeni_evrak->urunKG = $formData[$i]["urunKG"];
+                    $yeni_evrak->kaydeden_kullanici_id = Auth::id();
 
 
                     // yeni bir antrepo girilmiş ise bunu db ekle

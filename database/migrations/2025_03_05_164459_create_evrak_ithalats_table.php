@@ -21,12 +21,14 @@ return new class extends Migration
             $table->string('vekaletFirmaKisiAdi');  // firma tablosundan
             $table->string('urunAdi');
             $table->json('gtipNo');
-            $table->decimal('urunKG',10,3); // artık girilen miktar 1111111.111 şeklinde girilebilir
+            $table->decimal('urunKG', 10, 3); // artık girilen miktar 1111111.111 şeklinde girilebilir
             $table->string('sevkUlke');
             $table->string('orjinUlke');
             $table->string('girisGumruk');
             $table->integer('difficulty_coefficient')->default(20);
             $table->boolean('is_numuneli')->default(0);
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
+
 
             $table->timestamps();
         });

@@ -16,6 +16,10 @@ class EvrakCanliHayvan extends Model
         return "Canlı Hayvan";
     }
 
+    public function kaydeden(){
+        return $this->belongsTo(User::class,'kaydeden_kullanici_id');
+    }
+
     public function setUrun(Urun $urun)
     {
         // Önce eski ürünü siliyoruz

@@ -236,6 +236,11 @@
                                         @endif
 
                                         <tr>
+                                            <th>Kaydı Yapan Kişi Adı:</th>
+                                            <td>{{ $evrak->kaydeden->name }}</td>
+                                        </tr>
+
+                                        <tr>
                                             <th>Veteriner Hekim Adı:</th>
                                             <td>{{ $evrak->veteriner->user->name }}</td>
                                         </tr>

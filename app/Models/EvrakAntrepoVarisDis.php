@@ -16,6 +16,10 @@ class EvrakAntrepoVarisDis extends Model
         'gtipNo' => 'array',
     ];
 
+    public function kaydeden(){
+        return $this->belongsTo(User::class,'kaydeden_kullanici_id');
+    }
+
     public function evrak_adi()
     {
         return "Antrepo Varış(DIŞ)";

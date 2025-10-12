@@ -17,6 +17,10 @@ class EvrakAntrepoCikis extends Model
         return "Antrepo Çıkış";
     }
 
+    public function kaydeden(){
+        return $this->belongsTo(User::class,'kaydeden_kullanici_id');
+    }
+
     public function getUsks()
     {
         $usks = UsksNo::find($this->usks_id);

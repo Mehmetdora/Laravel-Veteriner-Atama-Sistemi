@@ -27,6 +27,7 @@ return new class extends Migration
             // Eğer antrepo silinirse antrepo ile ilişkili tüm evraklar da silinmiş olacak
             $table->foreignId('giris_antrepo_id')->constrained('giris_antrepos')->onDelete('cascade');
             $table->integer('difficulty_coefficient')->default(5);
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
             $table->timestamps();
         });

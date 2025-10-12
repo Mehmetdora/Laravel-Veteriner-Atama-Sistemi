@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('hayvan_sayisi');
             $table->date('start_date');
             $table->integer('day_count');
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
             $table->timestamps();
         });

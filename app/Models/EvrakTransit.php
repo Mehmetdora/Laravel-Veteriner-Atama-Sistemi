@@ -29,6 +29,11 @@ class EvrakTransit extends Model
         return $this->morphOne(UserEvrak::class, 'evrak');
     }
 
+    public function kaydeden()
+    {
+        return $this->belongsTo(User::class, 'kaydeden_kullanici_id');
+    }
+
     public function evrak_durumu()
     {
         return $this->morphOne(EvrakDurum::class, 'evrak');

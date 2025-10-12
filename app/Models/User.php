@@ -58,6 +58,7 @@ class User extends Authenticatable
         return $this->hasMany(UserEvrak::class, 'user_id');
     }
 
+
     public function izins()
     {
         return $this->belongsToMany(Izin::class, 'user_izin')->withPivot('startDate', 'endDate')
@@ -78,6 +79,44 @@ class User extends Authenticatable
     {
         return $this->hasMany(WorkLoad::class, 'vet_id');
     }
+
+    public function kaydi_yapilan_ithalat_evraklari()
+    {
+        return $this->hasMany(EvrakIthalat::class, 'id');
+    }
+    public function kaydi_yapilan_transit_evraklari()
+    {
+        return $this->hasMany(EvrakTransit::class, 'id');
+    }
+    public function kaydi_yapilan_giris_evraklari()
+    {
+        return $this->hasMany(EvrakAntrepoGiris::class, 'id');
+    }
+    public function kaydi_yapilan_varis_evraklari()
+    {
+        return $this->hasMany(EvrakAntrepoVaris::class, 'id');
+    }
+    public function kaydi_yapilan_varis_dis_evraklari()
+    {
+        return $this->hasMany(EvrakAntrepoVarisDis::class, 'id');
+    }
+    public function kaydi_yapilan_sertifika_evraklari()
+    {
+        return $this->hasMany(EvrakAntrepoSertifika::class, 'id');
+    }
+    public function kaydi_yapilan_cikis_evraklari()
+    {
+        return $this->hasMany(EvrakAntrepoCikis::class, 'id');
+    }
+    public function kaydi_yapilan_canli_h_evraklari()
+    {
+        return $this->hasMany(EvrakCanliHayvan::class, 'id');
+    }
+    public function kaydi_yapilan_canli_h_gemi_evraklari()
+    {
+        return $this->hasMany(EvrakCanliHayvanGemi::class, 'id');
+    }
+
 
     public function unread_evraks_count()
     {

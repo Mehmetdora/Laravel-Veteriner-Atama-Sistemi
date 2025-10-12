@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal('urunKG',10,3);
             $table->string('urunlerinBulunduguAntrepo');
             $table->integer('difficulty_coefficient')->default(1);
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
 
             $table->timestamps();

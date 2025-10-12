@@ -18,7 +18,10 @@ class EvrakAntrepoVaris extends Model
         return "Antrepo Varış";
     }
 
-
+    public function kaydeden()
+    {
+        return $this->belongsTo(User::class, 'kaydeden_kullanici_id');
+    }
 
     public function veteriner()
     {

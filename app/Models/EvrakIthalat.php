@@ -16,7 +16,6 @@ class EvrakIthalat extends Model
 
     public function evrak_adi()
     {
-
         return $this->is_numuneli ? "Numuneli İthalat" : 'İthalat';
     }
 
@@ -34,6 +33,9 @@ class EvrakIthalat extends Model
         return $this->hasMany(AracPlakaKg::class, 'evrak_ithalat_id');
     }
 
+    public function kaydeden(){
+        return $this->belongsTo(User::class,'kaydeden_kullanici_id');
+    }
 
 
 

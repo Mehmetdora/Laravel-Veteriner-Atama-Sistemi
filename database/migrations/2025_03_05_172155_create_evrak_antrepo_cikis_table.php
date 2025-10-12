@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('cikisGumruk');
             $table->integer('usks_id');
             $table->integer('difficulty_coefficient')->default(5);
+            $table->foreignId('kaydeden_kullanici_id')->references('id')->on('users');
 
             $table->timestamps();
         });
