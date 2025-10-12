@@ -10,6 +10,7 @@ class EvrakAntrepoVaris extends Model
 
     protected $casts = [
         'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+        'gtipNo' => 'array',
     ];
 
     public function evrak_adi()

@@ -6,7 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class EvrakCanliHayvan extends Model
 {
-    public function evrak_adi(){
+
+    protected $casts = [
+        'gtipNo' => 'array', // gtip no alanının json -> array dönüşümü için
+    ];
+
+    public function evrak_adi()
+    {
         return "Canlı Hayvan";
     }
 

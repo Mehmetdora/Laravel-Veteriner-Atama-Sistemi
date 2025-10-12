@@ -4614,6 +4614,7 @@
             if (result && result.saglik_sertifikalari) {
                 const sertifika = result;
                 const saglik_sertifikalari = result.saglik_sertifikalari;
+                const gtip_list = result.gtipNo;
                 on_izleme_ant_sertifika = result;
 
 
@@ -4636,6 +4637,14 @@
                         </li>
                     `;
                 });
+
+
+                let gtip_list_string = '';
+                gtip_list.forEach(gtip => {
+                    gtip_list_string += `<li style="list-style-position: inside">${ gtip }
+                                                            </li>`;
+                });
+
 
                 let div = document.createElement("div");
                 div.style.display = "block";
@@ -4685,7 +4694,11 @@
                                     </tr>
                                     <tr>
                                         <th>G.T.İ.P. No İlk 4 Rakamı:</th>
-                                        <td>${sertifika.gtipNo}</td>
+                                        <td>
+                                            <ul id="dataList" class="list">
+                                                ${gtip_list_string}
+                                            </ul>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th>Ürünün KG Cinsinden Net Miktarı:</th>
@@ -4758,7 +4771,8 @@
             let firma_kisi_adi = document.querySelector(`[name="vekaletFirmaKisiAdi_${currentFormIndex}"]`);
             let urun_adi = document.querySelector(`[name="urunAdi_${currentFormIndex}"]`);
             let urun_kategori_id = document.querySelector(`#urun_kategori_id_${currentFormIndex}`);
-            let gtipNo = document.querySelector(`[name="gtipNo_${currentFormIndex}"]`);
+            let gtip_list = document.querySelector(`#gtip_list_${currentFormIndex}`);
+            let gtip_json_data = document.querySelector(`#gtip_json_data_${currentFormIndex}`);
             let net_miktar = document.querySelector(`#net_miktar_${currentFormIndex}`);
             let sevkUlke = document.querySelector(`[name="sevkUlke_${currentFormIndex}"]`);
             let orjinUlke = document.querySelector(`[name="orjinUlke_${currentFormIndex}"]`);
@@ -4766,12 +4780,32 @@
             let cikis_g_select = document.querySelector(`#cikis_g_select_${currentFormIndex}`);
 
 
+
             if (siraNo) siraNo.value = on_izleme_ant_sertifika.evrakKayitNo;
             if (vgb) vgb.value = on_izleme_ant_sertifika.vgbNo;
             if (firma_kisi_adi) firma_kisi_adi.value = on_izleme_ant_sertifika.vekaletFirmaKisiAdi;
             if (urun_adi) urun_adi.value = on_izleme_ant_sertifika.urunAdi;
             if (urun_kategori_id) urun_kategori_id.value = on_izleme_ant_sertifika.urun?.[0]?.id || "";
-            if (gtipNo) gtipNo.value = on_izleme_ant_sertifika.gtipNo;
+            if (gtip_list) {
+                let gtip_array = on_izleme_ant_sertifika.gtipNo;
+
+                gtip_array.forEach(gtip => {
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `${gtip} <button type = "button" class="delete-btn" > ✖️ </button>`;
+
+                    listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                        gtip_array = gtip_array.filter(item => item !== gtip);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtip_array);
+                    });
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtip_array);
+                });
+
+
+
+            }
             if (net_miktar) net_miktar.value = formatNumberValue(on_izleme_ant_sertifika.urunKG);
             //if (sevkUlke) sevkUlke.value = on_izleme_ant_sertifika.saglik_sertifikalari?.[0]?.id || "";
             if (orjinUlke) orjinUlke.value = on_izleme_ant_sertifika.orjinUlke;

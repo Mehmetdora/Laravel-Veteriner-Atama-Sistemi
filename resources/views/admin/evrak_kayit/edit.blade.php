@@ -182,10 +182,31 @@
                                             </select>
                                         </div>
 
+
+
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -381,8 +402,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -587,8 +627,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -770,8 +829,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -933,8 +1011,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -1080,8 +1177,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -1199,7 +1315,8 @@
 
                                             <ul id="dataList" class="list">
                                                 @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
-                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                    <li class="setted-sertifika"
+                                                        data-ssn="{{ $saglik_sertifika->ssn }}"
                                                         data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
                                                         {{ $saglik_sertifika->ssn }} -
                                                         {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
@@ -1229,8 +1346,10 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                            <label for="urun_kategori_id" class="control-label">Ürünün
+                                                Kategorisi</label>
+                                            <select class="form-control"
+                                                data-id="{{ $evrak->urun->first()->id ?? -1 }}"
                                                 name="urun_kategori_id" id="urun_kategori_id" required>
                                                 @if (isset($uruns))
                                                     @if (isset($evrak->urun->first()->id))
@@ -1250,8 +1369,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input"
+                                                    class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -1428,8 +1566,27 @@
 
                                         <div class="form-group">
                                             <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
-                                            <input type="number" name="gtipNo" class="form-control"
-                                                value="{{ $evrak->gtipNo }}" required />
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input"
+                                                    class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
                                         </div>
 
                                         <div class="form-group">
@@ -1633,8 +1790,72 @@
 
     @if ($evrak_type == 'EvrakIthalat')
         <script>
-            let submit_btn = document.getElementById("submit-ithalat");
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
 
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-ithalat");
 
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
             var data_id2 = urun_kategori_id.getAttribute('data-id');
@@ -1673,8 +1894,72 @@
         </script>
     @elseif ($evrak_type == 'EvrakTransit')
         <script>
-            let submit_btn = document.getElementById('submit-transit');
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
 
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById('submit-transit');
 
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
             var data_id2 = urun_kategori_id.getAttribute('data-id');
@@ -1719,6 +2004,70 @@
         </script>
     @elseif ($evrak_type == 'EvrakCanliHayvan')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
             var data_id2 = urun_kategori_id.getAttribute('data-id');
             var options2 = urun_kategori_id.childNodes;
@@ -1746,6 +2095,71 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoGiris')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
             let submit_btn = document.getElementById("submit-giris");
 
             const urun_kategori_id = document.querySelector('#urun_kategori_id');
@@ -1775,6 +2189,71 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVaris')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
             let submit_btn = document.getElementById("submit-varis");
             let net_miktar_input = document.getElementById("net_miktar");
 
@@ -1794,6 +2273,71 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
             let submit_btn = document.getElementById("submit-varis-dis");
             let net_miktar_input = document.getElementById("net_miktar");
 
@@ -1813,6 +2357,71 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoSertifika')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
             let submit_btn = document.getElementById('submit-sertifika');
             let net_miktar_input = document.getElementById("net_miktar");
 
@@ -1843,6 +2452,71 @@
         </script>
     @elseif ($evrak_type == 'EvrakAntrepoCikis')
         <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
             let submit_btn = document.getElementById("submit-cikis");
 
 

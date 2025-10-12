@@ -82,7 +82,16 @@
                                                     <td>{{ $evrak->evrakKayitNo ?? '---' }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi ?? '---' }}</td>
                                                     <td>{{ $evrak->urunAdi ?? '---' }}</td>
-                                                    <td>{{ $evrak->gtipNo ?? '---' }}</td>
+                                                    <td class="text-center">
+                                                        @if ($evrak->gtipNo)
+                                                            @foreach ($evrak->gtipNo as $gtip)
+                                                                <li style="list-style-position: inside">{{ $gtip }}
+                                                                </li>
+                                                            @endforeach
+                                                        @else
+                                                            ---
+                                                        @endif
+                                                    </td>
                                                     <td>{{ $evrak->urunKG != 0.0 ? number_format($evrak->urunKG ?? 0, 3, ',', '.') : '---' }}
                                                     </td>
                                                     <td>{{ $evrak->usks?->usks_no ?? '---' }}</td>

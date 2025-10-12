@@ -142,7 +142,16 @@
                                         @if ($evrak->gtipNo)
                                             <tr>
                                                 <th>G.T.İ.P. No İlk 4 Rakamı:</th>
-                                                <td>{{ $evrak->gtipNo }}</td>
+                                                <td>
+                                                    @if ($evrak->gtipNo)
+                                                        @foreach ($evrak->gtipNo as $gtip)
+                                                            <li style="list-style-position: inside">{{ $gtip }}
+                                                            </li>
+                                                        @endforeach
+                                                    @else
+                                                        ---
+                                                    @endif
+                                                </td>
                                             </tr>
                                         @endif
 

@@ -10,9 +10,12 @@ class EvrakIthalat extends Model
 
     protected $casts = [
         'urunKG' => 'decimal:3', // 3 → virgülden sonra kaç basamak tutulsun
+        'gtipNo' => 'array', // gtip no alanının json -> array dönüşümü için
+
     ];
 
-    public function evrak_adi(){
+    public function evrak_adi()
+    {
 
         return $this->is_numuneli ? "Numuneli İthalat" : 'İthalat';
     }
@@ -26,8 +29,9 @@ class EvrakIthalat extends Model
         $this->urun()->attach($urun->id);
     }
 
-    public function aracPlakaKgs(){
-        return $this->hasMany(AracPlakaKg::class,'evrak_ithalat_id');
+    public function aracPlakaKgs()
+    {
+        return $this->hasMany(AracPlakaKg::class, 'evrak_ithalat_id');
     }
 
 

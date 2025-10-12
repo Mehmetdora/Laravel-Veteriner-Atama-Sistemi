@@ -9,6 +9,7 @@ class EvrakTransit extends Model
 
     protected $casts = [
         'urunKG' => 'decimal:3', // gelen verinin her zaman virgülden sonra 3 basamağı tutuldun,decimal
+        'gtipNo' => 'array', // gtip no alanının json -> array dönüşümü için
     ];
     public function evrak_adi()
     {
