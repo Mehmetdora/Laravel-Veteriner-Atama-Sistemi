@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\EvrakTur;
 use App\Models\GirisAntrepo;
 use App\Models\Izin;
+use App\Models\SystemSetting;
 use App\Models\Urun;
 use App\Models\User;
 use App\Models\Veteriner;
@@ -136,5 +137,13 @@ class RoleSeeder extends Seeder
         foreach ($permissions as $permission) {
             Izin::create(['name' => $permission]);
         }
+
+
+        // system settings
+
+        SystemSetting::create([
+            'key' => 'backup_frequency',
+            'value' => 'weekly'
+        ]);
     }
 }

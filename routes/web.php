@@ -3,6 +3,7 @@
 
 
 use App\Http\Controllers\admin\AntrepoStokTakipController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;
 use App\Http\Controllers\EvrakController;
@@ -67,6 +68,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::controller(StokTakipController::class)->group(function () {
 
         Route::get('/admin/stok-takip/liste', 'index')->name('admin.stok_takip.index');
+    });
+
+    // Admin sistem ayarları
+    Route::controller(SettingsController::class)->group(function () {
+
+        Route::get('/admin/sistem-ayarlari/liste', 'index')->name('admin.system_settings.index');
+        Route::get('/admin/sistem-ayarlari/duzenle', 'edit')->name('admin.system_settings.edit');
+        Route::post('/admin/sistem-ayarlari/duzenlendi', 'edited')->name('admin.system_settings.edited');
     });
 
     // Antrepo Stok Takip İşlemleri

@@ -111,6 +111,13 @@
                         </li>
                     </ul>
                 </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('admin.system_settings.index') }}" class="nav-link">
+                        <i class="far fa-wrench"></i>
+                        <p>Sistem Ayarları</p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->
