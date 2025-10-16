@@ -38,6 +38,35 @@
                                             <td>{{ $backup_description }}</td>
                                         </tr>
 
+                                        <tr>
+                                            <th style="width:30%">Yedeklemelerin Listesi:</th>
+                                            <td>
+                                                <table id="backupTable" class="table table-striped table-bordered"
+                                                    style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Dosya Adı</th>
+                                                            <th>İşlem</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($zipFiles as $file)
+                                                            <tr>
+                                                                <td>{{ $file['name'] }}</td>
+                                                                <td>
+                                                                    <a href="{{ route('admin.system_settings.backups.download', $file['name']) }}"
+                                                                        class="btn btn-primary">
+                                                                        <i class="fa fa-download"></i> İndir -
+                                                                        {{ $file['size'] }}
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+
                                     </tbody>
                                 </table>
                             </div>
@@ -54,4 +83,17 @@
 
 
 @section('admin.customJS')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#backupTable').DataTable({
+                "scrollY": "200px", // tablo yüksekliği, kaydırma için
+                "scrollCollapse": true,
+                "paging": false, // sayfalama kapalı
+                "searching": true // arama kutusu açık
+            });
+        });
+    </script>
 @endsection

@@ -42,11 +42,12 @@ class MemurIzinController extends Controller
 
 
 
+
         try {
             [$start, $end] = explode(' - ', $request->izin_tarihleri); // split the string into start and end dates
             // create DateTime objects from the strings
-            $dateStart = DateTime::createFromFormat('d/m/Y H:i A', $start)->format('Y-m-d H:i:s');
-            $dateEnd = DateTime::createFromFormat('d/m/Y H:i A', $end)->format('Y-m-d H:i:s');
+            $dateStart = DateTime::createFromFormat('d/m/Y H:i', $start)->format('Y-m-d H:i:s');
+            $dateEnd = DateTime::createFromFormat('d/m/Y H:i', $end)->format('Y-m-d H:i:s');
 
 
             $izin = null;

@@ -76,6 +76,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/admin/sistem-ayarlari/liste', 'index')->name('admin.system_settings.index');
         Route::get('/admin/sistem-ayarlari/duzenle', 'edit')->name('admin.system_settings.edit');
         Route::post('/admin/sistem-ayarlari/duzenlendi', 'edited')->name('admin.system_settings.edited');
+
+        Route::get('/admin/sistem-ayarlari/yedekleme/{file}/indir', 'download')->name('admin.system_settings.backups.download');
     });
 
     // Antrepo Stok Takip İşlemleri

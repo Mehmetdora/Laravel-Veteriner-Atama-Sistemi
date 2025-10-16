@@ -7,10 +7,22 @@ use App\Models\SystemSetting;
 
 use Illuminate\Validation\Rule;
 use function Laravel\Prompts\text;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class SettingsController extends Controller
 {
+
+
+    private function formatBytes($bytes, $decimals = 2)
+    {
+        $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        if ($bytes == 0) return '0 B';
+        $factor = floor(log($bytes, 1024));
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ' ' . $sizes[$factor];
+    }
+
+
     public function index()
     {
 
@@ -33,6 +45,28 @@ class SettingsController extends Controller
 
 
         $data['backup_description'] = $text;
+
+
+
+        $path = storage_path('app/private/Laravel');
+        $files = scandir($path);
+
+        $zipFiles = [];
+
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..' || !str_ends_with($file, '.zip')) continue;
+
+            $fullPath = $path . '/' . $file;
+            $sizeInBytes = filesize($fullPath);
+
+            $zipFiles[] = [
+                'name' => $file,
+                'size' => $this->formatBytes($sizeInBytes),
+            ];
+        }
+
+        $data['zipFiles'] = $zipFiles;
+
 
         return view('admin.system_settings.index', $data);
     }
@@ -84,5 +118,21 @@ class SettingsController extends Controller
 
 
         return redirect()->route('admin.system_settings.index')->with('success', 'Sistem ayarları başarıyla düzenlendi!');
+    }
+
+
+
+
+    public function download($file)
+    {
+
+
+        $path = storage_path('app/private/Laravel/' . $file);
+
+        if (!file_exists($path)) {
+            return redirect()->back()->with('error', 'Dosya bulunamadı.');
+        }
+
+        return response()->download($path);
     }
 }
