@@ -373,10 +373,12 @@ class VeterinerController extends Controller
     {
         $errors = [];
 
+
+
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_ithalats,evrakKayitNo',
+                'siraNo' => 'required|unique:evrak_ithalats,evrakKayitNo,' . $request->id,
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
@@ -414,7 +416,7 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == 'EvrakTransit') {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_transits,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_transits,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
@@ -430,7 +432,7 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'cıkısGumruk' => 'required',
+                'cikisGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
@@ -446,14 +448,14 @@ class VeterinerController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası & Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakAntrepoGiris") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_antrepo_giris,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_antrepo_giris,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'ss_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
@@ -469,7 +471,7 @@ class VeterinerController extends Controller
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
                 'girisGumruk' => 'required',
-                'giris_antrepo_id' => 'required',
+                'varis_antrepo_id' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
@@ -485,14 +487,14 @@ class VeterinerController extends Controller
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'giris_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
+                'varis_antrepo_id.required' => 'Varış Antrepo, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakAntrepoVaris") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_antrepo_varis,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_antrepo_varis,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'oncekiVGBOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -524,7 +526,7 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoSertifika") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_antrepo_sertifikas,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_antrepo_sertifikas,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'vgbNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -561,7 +563,7 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoCikis") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_antrepo_cikis,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_antrepo_cikis,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'usks_no' => 'required',
                 'vekaletFirmaKisiAdi' => 'required',
@@ -576,7 +578,7 @@ class VeterinerController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'aracPlaka' => 'required',
-                'cıkısGumruk' => 'required',
+                'cikisGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
@@ -591,14 +593,14 @@ class VeterinerController extends Controller
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'aracPlaka.required' => 'Araç Plakası veya Konteyner No, alanı eksik!',
-                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
             }
         } elseif ($request->type == "EvrakCanliHayvan") {
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_canli_hayvans,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_canli_hayvans,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'vgbOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -610,7 +612,7 @@ class VeterinerController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
-                'cıkısGumruk' => 'required',
+                'cikisGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
@@ -625,7 +627,7 @@ class VeterinerController extends Controller
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -647,7 +649,7 @@ class VeterinerController extends Controller
             }
         } elseif ($request->type == "EvrakAntrepoVarisDis") {  //Evrak Antrepo Varış(DIŞ)
             $validator = Validator::make($request->all(), [
-                'siraNo' => 'required|unique:evrak_antrepo_varis_dis,evrakKayitNo', // UNIQUE kuralı eklendi
+                'siraNo' => 'required|unique:evrak_antrepo_varis_dis,evrakKayitNo,' . $request->id, // UNIQUE kuralı eklendi
                 'oncekiVGBOnBildirimNo' => 'required',
                 'vetSaglikSertifikasiNo' => 'required',
                 'vetSaglikSertifikasiNo.*.miktar' => ['required', 'numeric', 'max:9999999,999'],
@@ -699,7 +701,7 @@ class VeterinerController extends Controller
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
@@ -827,7 +829,7 @@ class VeterinerController extends Controller
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
@@ -884,7 +886,7 @@ class VeterinerController extends Controller
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
@@ -942,7 +944,7 @@ class VeterinerController extends Controller
                 $evrak->oncekiVGBOnBildirimNo = $request->oncekiVGBOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = $request->urunKG;
                 $evrak->urunlerinBulunduguAntrepo = $request->urunlerinBulunduguAntrepo;
                 $evrak->save();
@@ -1008,7 +1010,7 @@ class VeterinerController extends Controller
                 $evrak->oncekiVGBOnBildirimNo = $request->oncekiVGBOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = $request->urunKG;
 
                 // yeni bir antrepo girilmiş ise bunu db ekle
@@ -1084,7 +1086,7 @@ class VeterinerController extends Controller
                 $evrak->evrakKayitNo = $request->siraNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->vgbNo = $request->vgbNo;
                 $evrak->urunKG = $request->urunKG;
                 $evrak->orjinUlke = $request->orjinUlke;
@@ -1217,7 +1219,7 @@ class VeterinerController extends Controller
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;
@@ -1271,7 +1273,7 @@ class VeterinerController extends Controller
                 $evrak->vgbOnBildirimNo = $request->vgbOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->hayvanSayisi = $request->hayvanSayisi;
                 $evrak->sevkUlke = $request->sevkUlke;
                 $evrak->orjinUlke = $request->orjinUlke;

@@ -105,19 +105,19 @@ class EvrakController extends Controller
             $data['evrak'] = EvrakIthalat::with(['urun', 'aracPlakaKgs', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakTransit") {
-            $data['evrak'] = EvrakTransit::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakTransit::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoGiris") {
-            $data['evrak'] = EvrakAntrepoGiris::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoGiris::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVaris") {
-            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user','kaydeden', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVaris::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoVarisDis") {
-            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user','kaydeden', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoVarisDis::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakAntrepoSertifika") {
-            $data['evrak'] = EvrakAntrepoSertifika::with(['urun','kaydeden', 'veteriner.user',  'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoSertifika::with(['urun', 'kaydeden', 'veteriner.user',  'evrak_durumu'])
                 ->find($evrak_id);
 
             $ss_kalan_array = [];
@@ -132,13 +132,13 @@ class EvrakController extends Controller
 
             $data['ss_kalan_array'] = $ss_kalan_array;
         } else if ($type == "EvrakAntrepoCikis") {
-            $data['evrak'] = EvrakAntrepoCikis::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakAntrepoCikis::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvan") {
-            $data['evrak'] = EvrakCanliHayvan::with(['urun','kaydeden', 'veteriner.user', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvan::with(['urun', 'kaydeden', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
         } else if ($type == "EvrakCanliHayvanGemi") {
-            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user','kaydeden', 'evrak_durumu'])
+            $data['evrak'] = EvrakCanliHayvanGemi::with(['veteriner.user', 'kaydeden', 'evrak_durumu'])
                 ->find($evrak_id);
         }
 
@@ -235,7 +235,7 @@ class EvrakController extends Controller
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
@@ -276,7 +276,7 @@ class EvrakController extends Controller
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
@@ -317,7 +317,7 @@ class EvrakController extends Controller
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
@@ -354,7 +354,7 @@ class EvrakController extends Controller
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
@@ -392,7 +392,7 @@ class EvrakController extends Controller
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
@@ -467,7 +467,7 @@ class EvrakController extends Controller
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
                     'urun_kategori_id.required' => 'Ürünün Kategorisi, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'hayvanSayisi.required' => 'Başvuru Yapılan Hayvan Sayısı(Baş Sayısı), alanı eksik!',
                     'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                     'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
@@ -519,7 +519,7 @@ class EvrakController extends Controller
                     'vetSaglikSertifikasiNo.*.miktar.max' => 'Sağlık Setifikalarının miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol ediniz!',
                     'vekaletFirmaKisiAdi.required' => 'Vekalet Sahibi Firma / Kişi İsmi, alanı eksik!',
                     'urunAdi.required' => 'Ürünün Adı, alanı eksik!',
-                    'gtipNo.required' => 'G.T.İ.P. No İlk 4 Rakamı, alanı eksik!',
+                    'gtipNo.required' => 'G.T.İ.P. No, alanı eksik!',
                     'urunKG.required' => 'Ürünün Kg Cinsinden Net Miktarı, alanı eksik!',
                     'urunKG.max' => 'Ürünün toplam miktarı 9.999.999,999 KG ı geçemez, lütfen değerleri kontrol edinizi!',
                     'urunlerinBulunduguAntrepo.required' => 'Giriş Antrepo, alanı eksik!',
@@ -1685,7 +1685,7 @@ class EvrakController extends Controller
                 'sevkUlke' => 'required',
                 'orjinUlke' => 'required',
                 'girisGumruk' => 'required',
-                'cıkısGumruk' => 'required',
+                'cikisGumruk' => 'required',
             ], [
                 'siraNo.required' => 'Evrak Kayıt No, alanı eksik!',
                 'siraNo.unique' => 'Evrak Kayıt No, alanı benzersiz olmalı !', // UNIQUE hata mesajı eklendi
@@ -1700,7 +1700,7 @@ class EvrakController extends Controller
                 'sevkUlke.required' => 'Sevk Eden Ülke, alanı eksik!',
                 'orjinUlke.required' => 'Orjin Ülke, alanı eksik!',
                 'girisGumruk.required' => 'Giriş Gümrüğü, alanı eksik!',
-                'cıkısGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
+                'cikisGumruk.required' => 'Çıkış Gümrüğü, alanı eksik!',
             ]);
             if ($validator->fails()) {
                 $errors[] = $validator->errors()->all();
@@ -2102,7 +2102,7 @@ class EvrakController extends Controller
                 $evrak->oncekiVGBOnBildirimNo = $request->oncekiVGBOnBildirimNo;
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
-                $evrak->gtipNo = $request->gtipNo;
+                $evrak->gtipNo = json_decode($request->gtipNo);
                 $evrak->urunKG = $request->urunKG;
 
                 // yeni bir antrepo girilmiş ise bunu db ekle
