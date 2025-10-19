@@ -18,9 +18,11 @@
 - Veteriner ve memurların takvim üzerinden izinler ve nöbetlerin eklenebilmesi(izin ve nöbet durumlarına göre evrak atanma kontrolleri yapılır)
 - Evraklarda kullanılan genel verilerin dinamik olması ve admin tarafından düzenlenebilmesi
 - Aynı anda birden fazla evrak kaydı
+- Referans evrak üzerinde ilgili evrak bilgilerinin otomatik doldurulması
 - Sağlık sertifikalarının takibi 
 - Antrepoların stok durumlarının takibi(antrepolara giriş-çıkış yapan malların otomatik stok takibi ile güncellenmesi)
 - Yeni yıla girildiğinde, yeni veteriner eklenmesinde-silinmesinde ve izinlerde veterinerlerin iş yüklerinin güncellenmesi sağlandı
+- Otomatik yedekleme sistemi , yedekleme sürelerinin seçilebilmesi ve yedekleme dosyaların görüntülenebilmesi - indirilebilmesi
 
 ## Yazılımsal Özellikler
 
@@ -33,7 +35,8 @@
 - **Middleware** kullanılarak farklı kullanıcı rollerine özel erişim kontrolleri uygulanmıştır.
 - **Validation** işlemleri hem Controller seviyesinde hemde view sayfalarında sağlanmıştır.
 - **Exception Handling** özelleştirilerek kullanıcı dostu hata mesajları sunulmuş, sistemde oluşan hatalar loglanarak geliştirici takibi kolaylaştırılmıştır.
-- Kritik işlemlerde (evrak atama, izin girişi, stok güncelleme vb.) veri tutarlılığını sağlamak amacıyla **database transaction** mekanizması kullanılmış, olası hatalarda işlemler otomatik olarak geri alınmıştır (rollback).
+- **Yedekleme** Olası bir sorun yada kontrol için admin tarafından ayarlanan sürelerde otomatik olarak sistem veritabanı yedeklemesini yapar, yedekeleme dosyaları listelenir ve admin tarafından indirilebilir.
+- Kritik ve uzun süreçli işlemlerde (evrak atama, izin girişi, stok güncelleme vb.) veri tutarlılığını sağlamak amacıyla **database transaction** mekanizması kullanılmış, olası hatalarda işlemler otomatik olarak geri alınmıştır (rollback).
 - Otomatik yük dengeleme ve iş yükü analizlerinde özel **servis algoritmaları** geliştirilmiştir.
 
 
