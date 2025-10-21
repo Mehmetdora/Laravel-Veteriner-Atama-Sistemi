@@ -1044,11 +1044,12 @@ class EvrakController extends Controller
                     // Antrepo sertifika oluşturulduğunda en son kayıtlı usks numarasın güncelleyerek(yıl ve sondakil sayıyı) bu sertifika ile ilişkilendir.
                     $yil = $today->year; // Değişecek kısım
                     // hiç yoksa oluştur
-                    $son_kayitli_usks = UsksNo::latest()?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
+                    $son_kayitli_usks = UsksNo::latest("id")?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
                     $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1); // sondaki numarayı 1 arttırma
                     // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
+
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;
                     $usks->miktar = $yeni_evrak->urunKG;
