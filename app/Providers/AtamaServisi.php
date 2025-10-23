@@ -58,7 +58,7 @@ class AtamaServisi
         // 1. Aktif Veterinerleri Alma
         $veterinerler = $this->aktifVeterinerleriGetir($now);
         if (empty($veterinerler)) {
-            throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+            throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen nöbetçi veteriner hekim olduğundan ve müsait olduklarından emin olduktan sonra tekrar deneyiniz!");
         }
 
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
@@ -70,7 +70,7 @@ class AtamaServisi
 
 
         // Elinde işlemde evrak olmayan, işi olmayan veterinerleri bulma
-        $işlemde_olmayan_vets = [];
+        $isi_olmayan_vets = [];
         foreach ($veterinerler as $vet) {
 
             // Veteriner canli hayvan gemide mi kontrolü
@@ -78,20 +78,32 @@ class AtamaServisi
                 continue;   // izinli ise geç
             }
 
-            // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
+            // Veterinerin üzerinde çalışmaya devam ettiği evrak var mı kontrolü
             if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
                 continue;
             }
-            $işlemde_olmayan_vets[] = $vet;
+
+            // gemi işine gitmemiş ve elinde işi olmayan veterinerleri listeye ekle
+            $isi_olmayan_vets[] = $vet;
         }
 
-        if (!empty($işlemde_olmayan_vets)) {    // EĞER MÜSAİT OLAN VETERİNER VAR İSE BUNLAR ARASINDAN SEÇ
-            foreach ($işlemde_olmayan_vets as $vet) {
+        /*
+            İlk amaç telifisi olan veterinerleri bulup onların telafilerini kapatmak,
+            sonrasında normal düzene devam edilecek.
+        */
+
+        if (!empty($isi_olmayan_vets)) {    // EĞER MÜSAİT OLAN VETERİNER VAR İSE BUNLAR ARASINDAN SEÇ
+            foreach ($isi_olmayan_vets as $vet) {
                 $workload = $vet->veterinerinBuYilkiWorkloadi();
                 $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
                 if ($has_telafi) {
 
                     $telafisi_olan_vets[] = $vet;
+
+                    /*
+                    o gün için veterinerin birden fazla telafisi olabilir,
+                    her birinin kalan telafi değeri 0dan büyükse bitmemis_telafiler listesinde topla
+                    */
                     $telafiler = $workload->telafis()->where('tarih', $today)->get();
 
                     foreach ($telafiler as $telafi) {
@@ -276,15 +288,17 @@ class AtamaServisi
     /**
      * Aktif Veterinerleri Getirir
      * - İzinli olmayanlar
-     * - Saat 16'den sonra sadece nöbetçiler
+     * - Saat 15.30'den sonra sadece nöbetçiler
      */
     private function aktifVeterinerleriGetir(Carbon $simdikiZaman)
     {
 
         try {
 
-            // 8. Nöbet Kontrolü (16:00 sonrası)
-            if ($simdikiZaman->hour >= 16) {
+            $kontrol_zamani = $simdikiZaman->copy()->setTime(15, 30, 0);
+
+            // 8. Nöbet Kontrolü (15.30 sonrasında sadece nöbetçi olanlar evrak alacak)
+            if ($simdikiZaman->greaterThan($kontrol_zamani)) {
 
                 $veterinerler = User::role('veteriner')
                     ->where('status', 1)

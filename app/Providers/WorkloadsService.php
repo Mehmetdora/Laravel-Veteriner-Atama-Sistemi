@@ -16,6 +16,10 @@ class WorkloadsService
         $işlemde_workload_count = 0;
 
 
+        /*
+            Veteriner ID ile veterinere ait "işlemde" olan evrakların
+            zorluk katsayıları toplamlarının bulunması
+        */
         if ($veteriner->evraks) {
             foreach ($veteriner->evraks as $evrak) {
                 if ($evrak->evrak->evrak_durumu->evrak_durum === 'İşlemde') {
