@@ -2,6 +2,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Veteriner Atama Sistemi</title>
+    <link rel="shortcut icon" href="{{ asset('bakanlig_logo.jpg') }}" type="image/jpg?">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"

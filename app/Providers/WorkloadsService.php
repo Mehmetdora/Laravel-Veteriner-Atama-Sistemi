@@ -14,8 +14,6 @@ class WorkloadsService
 
         $veteriner = User::with('evraks.evrak.evrak_durumu')->find($vet_id);
         $işlemde_workload_count = 0;
-
-
         /*
             Veteriner ID ile veterinere ait "işlemde" olan evrakların
             zorluk katsayıları toplamlarının bulunması
