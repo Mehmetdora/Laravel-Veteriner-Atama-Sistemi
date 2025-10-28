@@ -35,7 +35,18 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:30%">YEDEKLEME DÖNGÜSÜ:</th>
-                                            <td>{{ $backup_description }}</td>
+                                            <td>
+                                                <div style="display: flex">
+                                                    <div class="backup-time col-md-3">
+                                                        {{ $backup_description }}
+                                                    </div>
+                                                    <div class="col-md-6"></div>
+                                                    <div class="backup-button col-md-3">
+                                                        <button class="btn-primary" data-toggle="modal"
+                                                            data-target="#modal-manuel-backup">Veritabanını Yedekle</button>
+                                                    </div>
+                                                </div>
+                                            </td>
                                         </tr>
 
                                         <tr>
@@ -77,6 +88,30 @@
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
+    </div>
+
+    <div class="modal fade" id="modal-manuel-backup">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Emin Misin?</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Veritabanı Normal Yedekleme Döngüsünden Bağımsız Manuel Olarak Yedeklenecektir.
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                    <a href="{{ route('admin.system_settings.manuel_backup') }}">
+                        <button type="button" class="btn btn-primary">Veritabanını Şimdi Yedekle</button>
+                    </a>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
     </div>
     <!-- /.content-wrapper -->
 @endsection
