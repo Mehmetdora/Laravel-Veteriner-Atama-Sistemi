@@ -78,6 +78,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/sistem-ayarlari/duzenlendi', 'edited')->name('admin.system_settings.edited');
 
         Route::get('/admin/sistem-ayarlari/manual-yedekle', 'manuel_backup')->name('admin.system_settings.manuel_backup');
+        Route::post('/admin/sistem-ayarlari/geri-yukleme', 'restore')->name('admin.system_settings.backups.restore');
 
 
         Route::get('/admin/sistem-ayarlari/yedekleme/{file}/indir', 'download')->name('admin.system_settings.backups.download');

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\SystemSetting;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Backup\BackupFacade as Backup;
 
@@ -144,6 +145,51 @@ class SettingsController extends Controller
         }
     }
 
+
+    public function restore(Request $request)
+    {
+
+
+        $validator = Validator::make($request->all(), [
+            'backup_file' => 'required|file|max:51200', // max 50 MB
+        ], [
+            'backup_file.required' => 'Lütfen bir dosya seçiniz!',
+        ]);
+
+        // Uzantıyı manuel kontrol et
+        if ($request->hasFile('backup_file')) {
+            $extension = $request->file('backup_file')->getClientOriginalExtension();
+            if (strtolower($extension) !== 'sql') {
+                return redirect()->back()->with('error', 'Lütfen .sql uzantılı bir dosya seçiniz!');
+            }
+        }
+
+
+        // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
+        $errors = $validator->errors()->all();
+        if (!empty($errors)) {
+            return redirect()->back()->with('error', $errors);
+        }
+
+
+        $file = $request->file('backup_file');
+        $path = $file->getRealPath();
+
+        // SQL içeriğini oku
+        $sql = file_get_contents($path);
+
+        // PHP limitlerini artırmak (gerekirse)
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
+        try {
+            DB::unprepared($sql);
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Veritabanı geri yükleme başarısız: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('success', 'Veritabanı başarıyla geri yüklendi!');
+    }
 
 
 

@@ -50,6 +50,25 @@
                                         </tr>
 
                                         <tr>
+                                            <th style="width:30%">YEDEK DOSYASI YÜKLE:</th>
+                                            <td>
+                                                <div style="display: flex">
+                                                    <div class="backup-time col-md-3">
+                                                        Yüklenecek olan yedek dosya boyutu 50 MB'ı geçmemeli, eğer 50 MB'dan
+                                                        büyük bir dosya ise
+                                                        yöneticini veya geliştirici ile iletişime geçiniz.
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                    <div class="backup-button col-md-6">
+                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                            data-target="#modal-backup-upload">Yedeklenmiş Veritabanını
+                                                            Yükle</button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
                                             <th style="width:30%">Yedeklemelerin Listesi:</th>
                                             <td>
                                                 <table id="backupTable" class="table table-striped table-bordered"
@@ -89,7 +108,6 @@
         </section>
         <!-- /.content -->
     </div>
-
     <div class="modal fade" id="modal-manuel-backup">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -108,6 +126,45 @@
                         <button type="button" class="btn btn-primary">Veritabanını Şimdi Yedekle</button>
                     </a>
                 </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <div class="modal fade" id="modal-backup-upload">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" action="{{ route('admin.system_settings.backups.restore') }}"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header">
+                        <h4 class="modal-title"><b>Emin Misin?</b></h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Bu işlem sonrasında geri alınamaz. Bu işlem ile yüklenecek olan yedek dosyasının oluşturulduğu
+                        zamandaki
+                        sistemin tüm bilgileri o zamanki bilgiler ile devam edecektir. Buna tüm evraklar, izinler,
+                        kullanıcılar
+                        ve bilgileri... dahildir.
+                        <br>
+                        <b>Lütfen yükleme işlemini yapmadan önce şu an çalışan sistemin bir
+                            yedeğini
+                            alınız!</b>
+                        <br>
+                        <b>Yüklenecek olan dosya uzantısı ".sql" olmalıdır!</b>
+
+                        <hr>
+                        <input id="backup-file-input" name="backup_file" type="file" accept=".sql" draggable="true">
+
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Kapat</button>
+                        <button type="submit" class="btn btn-primary">Veritabanını Geri Yükle</button>
+                    </div>
+                </form>
             </div>
             <!-- /.modal-content -->
         </div>
