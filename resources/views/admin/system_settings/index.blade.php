@@ -58,9 +58,9 @@
                                                         büyük bir dosya ise
                                                         yöneticini veya geliştirici ile iletişime geçiniz.
                                                     </div>
-                                                    <div class="col-md-3"></div>
-                                                    <div class="backup-button col-md-6">
-                                                        <button class="btn btn-primary" data-toggle="modal"
+                                                    <div class="col-md-6"></div>
+                                                    <div class="backup-button col-md-3">
+                                                        <button class="btn-primary" data-toggle="modal"
                                                             data-target="#modal-backup-upload">Yedeklenmiş Veritabanını
                                                             Yükle</button>
                                                     </div>

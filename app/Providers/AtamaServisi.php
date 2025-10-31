@@ -58,11 +58,28 @@ class AtamaServisi
         */
 
         $now = now()->setTimezone('Europe/Istanbul'); // tam saat
+        $total_worklaod = $this->workloadCoefficients[$documentType] * $evraks_count;
+
 
         // 1. Aktif Veterinerleri Alma
         $veterinerler = $this->aktifVeterinerleriGetir($now);
         if ($veterinerler->isEmpty()) {
             throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen nöbetçi veteriner hekim olduğundan ve müsait olduklarından emin olduktan sonra tekrar deneyiniz!");
+        }
+
+
+        // Nöbetçi olan veterinerleri getirme
+        $nobetci_vets = $this->aktifNobetciVeterinerleriGetir($now);
+
+        // Nöbetçilerin de gün içinde evrak alabilmesi için saat kontrolü(12:00)
+        $kontrol_zamani = $now->copy()->setTime(12, 00, 0);
+        if ($now->lessThan($kontrol_zamani)) {
+
+            // eğer gelen toplam evrak workload değeri 10'dan az ise nöbetçi veterinerler de bu evrağı alabilecek,
+            // tabiki kesin olarak bir nöbetçiye atanamayacak. Sadece havuza eklenecekler.
+            if ($total_worklaod <= 10) {
+                $veterinerler = $veterinerler->merge($nobetci_vets)->unique('id');
+            }
         }
 
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
@@ -73,7 +90,8 @@ class AtamaServisi
         $telafisi_olan_vets = [];   // o gün için telafisi olan veterinerler(telafisini bitirmiş de olabilir bitirmemişde)
 
 
-        // Elinde işlemde evrak olmayan, işi olmayan veterinerleri bulma - İLK KONTROL
+        // İLK KONTROL
+        // Bu kontrol ile istenen özel durumlar için veterinerler kontrol edilir. Veya saate göre kontrol edilir.
         $isi_olmayan_vets = [];
         foreach ($veterinerler as $vet) {
 
@@ -292,8 +310,9 @@ class AtamaServisi
 
     /**
      * Aktif Veterinerleri Getirir
-     * - İzinli olmayanlar
-     * - Saat 15.30'den sonra sadece nöbetçiler
+     * - İzinli olmayanlar(gemi ve normal izin)
+     * - Saat 15.30'den sonra ise sadece nöbetçiler, önce ise nöbetçiler hariç.
+     * -
      */
     private function aktifVeterinerleriGetir(Carbon $simdikiZaman)
     {
@@ -325,10 +344,14 @@ class AtamaServisi
                     })->get();
             } else {
                 // 9. Normal Çalışma Saatleri (Tüm aktif ve izinli olmayanlar evrak alacak)
+                // ek olarak artık akşam nöbetçi olanlar gün içinde evrak alamayacak.
 
                 $veterinerler = $veterinerler_query
                     ->whereDoesntHave('izins', $izin_kontrol_closure)
                     ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
+                    ->whereDoesntHave('nobets', function ($sorgu) use ($simdikiZaman) {
+                        $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+                    })
                     ->get();
             }
 
@@ -366,6 +389,66 @@ class AtamaServisi
             return $atanabilir_veterinerler;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage() ?? $hata_mesaji);
+        }
+    }
+
+
+    // Sadece aktif , izinde olmayan ve nöbetçi olan veterinerleri getir.
+    private function aktifNobetciVeterinerleriGetir(Carbon $simdikiZaman)
+    {
+
+        $hata_mesaji = "Nöbetçi veteriner hekimlerinin seçilmesi sırasında bir hata oluştu, lütfen nöbetçi veterinerlerin olduğundan emin olduktan sonra tekrar deneyiniz!";
+
+        try {
+            $veterinerler_query = User::role('veteriner')->where('status', 1);
+
+            // İzin (normal ve gemi) kontrolü için temel sorgu parçası
+            $izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+                $query->where('startDate', '<=', $simdikiZaman)
+                    ->where('endDate', '>=', $simdikiZaman);
+            };
+            $gemi_izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+                $query->where('start_date', '<=', $simdikiZaman)
+                    ->where('end_date', '>=', $simdikiZaman);
+            };
+
+            $veterinerler = $veterinerler_query
+                ->whereDoesntHave('izins', $izin_kontrol_closure)
+                ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
+                ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
+                    $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+                })->get();
+
+
+
+            // --- FİLTRELEME : İŞLEMDE EVRAK KONTROLÜ ---
+            // Eğer veterinerin elinde "işlemde" durumunda evrak var ise o veteriner filtreleniyor
+
+            $veterinerler->load(['evraks.evrak.evrak_durumu']);
+
+            $atanabilir_veterinerler = $veterinerler->filter(function ($veteriner) {
+
+                // Veterinerin 'İşlemde' evrağı olup olmadığını kontrol et.
+                if ($veteriner->evraks) {
+                    $isi_var_mi = $veteriner->evraks->contains(
+                        fn($data) =>
+                        $data->evrak &&
+                            $data->evrak->evrak_durumu &&
+                            $data->evrak->evrak_durumu->evrak_durum === 'İşlemde'
+                    );
+
+                    // Sadece işi OLMAYANLARı (yani $isi_var_mi false olanları) tut
+                    return !$isi_var_mi;
+                }
+
+                // Evrağı olmayanlar doğal olarak işi yok sayılır ve tutulur.
+                return true;
+            });
+
+            // Atanmaya hazır, izinde olmayan, nöbetçi olan, "İşlemde" evrağı olmayan veteriner listesini geri dön
+            return $atanabilir_veterinerler;
+        } catch (\Exception $e) {
+            throw new \Exception($hata_mesaji);
         }
     }
 }
