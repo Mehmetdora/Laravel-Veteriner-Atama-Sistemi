@@ -1104,7 +1104,8 @@
                                         </div>
                                     </form>
                                 @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
-                                    <form method="post" action="{{ route('admin.evrak.edited') }}">
+                                    <form method="post"
+                                        action="{{ route('admin.veteriners.veteriner.evrak.edited') }}">
                                         @csrf
                                         <input type="hidden" name="id" value="{{ $evrak->id }}">
                                         <input type="hidden" name="type" value="{{ $evrak_type }}">

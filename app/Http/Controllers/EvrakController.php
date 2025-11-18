@@ -1447,8 +1447,6 @@ class EvrakController extends Controller
     {
         $errors = [];
 
-
-
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
@@ -1749,18 +1747,19 @@ class EvrakController extends Controller
             }
         }
 
-
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
         if (!empty($errors)) {
             return redirect()->back()->withErrors($errors)->with('error', $errors);
         }
 
-        //dd($request->gtipNo);
-
-
         DB::beginTransaction();
 
         try {
+
+
+            /**
+             * Gelen urunKG değerleri zaten php-decimal e dönüştürülmüş olarak geliyor, format ayarına ihtiyaç yok
+             */
 
             if ($request->type == "EvrakIthalat") {
 

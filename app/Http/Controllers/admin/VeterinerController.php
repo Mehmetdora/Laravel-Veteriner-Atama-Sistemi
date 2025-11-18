@@ -373,9 +373,6 @@ class VeterinerController extends Controller
     {
         $errors = [];
 
-
-
-
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
@@ -678,8 +675,6 @@ class VeterinerController extends Controller
 
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
         if (!empty($errors)) {
-
-            dd($errors);
             return redirect()->back()->with('error', $errors);
         }
 
@@ -690,6 +685,9 @@ class VeterinerController extends Controller
 
             if ($request->type == "EvrakIthalat") {
 
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
 
                 $evrak = EvrakIthalat::find($request->input('id'));
                 $old_is_numuneli = $evrak->is_numuneli;
@@ -820,6 +818,11 @@ class VeterinerController extends Controller
                 $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->save();
             } elseif ($request->type == "EvrakTransit") {
+
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
+
                 $evrak = EvrakTransit::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
@@ -877,6 +880,11 @@ class VeterinerController extends Controller
                 $sertifika->kalan_miktar = (int)str_replace('.', '', $request->urunKG);
                 $sertifika->save();
             } elseif ($request->type == "EvrakAntrepoGiris") {
+
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
+
                 $evrak = EvrakAntrepoGiris::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
@@ -935,6 +943,10 @@ class VeterinerController extends Controller
                 $sertifika->save();
             } elseif ($request->type == "EvrakAntrepoVaris") {
 
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
+
                 $evrak = EvrakAntrepoVaris::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
@@ -942,7 +954,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = json_decode($request->gtipNo);
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
                 $evrak->urunlerinBulunduguAntrepo = $request->urunlerinBulunduguAntrepo;
                 $evrak->save();
 
@@ -1001,6 +1013,11 @@ class VeterinerController extends Controller
                 }
             } elseif ($request->type == "EvrakAntrepoVarisDis") {  //Evrak Antrepo Varış Dış
 
+
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
+
                 $evrak = EvrakAntrepoVarisDis::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
@@ -1008,7 +1025,7 @@ class VeterinerController extends Controller
                 $evrak->vekaletFirmaKisiAdi = $request->vekaletFirmaKisiAdi;
                 $evrak->urunAdi = $request->urunAdi;
                 $evrak->gtipNo = json_decode($request->gtipNo);
-                $evrak->urunKG = $request->urunKG;
+                $evrak->urunKG = (int)str_replace('.', '', $request->urunKG);
 
                 // yeni bir antrepo girilmiş ise bunu db ekle
                 $gelen_antrepo = GirisAntrepo::where('name', $request->urunlerinBulunduguAntrepo)->first();
@@ -1076,6 +1093,10 @@ class VeterinerController extends Controller
                 }
             } elseif ($request->type == "EvrakAntrepoSertifika") {
 
+
+                /**
+                 * urunKG değeri php-decimal olarak geliyor zaten, convert etmeye gerek yok
+                 */
 
                 $sertifikalar = json_decode($request->vetSaglikSertifikasiNo) ?? [];
 
@@ -1210,6 +1231,12 @@ class VeterinerController extends Controller
                 $evrak_durum->evrak_durum = $request->evrak_durum;
                 $evrak->evrak_durumu()->save($evrak_durum);
             } elseif ($request->type == "EvrakAntrepoCikis") {
+
+
+                /**
+                 * urunKG değeri php-decimal olarak gelmiyor, convert edilmeli
+                 */
+
                 $evrak = EvrakAntrepoCikis::find($request->input('id'));
 
                 $evrak->evrakKayitNo = $request->siraNo;
