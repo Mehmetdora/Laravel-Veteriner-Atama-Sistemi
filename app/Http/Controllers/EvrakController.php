@@ -1499,7 +1499,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -1538,7 +1537,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -1577,7 +1575,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'urunlerinBulunduguAntrepo' => 'required',
@@ -1610,7 +1607,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'orjinUlke' => 'required',
@@ -1646,7 +1642,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -1732,7 +1727,6 @@ class EvrakController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'urunlerinBulunduguAntrepo' => 'required',

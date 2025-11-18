@@ -9,6 +9,12 @@ class OrtalamaGunlukWorkloadDegeriBulma
 
 
 
+    /*
+     * Son 5 hafta için günü teker teker dönülür,
+     * Her gün için bir totalworkload kaydı var ise array e eklenir,
+     * sonra bu 5 değerin ortalaması dönülüyor.
+     * Eğer sistem ilk defa başlatılıyorsa ortalama değeri olarak belirlenen bir sayı(50) dönülüyor.
+     */
     public function ortalamaWorkloadHesapla()
     {
 
@@ -37,6 +43,7 @@ class OrtalamaGunlukWorkloadDegeriBulma
             }
         }
 
+        // sistem ilk sıfırdan başlatıldığında veritabanında hiç kayıtlı gün olmayacağı için belirli bir değer geri dönülüyor.
         if(count($gunler) == 0){
             return 50;
         }

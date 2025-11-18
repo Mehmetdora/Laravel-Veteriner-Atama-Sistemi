@@ -375,6 +375,7 @@ class VeterinerController extends Controller
 
 
 
+
         // Validation
         if ($request->type == "EvrakIthalat") {
             $validator = Validator::make($request->all(), [
@@ -425,7 +426,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -464,7 +464,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -503,7 +502,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'urunlerinBulunduguAntrepo' => 'required',
@@ -536,7 +534,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'orjinUlke' => 'required',
@@ -572,7 +569,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'sevkUlke' => 'required',
@@ -658,7 +654,6 @@ class VeterinerController extends Controller
                 'gtipNo' => 'required',
                 'urunKG' => [
                     'required',
-                    'numeric',
                     'max:9999999.999'
                 ],
                 'urunlerinBulunduguAntrepo' => 'required',
@@ -683,7 +678,9 @@ class VeterinerController extends Controller
 
         // Eğer hata varsa, geriye yönlendir ve tüm hataları göster
         if (!empty($errors)) {
-            return redirect()->back()->withErrors($errors)->with('error', $errors);
+
+            dd($errors);
+            return redirect()->back()->with('error', $errors);
         }
 
 

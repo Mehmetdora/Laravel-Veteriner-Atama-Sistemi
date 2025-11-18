@@ -18,7 +18,7 @@
             {{ session('error') }}
         @else
             @foreach (session('error') as $message)
-                {{ $message }} <br>
+                {{ $message[0] }} <br>
             @endforeach
         @endif
     </div>

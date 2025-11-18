@@ -58,9 +58,13 @@ return [
             'strict' => true,
             'engine' => null,
             'dump' => [
-                'dump_binary_path' => '/Applications/XAMPP/xamppfiles/bin',
+                'dump_binary_path' => PHP_OS_FAMILY === 'Windows'
+                    ? 'C:\\tools\\mysql\\current\\bin'
+                    : '/Applications/XAMPP/xamppfiles/bin',
                 'use_single_transaction' => true,
                 'skip_lock_tables' => true,
+                // MySQL 8.0 için authentication sorunu çözümü
+                'skip_definer' => true,
             ],
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),

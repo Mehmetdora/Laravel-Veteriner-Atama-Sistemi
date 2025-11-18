@@ -124,24 +124,62 @@ class SettingsController extends Controller
     public function manuel_backup()
     {
         try {
-            $timestamp = now()->format('Y-m-d-H-i-s');
-            $zipFileName = "Manuel-Backup-{$timestamp}.zip";
+            // Backup öncesi log
 
-            // Spatie Backup'u çalıştır (DB ve config'de belirtilen disk/dosyalar)
+            Log::info('Manuel yedekleme başlatılıyor...');
+            Log::info('PHP sürümü: ' . PHP_VERSION);
+            Log::info('İşletim sistemi: ' . PHP_OS);
 
-            // Spatie Backup genelde storage/laravel-backups dizinine yedek oluşturur
-            // Eğer özel dizin istiyorsan config/backup.php'de 'backup.destination.disks' ayarını değiştir
+            // Backup dizinini kontrol et
+            $backupPath = storage_path('app/private/Laravel');
+            Log::info('Backup path: ' . $backupPath);
+            Log::info('Dizin var mı: ' . (is_dir($backupPath) ? 'Evet' : 'Hayır'));
+            Log::info('Dizin yazılabilir mi: ' . (is_writable($backupPath) ? 'Evet' : 'Hayır'));
 
-            Artisan::call('backup:run', [
+            // Artisan komutunu çalıştır
+            $exitCode = Artisan::call('backup:run', [
                 '--only-db' => true,
                 '--disable-notifications' => true,
             ]);
-            Log::info('Yedekleme başarıyla oluşturuldu: ' . $zipFileName);
 
-            return redirect()->back()->with('success', 'Yedekleme başarıyla oluşturuldu: ' . $zipFileName);
+            $output = Artisan::output();
+            Log::info('Backup command output: ' . $output);
+            Log::info('Backup command exit code: ' . $exitCode);
+
+            if ($exitCode !== 0) {
+                return redirect()->back()->with('error', 'Yedekleme sırasında komut hatası oluştu. Detay: ' . $output . ' - 001');
+            }
+
+            // Oluşturulan dosyayı bul
+            $backupPath = storage_path('app/private/Laravel');
+
+            // Dizin var mı kontrol et
+            if (!is_dir($backupPath)) {
+                Log::error('Backup dizini bulunamadı: ' . $backupPath);
+                return redirect()->back()->with('error', 'Yedekleme sırasından yedekleme dosyalarının bulunacağı dizin bulunamadı. - 002');
+            }
+
+            $files = scandir($backupPath, SCANDIR_SORT_DESCENDING);
+
+            $latestBackup = null;
+            foreach ($files as $file) {
+                if ($file !== '.' && $file !== '..' && str_ends_with($file, '.zip')) {
+                    $latestBackup = $file;
+                    break;
+                }
+            }
+
+            if ($latestBackup) {
+                Log::info('Yedekleme başarıyla oluşturuldu: ' . $latestBackup);
+                return redirect()->back()->with('success', 'Yedekleme başarıyla oluşturuldu: ' . $latestBackup);
+            } else {
+                Log::warning('Yedekleme komutu çalıştı ama zip dosyası bulunamadı.');
+                return redirect()->back()->with('error', 'Yedekleme dosyası oluşturulamadı. Lütfen log dosyalarını kontrol edin. - 003');
+            }
         } catch (\Exception $e) {
             Log::error('manuel_backup exception: ' . $e->getMessage());
-            return redirect()->back()->with('error', "Hata: " . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', "Hata: " . $e->getMessage() . " - 004");
         }
     }
 
