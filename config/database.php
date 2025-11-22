@@ -59,7 +59,7 @@ return [
             'engine' => null,
             'dump' => [
                 'dump_binary_path' => PHP_OS_FAMILY === 'Windows'
-                    ? 'C:\\tools\\mysql\\current\\bin'
+                    ? 'C:\\xampp\\mysql\\bin'
                     : '/Applications/XAMPP/xamppfiles/bin',
                 'use_single_transaction' => true,
                 'skip_lock_tables' => true,

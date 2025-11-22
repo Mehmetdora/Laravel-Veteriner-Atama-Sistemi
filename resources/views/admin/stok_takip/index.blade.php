@@ -65,7 +65,8 @@
                                             @foreach ($saglik_s as $kayit)
                                                 <tr class="text-center">
                                                     <td>
-                                                        {{ $kayit['saglik_sertifika']->created_at->format('d-m-y') }}
+                                                        {{ $kayit['saglik_sertifika']->created_at->format('d-m-y') }} <br>
+                                                        {{ $kayit['saglik_sertifika']->created_at->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
                                                     </td>
                                                     <td>
                                                         {{ $kayit['saglik_sertifika']->ssn }}

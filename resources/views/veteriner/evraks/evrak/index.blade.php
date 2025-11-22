@@ -57,7 +57,9 @@
                                         </tr>
                                         <tr>
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
-                                            <td>{{ $evrak->created_at->format('d-m-Y') }}</td>
+                                            <td>{{ $evrak->created_at->format('d-m-Y') }} |
+                                                {{ $evrak->created_at->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
+                                            </td>
                                         </tr>
                                         @if ($evrak->hayvan_sayisi)
                                             <tr>
@@ -289,16 +291,19 @@
 
                     <div class="modal-body">
                         <label for="evrak-onay">Evrak Durumu:</label>
-                        <select class="form-control" name="evrak_onay" data-evrak-type="{{ $evrak->getMorphClass() }}"
-                            id="evrak-onay">
+                        <select class="form-control" name="evrak_onay" id="evrak-onay"
+                            data-evrak-type="{{ $evrak->getMorphClass() }}"
+                            data-current-status="{{ $evrak->evrak_durumu->evrak_durum }}">
 
                             <option value="{{ $evrak->evrak_durumu->evrak_durum }}">
-                                {{ $evrak->evrak_durumu->evrak_durum }}</option>
+                                {{ $evrak->evrak_durumu->evrak_durum }}
+                            </option>
                             <hr>
                             <option value="İşlemde">İşlemde </option>
                             <option value="Beklemede">Beklemede </option>
                             <option value="Onaylandı">Onaylandı </option>
                         </select>
+
 
                     </div>
 
@@ -313,6 +318,32 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+
+        <div class="modal fade" id="modal-evrak-onay-confirm">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h4 class="modal-title">Evrakı Onayla</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Evrak durumunu <b>"Onaylandı"</b> olarak değiştirmek üzeresiniz.
+                            Bu işlemin geri alınamayacağını unutmayın. Emin misiniz?
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Vazgeç</button>
+                        <button type="button" class="btn btn-success" onclick="confirmOnayla()">
+                            Evet, Onayla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <!-- /.content-wrapper -->
 @endsection
@@ -320,13 +351,68 @@
 
 @section('veteriner.customJS')
     <script>
+        function getStatusOrder(status) {
+            // Durumların sıradüzeni:
+            // İşlemde (1) -> BEklemede (2) -> Onaylandı (3)
+            switch (status) {
+                case 'İşlemde':
+                    return 1;
+                case 'Beklemede':
+                    return 2;
+                case 'Onaylandı':
+                    return 3;
+                default:
+                    return 0;
+            }
+        }
+
+        // Kullanıcı "Kaydet" butonuna bastığında çalışan fonksiyon
         function onayla() {
-            const evrak_durum = document.getElementById('evrak-onay').value;
-            const evrak_type = document.getElementById('evrak-onay').getAttribute('data-evrak-type');
+            const selectEl = document.getElementById('evrak-onay');
+            const evrak_durum = selectEl.value;
+            const currentStatus = selectEl.getAttribute('data-current-status');
+
+            const currentOrder = getStatusOrder(currentStatus);
+            const newOrder = getStatusOrder(evrak_durum);
+
+            // 1) GERİYE DÖNÜŞÜ ENGELLE
+            if (newOrder < currentOrder) {
+                alert(
+                    'Evrak durumu geri alınamaz. Daha ileri bir duruma geçebilirsiniz ancak önceki bir duruma geri dönemezsiniz.'
+                );
+                selectEl.value = currentStatus;
+                return;
+            }
+
+            // 2) "Onaylandı"ya geçişte emin misiniz modalı
+            if (evrak_durum === 'Onaylandı' && evrak_durum !== currentStatus) {
+                $('#modal-evrak-onay-confirm').modal('show');
+                return;
+            }
+
+            // 3) Diğer durumlarda direkt güncelle
+            durumGuncelle(evrak_durum);
+        }
+
+        // Confirm modalındaki "Evet, Onayla" butonu
+        function confirmOnayla() {
+            const selectEl = document.getElementById('evrak-onay');
+            const evrak_durum = selectEl.value; // zaten "Onaylandı" seçili olacak
+
+            $('#modal-evrak-onay-confirm').modal('hide');
+            $('#modal-evrak-onay').modal('hide');
+
+            durumGuncelle(evrak_durum);
+        }
+
+        // Asıl AJAX çağrısını yapan fonksiyon
+        function durumGuncelle(evrak_durum) {
+            const selectEl = document.getElementById('evrak-onay');
+            const evrak_type = selectEl.getAttribute('data-evrak-type');
             const evrak_id = "{{ $evrak->id }}";
 
             $.ajax({
-                url: "{{ route('veteriner.evraks.evrak.onaylandi') }}", // Laravel rotası
+                url: "{{ route('veteriner.evraks.evrak.onaylandi') }}",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -340,11 +426,13 @@
                         alert(response.message);
                         window.location.reload();
                     } else {
-                        console.log(response.message);
+                        alert(response.message || 'İşlem sırasında bir hata oluştu.');
+                        console.log(response);
                     }
                 },
                 error: function(xhr) {
                     console.error("Hata:", xhr.responseText);
+                    alert('Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
                 }
             });
         }

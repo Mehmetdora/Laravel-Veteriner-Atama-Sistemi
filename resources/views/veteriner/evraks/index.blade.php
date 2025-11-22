@@ -51,7 +51,8 @@
                                         @if (isset($kayitlar))
                                             @foreach ($kayitlar as $kayit)
                                                 <tr>
-                                                    <td>{{ $kayit->evrak->created_at->format('d-m-y') }}
+                                                    <td>{{ $kayit->evrak->created_at->format('d-m-y') }} <br>
+                                                        {{ $kayit->created_at->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
                                                     </td>
                                                     <td>
                                                         @if ($kayit->evrak->evrak_durumu->evrak_durum == 'Onaylandı')

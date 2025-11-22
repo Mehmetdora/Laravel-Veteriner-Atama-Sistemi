@@ -75,7 +75,7 @@
                                             </a>
                                             <br />
                                             <small>
-                                                Eklendi {{ $veteriner['created_at']->format('d-m-y') }}
+                                                Başlangıç Tarihi : {{ $veteriner['created_at']->format('d-m-y') }}
                                             </small>
                                         </td>
 
@@ -145,5 +145,4 @@
 
 
 @section('admin.customJS')
-    
 @endsection

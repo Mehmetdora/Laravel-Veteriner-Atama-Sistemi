@@ -186,45 +186,95 @@ class VeterinerController extends Controller
     public function onaylandi(Request $request)
     {
         try {
+            // validation
+            $request->validate([
+                'evrak_durum' => 'required|string',
+                'evrak_id'    => 'required|integer',
+                'evrak_type'  => 'required|string',
+            ]);
+
             $type = explode("\\", $request->evrak_type);
             $type = end($type);
-            $id = (int)$request->evrak_id;
+            $id   = (int) $request->evrak_id;
 
             if ($type == "EvrakIthalat") {
-                $evrak = EvrakIthalat::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakIthalat::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakTransit") {
-                $evrak = EvrakTransit::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakTransit::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakAntrepoGiris") {
-                $evrak = EvrakAntrepoGiris::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakAntrepoGiris::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakAntrepoVaris") {
-                $evrak = EvrakAntrepoVaris::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakAntrepoVaris::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakAntrepoVarisDis") {
-                $evrak = EvrakAntrepoVarisDis::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakAntrepoVarisDis::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakAntrepoSertifika") {
-                $evrak = EvrakAntrepoSertifika::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakAntrepoSertifika::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakAntrepoCikis") {
-                $evrak = EvrakAntrepoCikis::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakAntrepoCikis::with('evrak_durumu')->find($id);
             } else if ($type == "EvrakCanliHayvan") {
-                $evrak = EvrakCanliHayvan::with('evrak_durumu')
-                    ->find($id);
+                $evrak = EvrakCanliHayvan::with('evrak_durumu')->find($id);
             } else {
-                $evrak = "bulunamadı";
+                $evrak = null;
             }
 
+            // Evrak bulunamadıysa
+            if (!$evrak || !$evrak->evrak_durumu) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Evrak veya evrak durumu bulunamadı.'
+                ], 404);
+            }
 
-            $evrak->evrak_durumu->evrak_durum = $request->evrak_durum;
+            // Durum sıralaması: İşlemde (1) -> BEklemede (2) -> Onaylandı (3)
+            $statusOrder = [
+                'İşlemde' => 1,
+                'Beklemede'   => 2,
+                'Onaylandı' => 3,
+            ];
+
+            $currentStatus = $evrak->evrak_durumu->evrak_durum;
+            $newStatus     = $request->evrak_durum;
+
+            // Tanımsız bir durum geldiyse
+            if (!isset($statusOrder[$newStatus]) || !isset($statusOrder[$currentStatus])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Geçersiz evrak durumu.'
+                ], 422);
+            }
+
+            $currentOrder = $statusOrder[$currentStatus];
+            $newOrder     = $statusOrder[$newStatus];
+
+            // GERİYE DÖNÜŞÜ ENGELLE
+            if ($newOrder < $currentOrder) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Onaylanmış veya daha ileri durumda olan bir evrağı önceki bir duruma geri alamazsınız.'
+                ], 422);
+            }
+
+            // Aynı durum seçildiyse, değişiklik yapmadan başarılı
+            if ($newOrder === $currentOrder) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evrak durumu zaten seçili durumda.'
+                ]);
+            }
+
+            // Durumu güncelle
+            $evrak->evrak_durumu->evrak_durum = $newStatus;
             $evrak->evrak_durumu->save();
 
-            return response()->json(['success' => true, 'message' => 'Evrak Durumu Başarıyla Güncellendi!']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Evrak Durumu Başarıyla Güncellendi!'
+            ]);
         } catch (\Exception $exception) {
-            return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => $exception->getMessage()
+            ], 500);
         }
     }
 }

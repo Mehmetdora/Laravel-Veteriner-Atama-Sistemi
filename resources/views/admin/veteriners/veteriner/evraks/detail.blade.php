@@ -36,7 +36,9 @@
                                         </tr>
                                         <tr>
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
-                                            <td>{{ $evrak->created_at->format('d-m-y') }}</td>
+                                            <td>{{ $evrak->created_at->format('d-m-y') }} |
+                                                {{ $evrak->created_at->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
+                                            </td>
                                         </tr>
                                         @if ($evrak->hayvan_sayisi)
                                             <tr>

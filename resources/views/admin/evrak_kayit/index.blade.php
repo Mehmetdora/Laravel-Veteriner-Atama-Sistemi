@@ -77,7 +77,9 @@
                                                                 class="btn btn-info">Detay</button>
                                                         </a>
                                                     </td>
-                                                    <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }}</td>
+                                                    <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }} <br>
+                                                        {{ $evrak->created_at?->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
+                                                    </td>
                                                     <td>{{ $evrak->evrak_adi() }}</td>
                                                     <td>{{ $evrak->evrakKayitNo ?? '---' }}</td>
                                                     <td>{{ $evrak->vekaletFirmaKisiAdi ?? '---' }}</td>

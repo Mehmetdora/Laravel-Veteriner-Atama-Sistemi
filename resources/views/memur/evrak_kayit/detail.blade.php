@@ -35,7 +35,9 @@
                                         </tr>
                                         <tr>
                                             <th style="width:30%">Oluşturulma Tarihi:</th>
-                                            <td>{{ $evrak->created_at->format('d-m-Y') }}</td>
+                                            <td>{{ $evrak->created_at->format('d-m-Y') }} |
+                                                {{ $evrak->created_at->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
+                                            </td>
                                         </tr>
                                         @if ($evrak->hayvan_sayisi)
                                             <tr>
@@ -237,7 +239,7 @@
                                         <tr>
                                             <th>Kaydı Yapan Kişi Adı:</th>
                                             <td>{{ $evrak->kaydeden->name }}</td>
-                                        </tr>  
+                                        </tr>
 
                                         <tr>
                                             <th>Veteriner Hekim Adı:</th>

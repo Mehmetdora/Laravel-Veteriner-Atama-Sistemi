@@ -12,7 +12,7 @@
                     <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ route('admin.veteriners.index') }}">Geri dön</a>
 
                     <div class="col-sm-6">
-                        <h1><b>Veterinere Atanmış Tüm Evraklar: {{ $veteriner->name ?? "----" }}</b></h1>
+                        <h1><b>Veterinere Atanmış Tüm Evraklar: {{ $veteriner->name ?? '----' }}</b></h1>
                     </div>
                 </div>
             </div><!-- /.container-fluid -->
@@ -56,13 +56,14 @@
                                 @foreach ($veteriner->evraks as $kayit)
                                     <tr>
                                         <td>
-                                            {{ $kayit->evrak->created_at->format('d-m-y') }}
+                                            {{ $kayit->evrak->created_at->format('d-m-y') }} <br>
+                                            {{ $kayit->created_at?->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
                                         </td>
                                         <td class="text-center">
                                             {{ $kayit->evrak->evrak_adi() }}
                                         </td>
                                         <td>
-                                            {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->USKSSertifikaReferansNo ?: "----" }}
+                                            {{ $kayit->evrak->vgbOnBildirimNo ?: $kayit->evrak->oncekiVGBOnBildirimNo ?: $kayit->evrak->USKSSertifikaReferansNo ?: '----' }}
                                         </td>
                                         <td class="project-state ">
                                             @if ($kayit->evrak->evrak_durumu->evrak_durum == 'İşlemde')

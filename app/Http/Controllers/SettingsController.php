@@ -120,11 +120,23 @@ class SettingsController extends Controller
         return redirect()->route('admin.system_settings.index')->with('success', 'Sistem ayarları başarıyla düzenlendi!');
     }
 
+    public function test_db_connection()
+    {
+        try {
+            DB::connection()->getPdo();
+            return "Veritabanı bağlantısı başarılı";
+        } catch (\Exception $e) {
+            return "Hata: " . $e->getMessage();
+        }
+    }
+
 
     public function manuel_backup()
     {
         try {
             // Backup öncesi log
+
+            //$this->test_db_connection();
 
             Log::info('Manuel yedekleme başlatılıyor...');
             Log::info('PHP sürümü: ' . PHP_VERSION);
