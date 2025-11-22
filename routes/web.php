@@ -120,6 +120,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::controller(VeterinerEController::class)->group(function () {
         Route::get('/admin/veterinerler/liste', 'index')->name('admin.veteriners.index');
 
+        Route::get('/admin/veterinerler/tum-evraklari-onayla', 'confirm_all_evraks')->name('admin.veteriners.tum_evraklari_onayla');
+
         Route::get('/admin/veterinerler/ekle', 'create')->name('admin.veteriners.create');
         Route::post('/admin/veterinerler/eklendi', 'created')->name('admin.veteriners.created');
 

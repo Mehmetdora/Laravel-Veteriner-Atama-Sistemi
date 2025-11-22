@@ -24,7 +24,11 @@
                 <div class="card-header">
                     <h3 class="card-title">Tüm Veterinerlerin Listesi</h3>
                     <div style="display:flex; justify-content: end;">
-                        <a href="{{ route('admin.veteriners.create') }}"><button type="button" class="btn btn-primary">Yeni
+                        <button type="button" data-toggle="modal" data-target="#modal-all-evraks-confirm"
+                            class="btn btn-primary">Tüm
+                            Evrakları Onayla</button>
+                        <a href="{{ route('admin.veteriners.create') }}" class="ml-3"><button type="button"
+                                class="btn btn-primary">Yeni
                                 Veteriner Ekle</button></a>
                     </div>
                 </div>
@@ -139,10 +143,62 @@
 
         </section>
         <!-- /.content -->
+
+        <div class="modal fade" id="modal-all-evraks-confirm">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h4 class="modal-title">Tüm Evrakların Onaylanması</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Tüm <b>"İşlemde"</b> durumunda olan evrakların durumunu <b>"Onaylandı"</b> olarak değiştirmek
+                            üzeresiniz. Bu işlem yapıldıktan
+                            sonra geri dönüşü yapılamaz! <br><br> Lütfen tüm veterinerleri ve aldıkları evrakların
+                            tamamlandığından
+                            eminseniz devam ediniz.
+                            Bu işlemin geri alınamayacağını unutmayın. Emin misiniz?
+                        </p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Vazgeç</button>
+                        <button type="button" class="btn btn-success" onclick="confirmAll()">
+                            Evet, Tümünü Onayla
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!-- /.content-wrapper -->
 @endsection
 
 
 @section('admin.customJS')
+    <script>
+        function confirmAll() {
+
+            $.ajax({
+                url: "{{ route('admin.veteriners.tum_evraklari_onayla') }}",
+                method: "GET",
+                contentType: "application/json",
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        window.location.reload();
+                    } else {
+                        alert(response.message || 'İşlem sırasında bir hata oluştu.');
+                        console.log(response);
+                    }
+                },
+                error: function(xhr) {
+                    console.error("Hata:", xhr.responseText);
+                    alert('Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                }
+            });
+        }
+    </script>
 @endsection

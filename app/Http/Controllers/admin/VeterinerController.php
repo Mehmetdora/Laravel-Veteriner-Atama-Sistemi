@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\admin;
 
+use Exception;
 use App\Models\Urun;
 use App\Models\User;
 use App\Models\Evrak;
@@ -12,8 +13,8 @@ use App\Models\EvrakDurum;
 use App\Models\NobetHafta;
 use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
-use App\Models\EvrakTransit;
 
+use App\Models\EvrakTransit;
 use App\Models\GirisAntrepo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -26,13 +27,13 @@ use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Models\EvrakAntrepoVarisDis;
 
+use App\Models\EvrakAntrepoVarisDis;
 use App\Models\EvrakCanliHayvanGemi;
 use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
-use function PHPUnit\Framework\isEmpty;
 
+use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\CanliHGemiIzinDuzenleme;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
@@ -1512,6 +1513,45 @@ class VeterinerController extends Controller
         $data['type'] = $type;
 
         return view('admin.veteriners.veteriner.evraks.detail', $data);
+    }
+
+
+    public function confirm_all_evraks()
+    {
+        // Tüm "işlemde" olan evrakları bul ve "onaylandı" olarak güncelle.
+        try {
+
+            $evraks_all = collect()
+                ->merge(EvrakIthalat::with(['evrak_durumu'])->get())
+                ->merge(EvrakTransit::with(['evrak_durumu'])->get())
+                ->merge(EvrakCanliHayvan::with(['evrak_durumu'])->get())
+                ->merge(EvrakAntrepoGiris::with(['evrak_durumu'])->get())
+                ->merge(EvrakAntrepoVaris::with(['evrak_durumu'])->get())
+                ->merge(EvrakAntrepoVarisDis::with(['evrak_durumu'])->get())
+                ->merge(EvrakAntrepoSertifika::with(['evrak_durumu'])->get())
+                ->merge(EvrakAntrepoCikis::with(['evrak_durumu'])->get())
+                ->merge(EvrakCanliHayvanGemi::with(['evrak_durumu'])->get());
+
+            $filtered_evraks = $evraks_all
+                ->filter(function ($evrak) {
+                    return $evrak->evrak_durumu && $evrak->evrak_durumu->evrak_durum === 'İşlemde';
+                });
+
+            if (count($filtered_evraks) != 0) {
+                $filtered_evraks->each(function ($evrak) {
+                    $evrak->evrak_durumu()->update([
+                        'evrak_durum' => 'Onaylandı'
+                    ]);
+                });
+            } else {
+                return response()->json(['success' => true, 'message' => '"İşlemde" durumunda hiç evrak bulunmadığı için bir güncelleme yapılmadı!']);
+            }
+
+
+            return response()->json(['success' => true, 'message' => 'Toplam ' . count($filtered_evraks) . ' tane "İşlemde" durumundaki evrak "Onaylandı" olarak güncellendi!']);
+        } catch (Exception $exception) {
+            return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
+        }
     }
 
 
