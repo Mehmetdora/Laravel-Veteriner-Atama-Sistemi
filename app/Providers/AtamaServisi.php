@@ -64,17 +64,31 @@ class AtamaServisi
         $total_worklaod = $this->workloadCoefficients[$documentType] * $evraks_count;
 
 
-        // 1. Aktif Veterinerleri Alma
+        // 1. Aktif Veterinerleri Alma - Atanabilecek Veterinerlerin Seçilmesi
+        /**
+         * Aktif Veterinerleri Getirir
+         * - İzinli olmayanlar(gemi ve normal izin),
+         * - Saat 15.30'den sonra ise sadece nöbetçiler, önce nöbetçi olmayanlar,
+         * - Elinde "işlemde" durumunda evrağı olmayanları,
+         *
+         */
         $veterinerler = $this->veteriner_durum_kontrol->aktifVeterinerleriGetir($now);
         if ($veterinerler->isEmpty()) {
-            throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen nöbetçi veteriner hekim olduğundan ve müsait olduklarından emin olduktan sonra tekrar deneyiniz!");
+            throw new \Exception("001 - Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen nöbetçi veteriner hekim olduğundan ve müsait olduklarından emin olduktan sonra tekrar deneyiniz!");
         }
 
 
         // Nöbetçi olan veterinerleri getirme
+        /**
+         * Aktif Veterinerleri Getirir
+         * - İzinli olmayan(gemi ve normal izin),
+         * - Nöbetçi olan,
+         * - Elinde "işlemde" durumunda evrağı olmayanları
+         */
         $nobetci_vets = $this->veteriner_durum_kontrol->aktifNobetciVeterinerleriGetir($now);
 
         // Nöbetçilerin de gün içinde evrak alabilmesi için saat kontrolü(12:00)
+        // $nobetci_vets değişkeni başka yerde kullanılmıyor.
         $kontrol_zamani = $now->copy()->setTime(12, 00, 0);
         if ($now->lessThan($kontrol_zamani)) {
 
@@ -95,8 +109,8 @@ class AtamaServisi
 
         // İLK KONTROL
         // Bu kontrol ile istenen özel durumlar için veterinerler kontrol edilir. Veya saate göre kontrol edilir.
-        $isi_olmayan_vets = [];
-        foreach ($veterinerler as $vet) {
+        $isi_olmayan_vets = $veterinerler;
+        /* foreach ($veterinerler as $vet) {
 
             // Veteriner canli hayvan gemide mi kontrolü - aslında bu kotrol zaten yapılmıştı , gerek yok gibi
             if ($this->vet_gemi_izin_kontrolu->izin_var_mi($vet->id)) {
@@ -110,7 +124,7 @@ class AtamaServisi
 
             // gemi işine gitmemiş ve elinde işi olmayan veterinerleri listeye ekle
             $isi_olmayan_vets[] = $vet;
-        }
+        } */
 
         /*
             İlk amaç telifisi olan veterinerleri bulup onların telafilerini kapatmak,
@@ -231,6 +245,7 @@ class AtamaServisi
             // Seçilen veterinerin workload ını veterinerin telafisi olmasına göre farklı şekilde güncellenmesi gerekiyor
             if (in_array($seciliVeteriner, $telafisi_olan_vets)) {
 
+                // temp_worklaod değerine göre güncelleniryot
                 $this->updateWorkload(
                     $seciliVeteriner,
                     $this->workloadCoefficients[$documentType],
@@ -238,6 +253,7 @@ class AtamaServisi
                     $evraks_count
                 );
             } else {
+                // year_workload değerine göre güncelleniyor.
                 $this->updateWorkload(
                     $seciliVeteriner,
                     $this->workloadCoefficients[$documentType],

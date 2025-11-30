@@ -14,7 +14,6 @@ class VeterinerDurumKontrolleri
      * Aktif Veterinerleri Getirir
      * - İzinli olmayanlar(gemi ve normal izin),
      * - Saat 15.30'den sonra ise sadece nöbetçiler, önce nöbetçi olmayanlar,
-     * - Elinde "işlemde" durumunda evrağı olmayanları,
      *
      */
     public function aktifVeterinerleriGetir(Carbon $simdikiZaman)
@@ -57,38 +56,73 @@ class VeterinerDurumKontrolleri
                     })
                     ->get();
             }
+            // Yeni Özellik
+            /**
+             * Bundan sonra veterinerler seçilirken önce normla kontroller yapılacak,
+             * eğer veterinerlerin elinde "işlemde" evrağı yoksa bu şekilde normal akışta seçilecekler,
+             * ama eğer hiçbir veteriner boşta değilse;
+             * - tüm veterinerlerin elindeki "işlemde" türündeki evraklarının toplam workload değerleri karşılaştırılır,
+             * - en az işlemde workload ı olan/olanlar arasından random birine evrağı ata
+             */
 
-            // --- YENİ EKLENEN FİLTRELEME MANTIĞI: İŞLEMDE EVRAK KONTROLÜ ---
-            // Eğer veterinerin elinde "işlemde" durumunda evrak var ise o veteriner filtreleniyor
-
+            $veteriner_islemde_workload = [];
             $veterinerler->load(['evraks.evrak.evrak_durumu']);
 
-            $atanabilir_veterinerler = $veterinerler->filter(function ($veteriner) {
+            $islenmis_veri = $veterinerler->map(function ($veteriner) {
+                $islemde_mi = $veteriner->evraks->contains(
+                    fn($data) =>
+                    $data->evrak &&
+                        $data->evrak->evrak_durumu &&
+                        $data->evrak->evrak_durumu->evrak_durum === 'İşlemde'
+                );
 
-                // Veterinerin 'İşlemde' evrağı olup olmadığını kontrol et.
-                if ($veteriner->evraks) {
-                    $isi_var_mi = $veteriner->evraks->contains(
-                        fn($data) =>
-                        $data->evrak &&
-                            $data->evrak->evrak_durumu &&
-                            $data->evrak->evrak_durumu->evrak_durum === 'İşlemde'
-                    );
+                $evrak_workload = $veteriner->evraks
+                    ->filter(fn($d) => $d->evrak?->evrak_durumu?->evrak_durum === 'İşlemde')
+                    ->sum(fn($data) => $data->evrak->difficulty_coefficient ?? 0);
 
-                    // Sadece işi OLMAYANLARı (yani $isi_var_mi false olanları) tut
-                    return !$isi_var_mi;
-                }
-
-                // Evrağı olmayanlar doğal olarak işi yok sayılır ve tutulur.
-                return true;
+                return [
+                    'veteriner' => $veteriner,
+                    'musait_mi' => !$islemde_mi,
+                    'evrak_workload'  => $evrak_workload
+                ];
             });
-            // --------------------------------------------------------------------
+
+            $veteriner_islemde_workload = $islenmis_veri->map(fn($item) => [
+                'vet' => $item['veteriner'],
+                'islemde_workload' => $item['evrak_workload']
+            ]);
+
+
+            // toplanan veteriner bilgileri içinden normal şekilde veterinerlerin filtrelenmesi
+            $atanabilir_veterinerler = $islenmis_veri
+                ->where('musait_mi', true)
+                ->pluck('veteriner');
+
+            // Hata vermek yerine , elinde iş de olsa veterinerin birine bu evrak atanacak
+            // bu nedenle elinde işlemde evrağı olanlar arasından seçerek , veteriner listesini dön
 
 
             if ($atanabilir_veterinerler->isEmpty()) {
-                throw new \Exception($hata_mesaji);
+                //throw new \Exception($hata_mesaji);
+
+                $min_value = PHP_INT_MAX;   // başlangıç değeri olarak başlat
+                $adayVeterinerler = collect();
+
+                foreach ($veteriner_islemde_workload as $vet_collection) {
+                    $currentWorkload_degeri = $vet_collection['islemde_workload']; // telafisi olması durumuna göre hangi değerin alınacağına karar verilecek
+
+                    // Workload değerleri arasından en az olani yada olanları bul
+                    if ($currentWorkload_degeri < $min_value) {
+                        $min_value = $currentWorkload_degeri;
+                        $adayVeterinerler = collect([$vet_collection['vet']]);
+                    } elseif ($currentWorkload_degeri == $min_value) {
+                        $adayVeterinerler->push($vet_collection['vet']);
+                    }
+                }
+
+                return $adayVeterinerler;
             }
 
-            // Atanmaya hazır, "İşlemde" evrağı olmayan veteriner listesini geri dön
             return $atanabilir_veterinerler;
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage() ?? $hata_mesaji);
