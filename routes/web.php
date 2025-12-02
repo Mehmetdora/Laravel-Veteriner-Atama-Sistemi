@@ -68,6 +68,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::controller(StokTakipController::class)->group(function () {
 
         Route::get('/admin/stok-takip/liste', 'index')->name('admin.stok_takip.index');
+
+        // Sağlık sertifikası düzenleme
+        Route::get('/admin/stok-takip/saglik-sertifika/{ss_id}/duzenle', 'ss_edit')->name('admin.stok_takip.ss_edit');
+        Route::post('/admin/stok-takip/saglik-sertifika/duzenlendi', 'ss_edited')->name('admin.stok_takip.ss_edited');
     });
 
     // Admin sistem ayarları

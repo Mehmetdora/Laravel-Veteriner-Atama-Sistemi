@@ -42,7 +42,7 @@
                                             <th>
                                                 Tarih
                                             </th>
-                                            <th>
+                                            <th style="width:20%">
                                                 Sağlık Sertifikası Numarası
                                             </th>
                                             <th>
@@ -94,6 +94,15 @@
                                                             <i class="fas fa-folder">
                                                             </i>
                                                             İlgili Evrak
+                                                        </a>
+
+                                                        <a class="btn btn-secondary btn-sm"
+                                                            href="{{ route('admin.stok_takip.ss_edit', [
+                                                                'ss_id' => $kayit['saglik_sertifika']->id,
+                                                            ]) }}">
+                                                            <i class="fas fa-pen">
+                                                            </i>
+                                                            Düzenle
                                                         </a>
 
                                                     </td>
