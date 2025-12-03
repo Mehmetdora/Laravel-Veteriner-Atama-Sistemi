@@ -293,13 +293,13 @@
             if (evraks_type == "İthalat") {
                 kopya_modal_html = `
                 <div class="form-group">
-                    <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control ithalat" required />
+                    <label name="siraNo" class="control-label ">Evrak Kayıt No</label>
+                    <input id="siraNo" name="siraNo" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control ithalat" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -315,17 +315,17 @@
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control ithalat" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control ithalat" required />
+                    <input name="urunAdi" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control ithalat" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control ithalat  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value = "" > Ürün Kategorileri </option>
                             @foreach ($uruns as $urun)
@@ -337,7 +337,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -346,26 +346,26 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control ithalat" required readonly />
+                    <input id="net_miktar" name="urunKG" class="form-control ithalat  validatable_tag" required readonly />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control ithalat" required />
+                    <input name="sevkUlke" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control ithalat" required />
+                    <input name="orjinUlke" class="form-control ithalat  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="arac_plaka_kg" class="control-label">Araç Plakası ve Yük Miktarı(KG)</label>
+                    <label for="arac_plaka_kg" class="control-label validatable_tag_label">Araç Plakası ve Yük Miktarı(KG)</label>
                     <button type="button" id="addBtn">➕</button>
 
                     <div id="inputContainer" class="inputs hidden">
@@ -376,7 +376,7 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="arac_plaka_kg" id="jsonData" class="form-control ithalat" required />
+                    <input type="hidden" name="arac_plaka_kg" id="jsonData" class="form-control ithalat  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
@@ -388,7 +388,7 @@
                             <option value="Taşucu">Taşucu</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control ithalat" type="text" name="girisGumruk"
+                        <input class="col-sm-5 form-control ithalat  validatable_tag" type="text" name="girisGumruk"
                             id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
                 </div>
@@ -399,36 +399,36 @@
 
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı: *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                        <input class="col-sm-6 form-control  validatable_tag" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value="">Ürün Kategorileri</option>
                             @foreach ($uruns as $urun)
@@ -439,7 +439,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -448,27 +448,27 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control" required readonly />
+                    <input id="net_miktar" name="urunKG" class="form-control  validatable_tag" required readonly />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control" required />
+                    <input name="sevkUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
-                    <input name="aracPlaka" class="form-control" required />
+                    <input name="aracPlaka" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -480,7 +480,7 @@
                             <option value="Taşucu">Taşucu</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
                 </div>
 
@@ -493,43 +493,43 @@
                             <option value="Cilvegözü">Cilvegözü</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Antrepo Giriş") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı: *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-6 form-control" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                        <input class="col-sm-6 form-control  validatable_tag" type="text" name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar" placeholder="Miktar (9.999.999,999)" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value="">Ürün Kategorileri</option>
                             @foreach ($uruns as $urun)
@@ -540,7 +540,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -549,27 +549,27 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                    <input id="net_miktar" name="urunKG" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control" required />
+                    <input name="sevkUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
-                    <input name="aracPlaka" class="form-control" required />
+                    <input name="aracPlaka" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -581,7 +581,7 @@
                             <option value="Taşucu">Taşucu</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü" required>
                     </div>
                 </div>
 
@@ -597,7 +597,7 @@
                             @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="giris_antrepo_id"
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="giris_antrepo_id"
                             id="giris_antrepo_id" placeholder="Giriş Antreposu" required>
                     </div>
                 </div>`;
@@ -605,16 +605,16 @@
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="oncekiVGBOnBildirimNo" class="control-label">Önceki VGB Numarası</label>
-                    <input id="oncekiVGBOnBildirimNo" name="oncekiVGBOnBildirimNo" type="text" class="form-control" required />
+                    <input id="oncekiVGBOnBildirimNo" name="oncekiVGBOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <label for="vetSaglikSertifikasiNo" class="control-label validatable_tag_label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
                     <button type="button" id="addBtn">➕</button>
 
                     <div id="inputContainer" class="inputs hidden">
@@ -625,21 +625,21 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -648,12 +648,12 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" oninput="formatNumber(this)" name="urunKG" class="form-control" required />
+                    <input id="net_miktar" oninput="formatNumber(this)" name="urunKG" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -668,23 +668,23 @@
                             @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo" id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="urunlerinBulunduguAntrepo" id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Antrepo Varış(DIŞ)") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="oncekiVGBOnBildirimNo" class="control-label">Önceki VGB Numarası</label>
-                    <input id="oncekiVGBOnBildirimNo" name="oncekiVGBOnBildirimNo" type="text" class="form-control" required />
+                    <input id="oncekiVGBOnBildirimNo" name="oncekiVGBOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <label for="vetSaglikSertifikasiNo" class="control-label validatable_tag_label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
                     <button type="button" id="addBtn">➕</button>
 
                     <div id="inputContainer" class="inputs hidden">
@@ -695,21 +695,21 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -718,12 +718,12 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" oninput="formatNumber(this)" name="urunKG" class="form-control" required />
+                    <input id="net_miktar" oninput="formatNumber(this)" name="urunKG" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -738,23 +738,23 @@
                             @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo" id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="urunlerinBulunduguAntrepo" id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Antrepo Sertifika") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
-                    <input id="vgbNo" name="vgbNo" type="text" class="form-control" required />
+                    <input id="vgbNo" name="vgbNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <label for="vetSaglikSertifikasiNo" class="control-label validatable_tag_label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
                     <button type="button" id="addBtn">➕</button>
 
                     <div id="inputContainer" class="inputs hidden">
@@ -765,22 +765,22 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value="">Ürün Kategorileri</option>
                             @foreach ($uruns as $urun)
@@ -791,7 +791,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -800,24 +800,24 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" class="form-control" required />
+                    <input id="net_miktar" name="urunKG" class="form-control  validatable_tag" required />
                 </div>
 
 
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
-                    <input name="aracPlaka" class="form-control" required />
+                    <input name="aracPlaka" class="form-control  validatable_tag" required />
                 </div>
 
 
@@ -834,41 +834,41 @@
                             @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cikis_antrepo_input" id="cikis_antrepo_input" placeholder="Çıkış Antreposu" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="cikis_antrepo_input" id="cikis_antrepo_input" placeholder="Çıkış Antreposu" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Antrepo Çıkış") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="usks">USKS Numarası: *</label>
                     <div class="row" style="display: flex; align-items: center;">
-                        <input class="col-sm-12 form-control" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
+                        <input class="col-sm-12 form-control  validatable_tag" type="text" name="usks_no" id="usks_no" value="{{ $ornek_usks }}" placeholder="USKS Numarası" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value="">Ürün Kategorileri</option>
                             @foreach ($uruns as $urun)
@@ -879,7 +879,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -888,27 +888,27 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar" name="urunKG" oninput="formatNumber(this)" placeholder="Miktar  (9.999.999,999)" class="form-control" required />
+                    <input id="net_miktar" name="urunKG" oninput="formatNumber(this)" placeholder="Miktar  (9.999.999,999)" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" value="Türkiye" class="form-control" required />
+                    <input name="sevkUlke" value="Türkiye" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner No</label>
-                    <input name="aracPlaka" class="form-control" required />
+                    <input name="aracPlaka" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -920,23 +920,23 @@
                             <option value="Cilvegözü">Cilvegözü</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Canlı Hayvan") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label name="siraNo" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo" name="siraNo" class="form-control" required />
+                    <input id="siraNo" name="siraNo" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim Numarası</label>
-                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control" required />
+                    <input id="vgbOnBildirimNo" name="vgbOnBildirimNo" type="text" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <label for="vetSaglikSertifikasiNo" class="control-label validatable_tag_label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
                     <button type="button" id="addBtn">➕</button>
 
                     <div id="inputContainer" class="inputs hidden">
@@ -947,22 +947,22 @@
 
                     <ul id="dataList" class="list"></ul>
 
-                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control" required />
+                    <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData" class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control" required />
+                    <input type="text" name="vekaletFirmaKisiAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi" class="form-control" required />
+                    <input name="urunAdi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
-                    <select class="form-control" name="urun_kategori_id" id="urun_kategori_id" required>
+                    <select class="form-control  validatable_tag" name="urun_kategori_id" id="urun_kategori_id" required>
                         @if (isset($uruns))
                             <option selected value="">Ürün Kategorileri</option>
                             @foreach ($uruns as $urun)
@@ -973,7 +973,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -982,22 +982,22 @@
                     <ul id="gtip_list" class="list"></ul>
 
                     <input type="hidden" name="gtipNo" id="gtip_json_data"
-                        class="form-control" required />
+                        class="form-control  validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="hayvanSayisi" class="control-label">Başvuru Yapılan Hayvan Sayısı(Baş Sayısı)</label>
-                    <input id="hayvanSayisi" name="hayvanSayisi" class="form-control" required />
+                    <input id="hayvanSayisi" name="hayvanSayisi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
-                    <input name="sevkUlke" class="form-control" required />
+                    <input name="sevkUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="orjinUlke" class="control-label">Orjin Ülke</label>
-                    <input name="orjinUlke" class="form-control" required />
+                    <input name="orjinUlke" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
@@ -1009,7 +1009,7 @@
                             <option value="Taşucu">Taşucu</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="girisGumruk" id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
                     </div>
                 </div>
 
@@ -1022,19 +1022,19 @@
                             <option value="Cilvegözü">Cilvegözü</option>
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+                        <input class="col-sm-5 form-control  validatable_tag" type="text" name="cıkısGumruk" id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
                     </div>
                 </div>`;
             } else if (evraks_type == "Canlı Hayvan(GEMİ)") {
                 kopya_modal_html = `
                 <div class="form-group">
                     <label for="hayvan_sayisi" class="control-label">Hayvan Sayısı: *</label>
-                    <input id="hayvan_sayisi" oninput="formatNumber(this)" name="hayvan_sayisi" class="form-control" required />
+                    <input id="hayvan_sayisi" oninput="formatNumber(this)" name="hayvan_sayisi" class="form-control  validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="veteriner_id" class="control-label">Veteriner Hekim: *</label>
-                    <select class="form-control" name="veteriner_id" id="veteriner_id" required>
+                    <select class="form-control  validatable_tag" name="veteriner_id" id="veteriner_id" required>
                         @if (isset($veteriners))
                             @foreach ($veteriners as $veteriner)
                                 <option value="{{ $veteriner->id }}">{{ $veteriner->name }}</option>
@@ -1046,7 +1046,7 @@
                 <div class="form-group">
                     <label>Başlangıç Tarihi: *</label>
                     <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                        <input name="start_date" placeholder="Ör. Tarih Formatı: gg/aa/YY" type="text" class="form-control datetimepicker-input" data-target="#reservationdate" />
+                        <input name="start_date" placeholder="Ör. Tarih Formatı: gg/aa/YY" type="text" class="form-control  validatable_tag datetimepicker-input" data-target="#reservationdate" />
                         <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
@@ -1055,7 +1055,7 @@
 
                 <div class="form-group">
                     <label for="day_count" class="control-label">Kaç Günlük: * (Tam Sayı Giriniz!)</label>
-                    <input id="day_count" name="day_count" type="number" class="form-control" required />
+                    <input id="day_count" name="day_count" type="number" class="form-control  validatable_tag" required />
                 </div>
                 `;
             } else {
@@ -2663,13 +2663,13 @@
                 return `
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control  validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                                         </div>
 
 
@@ -2677,10 +2677,10 @@
                                         <div class="form-group">
                                             <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                <input class="col-sm-6 form-control validatable_tag" type="text" name="ss_no_${i}"
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
                                                     id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
@@ -2693,18 +2693,18 @@
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                                                 Kişi
                                                 İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                                                 required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
+                                            <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                            <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                                                 required>
                                                 @if (isset($uruns))
                                                     <option selected value="">Ürün Kategorileri</option>
@@ -2716,7 +2716,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                                             <div style="display:flex; justify-content=start;">
                                                 <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -2725,27 +2725,27 @@
                                             <ul id="gtip_list_${i}" class="list"></ul>
 
                                             <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control validatable_tag" required readonly />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                            <input name="sevkUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                            <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="arac_plaka_kg_${i}" class="control-label">Araç Plakası ve Yük Miktarı(KG)</label>
+                                            <label for="arac_plaka_kg_${i}" class="control-label validatable_tag_label">Araç Plakası ve Yük Miktarı(KG)</label>
                                             <button type="button" id="addBtn_${i}">➕</button>
 
                                             <div id="inputContainer_${i}" class="inputs hidden">
@@ -2758,7 +2758,7 @@
                                             <ul id="dataList_${i}" class="list"></ul>
 
                                             <input type="hidden" name="arac_plaka_kg_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
@@ -2773,7 +2773,7 @@
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="girisGumruk_${i}"
                                                     id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                                             </div>
@@ -2785,13 +2785,13 @@
 
             <div class="form-group">
                 <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
             </div>
 
             <div class="form-group">
                 <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
                     Numarası</label>
-                <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+                <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
             </div>
 
 
@@ -2799,10 +2799,10 @@
             <div class="form-group">
                 <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                 <div class="row" style="display: flex; align-items: center;">
-                    <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                    <input class="col-sm-6 form-control validatable_tag" type="text" name="ss_no_${i}"
                         id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                     <div class="col-sm-1"></div>
-                    <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                    <input class="col-sm-5 form-control validatable_tag" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
                         id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                 </div>
@@ -2815,18 +2815,18 @@
                 <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                     Kişi
                     İsmi</label>
-                <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                     required />
             </div>
 
             <div class="form-group">
                 <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                <input name="urunAdi_${i}" class="form-control" required />
+                <input name="urunAdi_${i}" class="form-control validatable_tag" required />
             </div>
 
             <div class="form-group">
                 <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                     required>
                     @if (isset($uruns))
                         <option selected value="">Ürün Kategorileri</option>
@@ -2838,7 +2838,7 @@
             </div>
 
             <div class="form-group">
-                <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                 <div style="display:flex; justify-content=start;">
                     <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -2847,29 +2847,29 @@
                 <ul id="gtip_list_${i}" class="list"></ul>
 
                 <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                    class="form-control" required />
+                    class="form-control validatable_tag_hidden" required />
             </div>
 
             <div class="form-group">
                 <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                     Miktarı</label>
-                <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly />
+                <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control validatable_tag" required readonly />
             </div>
 
             <div class="form-group">
                 <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                <input name="sevkUlke_${i}" class="form-control" required />
+                <input name="sevkUlke_${i}" class="form-control validatable_tag" required />
             </div>
 
             <div class="form-group">
                 <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                <input name="orjinUlke_${i}" class="form-control" required />
+                <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
             </div>
 
             <div class="form-group">
                 <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
                     No</label>
-                <input name="aracPlaka_${i}" class="form-control" required />
+                <input name="aracPlaka_${i}" class="form-control validatable_tag" required />
             </div>
 
             <div class="form-group">
@@ -2884,7 +2884,7 @@
 
                     </select>
                     <div class="col-sm-1"></div>
-                    <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                    <input class="col-sm-5 form-control validatable_tag" type="text" name="girisGumruk_${i}"
                         id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                 </div>
@@ -2902,7 +2902,7 @@
 
                     </select>
                     <div class="col-sm-1"></div>
-                    <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                    <input class="col-sm-5 form-control validatable_tag" type="text" name="cıkısGumruk_${i}"
                         id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
 
                 </div>
@@ -2913,13 +2913,13 @@
 
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
                                                 Numarası</label>
-                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                                         </div>
 
 
@@ -2928,10 +2928,10 @@
                                         <div class="form-group">
                                             <label for="ss_no_${i}">Sağlık Sertifikası Numarası ve Miktarı:*</label>
                                             <div class="row" style="display: flex; align-items: center;">
-                                                <input class="col-sm-6 form-control" type="text" name="ss_no_${i}"
+                                                <input class="col-sm-6 form-control validatable_tag" type="text" name="ss_no_${i}"
                                                     id="ss_no_${i}" placeholder="Sağlık Sertifika Numarası" required>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" oninput="formatNumber(this)" name="ss_miktar_${i}"
                                                     id="ss_miktar_${i}" placeholder="Miktar (9.999.999,999)" required>
 
                                             </div>
@@ -2943,18 +2943,18 @@
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                                                 Kişi
                                                 İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                                                 required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
+                                            <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                            <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                                                 required>
                                                 @if (isset($uruns))
                                                     <option selected value="">Ürün Kategorileri</option>
@@ -2966,7 +2966,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                                             <div style="display:flex; justify-content=start;">
                                                 <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -2975,29 +2975,29 @@
                                             <ul id="gtip_list_${i}" class="list"></ul>
 
                                             <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke_${i}" class="form-control" required />
+                                            <input name="sevkUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                            <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
                                                 No</label>
-                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                            <input name="aracPlaka_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
@@ -3012,7 +3012,7 @@
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="girisGumruk_${i}"
                                                     id="giris_g_input_${i}" placeholder="Giriş Gümrüğü" required>
 
                                             </div>
@@ -3032,7 +3032,7 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="giris_antrepo_id_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="giris_antrepo_id_${i}"
                                                     id="giris_antrepo_id_${i}" placeholder="Giriş Antreposu" required>
                                             </div>
                                         </div>
@@ -3041,18 +3041,18 @@
                 return `
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
-                                            <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control" required />
+                                            <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                                         </div>
 
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label validatable_tag_label">Sağlık Sertifikası
                                                 Numarası Ve Miktarı(KG)</label>
                                             <button type="button" id="addBtn_${i}">➕</button>
 
@@ -3066,26 +3066,26 @@
                                             <ul id="dataList_${i}" class="list"></ul>
 
                                             <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                                                 Kişi
                                                 İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                                                 required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
+                                            <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                                         </div>
 
 
 
                                         <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                                             <div style="display:flex; justify-content=start;">
                                                 <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -3094,13 +3094,13 @@
                                             <ul id="gtip_list_${i}" class="list"></ul>
 
                                             <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required  readonly/>
+                                            <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control validatable_tag" required  readonly/>
                                         </div>
 
 
@@ -3119,7 +3119,7 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}"
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="urunlerinBulunduguAntrepo_${i}"
                                                     id="urunlerinBulunduguAntrepo_input${i}" placeholder="Giriş Antreposu" required>
                                             </div>
                                         </div>
@@ -3133,17 +3133,17 @@
 
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
-                                            <input id="vgbNo_${i}" name="vgbNo_${i}" type="text" class="form-control" required />
+                                            <input id="vgbNo_${i}" name="vgbNo_${i}" type="text" class="form-control validatable_tag" required />
                                         </div>
 
 
                                         <div class="form-group">
-                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                                            <label for="vetSaglikSertifikasiNo_${i}" class="control-label validatable_tag_label">Sağlık Sertifikası
                                                 Numarası Ve Miktarı(KG)</label>
                                             <button type="button" id="addBtn_${i}">➕</button>
 
@@ -3157,25 +3157,25 @@
                                             <ul id="dataList_${i}" class="list"></ul>
 
                                             <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                                                 Kişi
                                                 İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                                                 required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
+                                            <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                            <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                                                 required>
                                                 @if (isset($uruns))
                                                     <option selected value="">Ürün Kategorileri</option>
@@ -3187,7 +3187,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                                             <div style="display:flex; justify-content=start;">
                                                 <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -3196,26 +3196,26 @@
                                             <ul id="gtip_list_${i}" class="list"></ul>
 
                                             <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control" required readonly/>
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" class="form-control validatable_tag" required readonly/>
                                         </div>
 
 
 
                                         <div class="form-group">
                                             <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                            <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
                                                 No</label>
-                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                            <input name="aracPlaka_${i}" class="form-control validatable_tag" required />
                                         </div>
 
 
@@ -3232,7 +3232,7 @@
                                                     @endif
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="cikis_antrepo_input_${i}" id="cikis_antrepo_input_${i}" placeholder="Çıkış Antreposu" required>
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="cikis_antrepo_input_${i}" id="cikis_antrepo_input_${i}" placeholder="Çıkış Antreposu" required>
                                             </div>
                                         </div>
         `;
@@ -3264,12 +3264,12 @@
 
                                         <div class="form-group">
                                             <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                                            <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Numarası</label>
-                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+                                            <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                                         </div>
 
 
@@ -3280,18 +3280,18 @@
                                             <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                                                 Kişi
                                                 İsmi</label>
-                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                                            <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                                                 required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                                            <input name="urunAdi_${i}" class="form-control" required />
+                                            <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                                            <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                                            <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                                                 required>
                                                 @if (isset($uruns))
                                                     <option selected value="">Ürün Kategorileri</option>
@@ -3303,7 +3303,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                                            <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                                             <div style="display:flex; justify-content=start;">
                                                 <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -3312,29 +3312,29 @@
                                             <ul id="gtip_list_${i}" class="list"></ul>
 
                                             <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                                                class="form-control" required />
+                                                class="form-control validatable_tag_hidden" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net
                                                 Miktarı</label>
-                                            <input id="net_miktar_${i}" name="urunKG_${i}" oninput="formatNumber(this)" placeholder="Max miktar (9.999.999,999)" class="form-control" required />
+                                            <input id="net_miktar_${i}" name="urunKG_${i}" oninput="formatNumber(this)" placeholder="Max miktar (9.999.999,999)" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                                            <input name="sevkUlke_${i}" value="Türkiye" class="form-control" required />
+                                            <input name="sevkUlke_${i}" value="Türkiye" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                                            <input name="orjinUlke_${i}" class="form-control" required />
+                                            <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="aracPlaka_${i}" class="control-label">Araç Plakası veya Konteyner
                                                 No</label>
-                                            <input name="aracPlaka_${i}" class="form-control" required />
+                                            <input name="aracPlaka_${i}" class="form-control validatable_tag" required />
                                         </div>
 
 
@@ -3351,8 +3351,8 @@
 
                                                 </select>
                                                 <div class="col-sm-1"></div>
-                                                <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
-                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
+                                                <input class="col-sm-5 form-control validatable_tag" type="text" name="cıkısGumruk_${i}"
+                                                    id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü" required>
 
                                             </div>
                                         </div>
@@ -3361,19 +3361,19 @@
                 return `
                     <div class="form-group">
                         <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                        <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                     </div>
 
                     <div class="form-group">
                         <label for="vgbOnBildirimNo_${i}" class="control-label">VGB Ön Bildirim
                             Numarası</label>
-                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control" required />
+                        <input id="vgbOnBildirimNo_${i}" name="vgbOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                     </div>
 
 
 
                     <div class="form-group">
-                        <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası
+                        <label for="vetSaglikSertifikasiNo_${i}" class="control-label validatable_tag_label">Sağlık Sertifikası
                             Numarası Ve Miktarı(KG)</label>
                         <button type="button" id="addBtn_${i}">➕</button>
 
@@ -3387,25 +3387,25 @@
                         <ul id="dataList_${i}" class="list"></ul>
 
                         <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}"
-                            class="form-control" required />
+                            class="form-control validatable_tag_hidden" required />
                     </div>
 
                     <div class="form-group">
                         <label for="vekaletFirmaKisiId_${i}" class="control-label">Vekalet Sahibi Firma /
                             Kişi
                             İsmi</label>
-                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control"
+                        <input type="text" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag"
                             required />
                     </div>
 
                     <div class="form-group">
                         <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                        <input name="urunAdi_${i}" class="form-control" required />
+                        <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                     </div>
 
                     <div class="form-group">
                         <label for="urun_kategori_id_${i}" class="control-label">Ürünün Kategorisi</label>
-                        <select class="form-control" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
+                        <select class="form-control validatable_tag" name="urun_kategori_id_${i}" id="urun_kategori_id_${i}"
                             required>
                             @if (isset($uruns))
                                 <option selected value="">Ürün Kategorileri</option>
@@ -3417,7 +3417,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                        <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                         <div style="display:flex; justify-content=start;">
                             <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -3426,22 +3426,22 @@
                         <ul id="gtip_list_${i}" class="list"></ul>
 
                         <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                            class="form-control" required />
+                            class="form-control validatable_tag_hidden" required />
                     </div>
 
                     <div class="form-group">
                         <label for="hayvanSayisi_${i}" class="control-label">Başvuru Yapılan Hayvan Sayısı(Baş Sayısı)</label>
-                        <input id="hayvanSayisi_${i}" name="hayvanSayisi_${i}" class="form-control" required />
+                        <input id="hayvanSayisi_${i}" name="hayvanSayisi_${i}" class="form-control validatable_tag" required />
                     </div>
 
                     <div class="form-group">
                         <label for="sevkUlke_${i}" class="control-label">Sevk Eden Ülke</label>
-                        <input name="sevkUlke_${i}" class="form-control" required />
+                        <input name="sevkUlke_${i}" class="form-control validatable_tag" required />
                     </div>
 
                     <div class="form-group">
                         <label for="orjinUlke_${i}" class="control-label">Orjin Ülke</label>
-                        <input name="orjinUlke_${i}" class="form-control" required />
+                        <input name="orjinUlke_${i}" class="form-control validatable_tag" required />
                     </div>
 
 
@@ -3457,7 +3457,7 @@
 
                             </select>
                             <div class="col-sm-1"></div>
-                            <input class="col-sm-5 form-control" type="text" name="girisGumruk_${i}"
+                            <input class="col-sm-5 form-control validatable_tag" type="text" name="girisGumruk_${i}"
                                 id="giris_g_input_${i}" placeholder="Giriş Gümrüğü Yaz" required>
 
                         </div>
@@ -3475,7 +3475,7 @@
 
                             </select>
                             <div class="col-sm-1"></div>
-                            <input class="col-sm-5 form-control" type="text" name="cıkısGumruk_${i}"
+                            <input class="col-sm-5 form-control validatable_tag" type="text" name="cıkısGumruk_${i}"
                                 id="cikis_g_input_${i}" placeholder="Çıkış Gümrüğü Yaz" required>
 
                         </div>
@@ -3485,12 +3485,12 @@
                 return `
                     <div class="form-group">
                         <label for="hayvan_sayisi_${i}" class="control-label">Hayvan Sayısı:*</label>
-                        <input id="hayvan_sayisi_${i}" oninput="formatNumber(this)"  name="hayvan_sayisi_${i}" class="form-control" required />
+                        <input id="hayvan_sayisi_${i}" oninput="formatNumber(this)"  name="hayvan_sayisi_${i}" class="form-control validatable_tag" required />
                     </div>
 
                     <div class="form-group">
                         <label for="veteriner_id_${i}" class="control-label">Veteriner Hekim:*</label>
-                        <select class="form-control"
+                        <select class="form-control validatable_tag"
                             name="veteriner_id_${i}" id="veteriner_id_${i}" required>
                             @if (isset($veteriners))
                                 @foreach ($veteriners as $veteriner)
@@ -3513,23 +3513,23 @@
 
                     <div class="form-group">
                         <label for="day_count_${i}" class="control-label">Kaç Günlük:*(Tam Sayı Giriniz!)</label>
-                        <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control" required />
+                        <input id="day_count_${i}" name="day_count_${i}" type="number" class="form-control validatable_tag" required />
                     </div>
                     `;
             } else if (type == 8) {
                 return `
                 <div class="form-group">
                     <label name="siraNo_${i}" class="control-label">Evrak Kayıt No</label>
-                    <input id="siraNo_${i}" name="siraNo_${i}" class="form-control" required />
+                    <input id="siraNo_${i}" name="siraNo_${i}" class="form-control validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="oncekiVGBOnBildirimNo_${i}" class="control-label">Önceki VGB Numarası</label>
-                    <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control" required />
+                    <input id="oncekiVGBOnBildirimNo_${i}" name="oncekiVGBOnBildirimNo_${i}" type="text" class="form-control validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="vetSaglikSertifikasiNo_${i}" class="control-label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
+                    <label for="vetSaglikSertifikasiNo_${i}" class="control-label validatable_tag_label">Sağlık Sertifikası Numarası Ve Miktarı(KG)</label>
                     <button type="button" id="addBtn_${i}">➕</button>
 
                     <div id="inputContainer_${i}" class="inputs hidden">
@@ -3540,21 +3540,21 @@
 
                     <ul id="dataList_${i}" class="list"></ul>
 
-                    <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}" class="form-control" required />
+                    <input type="hidden" name="vetSaglikSertifikasiNo_${i}" id="jsonData_${i}" class="form-control validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="vekaletFirmaKisiAdi_${i}" class="control-label">Vekalet Sahibi Firma / Kişi İsmi</label>
-                    <input type="text" id="vekaletFirmaKisiAdi_${i}" name="vekaletFirmaKisiAdi_${i}" class="form-control" required />
+                    <input type="text" id="vekaletFirmaKisiAdi_${i}" name="vekaletFirmaKisiAdi_${i}" class="form-control validatable_tag" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunAdi_${i}" class="control-label">Ürünün Adı</label>
-                    <input name="urunAdi_${i}" class="form-control" required />
+                    <input name="urunAdi_${i}" class="form-control validatable_tag" required />
                 </div>
 
                 <div class="form-group">
-                    <label for="gtipNo_${i}" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+                    <label for="gtipNo_${i}" class="control-label validatable_tag_label">G.T.İ.P. No İlk 4 Rakamı</label>
 
                     <div style="display:flex; justify-content=start;">
                         <input type="number" id="gtip_input_${i}" class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
@@ -3563,12 +3563,12 @@
                     <ul id="gtip_list_${i}" class="list"></ul>
 
                     <input type="hidden" name="gtipNo_${i}" id="gtip_json_data_${i}"
-                        class="form-control" required />
+                        class="form-control validatable_tag_hidden" required />
                 </div>
 
                 <div class="form-group">
                     <label for="urunKG_${i}" class="control-label">Ürünün Kg Cinsinden Net Miktarı</label>
-                    <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control" required readonly/>
+                    <input id="net_miktar_${i}" oninput="formatNumber(this)" name="urunKG_${i}" class="form-control validatable_tag" required readonly/>
                 </div>
 
                 <div class="form-group">
@@ -3583,7 +3583,7 @@
                             @endif
                         </select>
                         <div class="col-sm-1"></div>
-                        <input class="col-sm-5 form-control" type="text" name="urunlerinBulunduguAntrepo_${i}" id="urunlerinBulunduguAntrepo_input_${i}" placeholder="Giriş Antreposu" required>
+                        <input class="col-sm-5 form-control validatable_tag" type="text" name="urunlerinBulunduguAntrepo_${i}" id="urunlerinBulunduguAntrepo_input_${i}" placeholder="Giriş Antreposu" required>
                     </div>
                 </div>`;
 
@@ -4816,197 +4816,309 @@
 
 
 
+        // Kaydet butonuna tıklanıldıktan sonra form validation işlemleri yapılmalı
+        function validate_form() {
 
+            // veriler sadece input ve select tag leri üzerinden alınıyor. Ayrılması lazım
+            var input_tags = [];
+            var select_tags = [];
+            var hidden_tags = [];
+            var hidden_tags_labels = [];
+
+            // Doğrulanması gereken tag ler toplanıyor
+            var all_validatable_tags = document.getElementById('dynamicForm').querySelectorAll('.validatable_tag');
+            var all_validatable_tags_names = Array.from(all_validatable_tags).map((tag) => {
+
+                const type = tag.tagName.toLowerCase();
+                if (type === "input") {
+                    input_tags.push(tag);
+                    return tag.name;
+                } else if (type === "select") {
+                    select_tags.push(tag);
+                    return tag.name;
+                } else {
+
+                }
+            });
+            var error_pages = [];
+            var error_tags = [];
+            // input tags validations
+            input_tags.forEach((tag) => {
+
+                if (tag.value.trim().length === 0) {
+                    tag.style.borderColor = 'red';
+                    error_tags.push(tag);
+                } else {
+                    tag.style.borderColor = '';
+                }
+
+            });
+
+            select_tags.forEach((tag) => {
+                if (tag.value.trim().length === 0) {
+                    tag.style.borderColor = 'red';
+                    error_tags.push(tag);
+                } else {
+                    tag.style.borderColor = '';
+                }
+
+            });
+
+
+            // Doğrulanması gereken hidden tag ler toplanıyor
+            var all_validatable_hidden_tags = document.getElementById('dynamicForm').querySelectorAll(
+                '.validatable_tag_hidden');
+            var all_validatable_hidden_tags_names = Array.from(all_validatable_hidden_tags).map((tag) => {
+                hidden_tags.push(tag);
+                return tag.name;
+            });
+            // hidden tags validations
+            hidden_tags.forEach((tag) => {
+
+                if (tag.value.trim().length === 0) {
+                    const parent = tag.parentElement;
+                    const label_tag = parent.querySelector('.validatable_tag_label');
+
+                    label_tag.style.borderColor = 'red';
+                    label_tag.style.borderWidth = '3px';
+                    label_tag.style.borderStyle = 'solid';
+                    error_tags.push(tag);
+                } else {
+                    const parent = tag.parentElement;
+                    const label_tag = parent.querySelector('.validatable_tag_label');
+                    label_tag.style.borderColor = '';
+                    label_tag.style.borderWidth = '0px';
+
+                }
+
+            });
+
+
+
+            error_tags.forEach((tag) => {
+                var last_char = tag.name.slice(-1);
+                if (!isNaN(Number(last_char))) {
+                    error_pages.push(Number(last_char) + 1);
+                } else {
+                    alert(`Evrak bilgilerinin girildiği alan adı formatı hatası: `, tag.name,
+                        `  - 001 , Lütfen ilgili kişiye bu hatayı bildiriniz!`);
+                }
+            });
+
+            if (error_pages.length != 0) {
+
+                var pages = new Set(error_pages); // sayfaları seç
+                var error_msg =
+                    `Aşağıda numaraları belirtilen sayfalarda eksik bilgiler bulunmaktadır : \n
+                 ${Array.from(pages).join(' - ')}\n Lütfen kırmızı olarak belirtilen alanların doldurulduğundan emin olunuz!`;
+                alert(error_msg);
+
+                return false;
+
+            } else {
+                return true;
+            }
+        }
+
+        // Aynı zamanda her kaydet butonuna basıldığında da bir validation ile kullanıcıyı uyarsın
+        document.getElementById("submitButton").addEventListener('click', function() {
+            validate_form();
+        });
 
         document.getElementById("dynamicForm").addEventListener("submit", function(event) {
 
+            // otomatik submit işleminin durdurulması
             event.preventDefault();
 
-            let type = parseInt(document.getElementById("evrakType").value);
-            let totalForms = parseInt(document.getElementById("formCount").value) || 0;
-            let evrak_turu = {
-                evrak_turu: type
-            };
-            let allFormData = [];
+            // Tüm form bilgilerini doğrula
+            if (validate_form()) {
 
-            allFormData.push(evrak_turu);
+                let type = parseInt(document.getElementById("evrakType").value);
+                let totalForms = parseInt(document.getElementById("formCount").value) || 0;
+                let evrak_turu = {
+                    evrak_turu: type
+                };
+                let allFormData = [];
 
-            if (type == 0) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        arac_plaka_kg: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                    };
-                    allFormData.push(formData);
+                allFormData.push(evrak_turu);
+
+                if (type == 0) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
+                            ss_no: document.querySelector(`#ss_no_${i}`).value,
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            arac_plaka_kg: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
+                                "[]"),
+                            girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 1) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
+                            ss_no: document.querySelector(`#ss_no_${i}`).value,
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
+                            girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
+                            cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 2) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
+                            ss_no: document.querySelector(`#ss_no_${i}`).value,
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
+                            girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
+                            giris_antrepo_id: document.querySelector(`[name="giris_antrepo_id_${i}"]`).value
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 3) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            oncekiVGBOnBildirimNo: document.querySelector(`#oncekiVGBOnBildirimNo_${i}`).value,
+                            vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
+                                "[]"),
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            urunlerinBulunduguAntrepo: document.querySelector(
+                                `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 4) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
+                                "[]"),
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            vgbNo: document.querySelector(`#vgbNo_${i}`).value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
+                            cikis_antrepo: document.querySelector(`[name="cikis_antrepo_input_${i}"]`).value
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 5) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
+                            usks_no: document.querySelector(`#usks_no_${i}`).value,
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
+                            cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 6) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
+                            vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
+                                "[]"),
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            hayvanSayisi: document.querySelector(`[name="hayvanSayisi_${i}"]`).value,
+                            sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
+                            orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
+                            girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
+                            cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 7) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            hayvan_sayisi: document.querySelector(`#hayvan_sayisi_${i}`).value,
+                            veteriner_id: document.querySelector(`#veteriner_id_${i}`).value,
+                            start_date: document.querySelector(`[name="start_date_${i}"]`).value,
+                            day_count: document.querySelector(`[name="day_count_${i}"]`).value,
+                        };
+                        allFormData.push(formData);
+                    }
+                } else if (type == 8) {
+                    for (let i = 0; i < totalForms; i++) {
+                        let formData = {
+                            siraNo: document.querySelector(`#siraNo_${i}`).value,
+                            oncekiVGBOnBildirimNo: document.querySelector(`#oncekiVGBOnBildirimNo_${i}`).value,
+                            vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
+                                "[]"),
+                            vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
+                                .value,
+                            urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
+                            gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
+                                "[]"),
+                            urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
+                            urunlerinBulunduguAntrepo: document.querySelector(
+                                `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
+                        };
+                        allFormData.push(formData);
+                    }
                 }
-            } else if (type == 1) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                        cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 2) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        ss_no: document.querySelector(`#ss_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                        giris_antrepo_id: document.querySelector(`[name="giris_antrepo_id_${i}"]`).value
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 3) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        oncekiVGBOnBildirimNo: document.querySelector(`#oncekiVGBOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        urunlerinBulunduguAntrepo: document.querySelector(
-                            `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 4) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        vgbNo: document.querySelector(`#vgbNo_${i}`).value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        cikis_antrepo: document.querySelector(`[name="cikis_antrepo_input_${i}"]`).value
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 5) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        usks_no: document.querySelector(`#usks_no_${i}`).value,
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        aracPlaka: document.querySelector(`[name="aracPlaka_${i}"]`).value,
-                        cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 6) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        vgbOnBildirimNo: document.querySelector(`#vgbOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        urun_kategori_id: document.querySelector(`#urun_kategori_id_${i}`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        hayvanSayisi: document.querySelector(`[name="hayvanSayisi_${i}"]`).value,
-                        sevkUlke: document.querySelector(`[name="sevkUlke_${i}"]`).value,
-                        orjinUlke: document.querySelector(`[name="orjinUlke_${i}"]`).value,
-                        girisGumruk: document.querySelector(`[name="girisGumruk_${i}"]`).value,
-                        cıkısGumruk: document.querySelector(`[name="cıkısGumruk_${i}"]`).value
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 7) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        hayvan_sayisi: document.querySelector(`#hayvan_sayisi_${i}`).value,
-                        veteriner_id: document.querySelector(`#veteriner_id_${i}`).value,
-                        start_date: document.querySelector(`[name="start_date_${i}"]`).value,
-                        day_count: document.querySelector(`[name="day_count_${i}"]`).value,
-                    };
-                    allFormData.push(formData);
-                }
-            } else if (type == 8) {
-                for (let i = 0; i < totalForms; i++) {
-                    let formData = {
-                        siraNo: document.querySelector(`#siraNo_${i}`).value,
-                        oncekiVGBOnBildirimNo: document.querySelector(`#oncekiVGBOnBildirimNo_${i}`).value,
-                        vetSaglikSertifikasiNo: JSON.parse(document.querySelector(`#jsonData_${i}`).value ||
-                            "[]"),
-                        vekaletFirmaKisiAdi: document.querySelector(`[name="vekaletFirmaKisiAdi_${i}"]`)
-                            .value,
-                        urunAdi: document.querySelector(`[name="urunAdi_${i}"]`).value,
-                        gtipNo: JSON.parse(document.querySelector(`[name="gtipNo_${i}"]`).value ||
-                            "[]"),
-                        urunKG: getNumericValue(document.querySelector(`[name="urunKG_${i}"]`).value),
-                        urunlerinBulunduguAntrepo: document.querySelector(
-                            `[name="urunlerinBulunduguAntrepo_${i}"]`).value,
-                    };
-                    allFormData.push(formData);
-                }
+
+                // JSON verisini hidden input içine aktarıyoruz
+                document.getElementById("formData").value = JSON.stringify(allFormData);
+
+                this.submit();
             }
-
-            // JSON verisini hidden input içine aktarıyoruz
-            document.getElementById("formData").value = JSON.stringify(allFormData);
-
-            this.submit();
         });
     </script>
 
