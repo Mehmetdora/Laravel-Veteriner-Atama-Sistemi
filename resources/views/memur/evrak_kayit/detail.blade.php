@@ -24,7 +24,12 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
+                            <div class="card-header ">
+                                <a href="{{ route('memur.evrak.edit', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}"
+                                    style="margin-right:0px;"><button type="button"
+                                        class="btn btn-primary">Düzenle</button></a>
 
+                            </div>
                             <!-- /.card-header -->
                             <div class="table-responsive">
                                 <table class="table">

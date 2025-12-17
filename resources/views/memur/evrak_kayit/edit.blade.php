@@ -1,0 +1,2572 @@
+@extends('memur.layouts.app')
+@section('memur.customCSS')
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    <link rel="stylesheet" href="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.css">
+
+
+    <style>
+        .inputs {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container {
+            width: 400px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .list-item {
+            background: #f3f3f3;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+@endsection
+
+@section('memur.content')
+    <!-- Content Wrapper. Contains page content -->
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <a class="ml-2 mr-2 btn btn-primary col-sm-1" href="{{ url()->previous() }}">Geri dön</a>
+
+                    <div class="col-sm-6">
+                        <h1 class="m-0"><b>Evrak Düzenleme</b></h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12">
+                        <hr>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-6">
+
+                                @include('memur.layouts.messages')
+
+
+                                @if ($evrak_type == 'EvrakIthalat')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+                                        <input type="hidden" name="veterinerId" value="{{ $evrak->veteriner->user->id }}">
+
+
+                                        <div class="form-group">
+                                            <label for="is_numuneli" class="control-label">Numuneli/Numunesiz:*</label>
+                                            <select class="form-control" name="is_numuneli" id="is_numuneli" required>
+                                                @if ($evrak->is_numuneli == true)
+                                                    <option selected value="1">Numuneli</option>
+                                                    <option value="0">Numunesiz</option>
+                                                @else
+                                                    <option value="1">Numuneli</option>
+                                                    <option selected value="0">Numunesiz</option>
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->ssn }}" name="ss_no"
+                                                    id="ss_no" placeholder="Sağlık Sertifika Numarası" required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
+                                                    oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
+                                                    placeholder="Miktarı" required>
+
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" oninput="formatNumber(this)" id="net_miktar"
+                                                class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control" value="{{ $evrak->orjinUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="arac_plaka_kg" class="control-label">Araç Plakaları Ve
+                                                Miktarları(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1" placeholder="Araç Plakası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->aracPlakaKgs as $plaka_kg)
+                                                    <li class="setted-plaka" data-plaka="{{ $plaka_kg->arac_plaka }}"
+                                                        data-miktar="{{ $plaka_kg->miktar }}">
+                                                        {{ $plaka_kg->arac_plaka }} -
+                                                        {{ number_format($plaka_kg->miktar, 3, ',', '.') }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="arac_plaka_kg" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select">
+                                                    <option selected value="{{ $evrak->girisGumruk }}">
+                                                        {{ $evrak->girisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
+                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input id="submit-ithalat" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+
+
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakTransit')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->ssn }}"
+                                                    name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası"
+                                                    required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
+                                                    oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
+                                                    placeholder="Miktarı" required>
+
+                                            </div>
+                                        </div>
+
+
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control" value="{{ $evrak->orjinUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka" class="form-control" value="{{ $evrak->aracPlaka }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select">
+                                                    <option selected value="{{ $evrak->girisGumruk }}">
+                                                        {{ $evrak->girisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
+                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select">
+                                                    <option selected value="{{ $evrak->cikisGumruk }}">
+                                                        {{ $evrak->cikisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
+                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input id="submit-transit" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakCanliHayvan')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo"
+                                                value="{{ json_encode($evrak->saglikSertifikalari) }}" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}</option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="hayvanSayisi" class="control-label">Başvuru Yapılan Hayvan
+                                                Sayısı(Baş Sayısı)</label>
+                                            <input name="hayvanSayisi" id="hayvanSayisi" class="form-control"
+                                                value="{{ $evrak->hayvanSayisi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control" value="{{ $evrak->orjinUlke }}"
+                                                required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="giris_g_input">Giriş Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="giris_g_select">
+                                                    <option selected value="{{ $evrak->girisGumruk }}">
+                                                        {{ $evrak->girisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Mersin">Mersin</option>
+                                                    <option value="Taşucu">Taşucu</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->girisGumruk }}" name="girisGumruk"
+                                                    id="giris_g_input" placeholder="Giriş Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select">
+                                                    <option selected value="{{ $evrak->cikisGumruk }}">
+                                                        {{ $evrak->cikisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
+                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoGiris')
+                                    <form class="form" method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Ön Bildirim
+                                                Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="ss_no">Sağlık Sertifikası Numarası ve Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-6 form-control" type="text"
+                                                    value="{{ $evrak->saglikSertifikalari->first()->ssn }}"
+                                                    name="ss_no" id="ss_no" placeholder="Sağlık Sertifika Numarası"
+                                                    required>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ number_format($evrak->saglikSertifikalari->first()->toplam_miktar, 3, ',', '.') }}"
+                                                    oninput="formatNumber(this)" name="ss_miktar" id="ss_miktar"
+                                                    placeholder="Miktarı" required>
+
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required
+                                                readonly />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control" value="{{ $evrak->sevkUlke }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control"
+                                                value="{{ $evrak->orjinUlke }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka" class="form-control"
+                                                value="{{ $evrak->aracPlaka }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="girisGumruk" class="control-label">Giriş Gümrüğü</label>
+                                            <input name="girisGumruk" class="form-control"
+                                                value="{{ $evrak->girisGumruk }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Varış Antreposu:*</label>
+
+                                            <select class="form-control" name="varis_antrepo_id" style="width: 100%;">
+                                                @if (isset($giris_antrepos))
+                                                    @foreach ($giris_antrepos as $giris_antrepo)
+                                                        <option @if ($evrak->giris_antrepo->name == $giris_antrepo->name) selected @endif
+                                                            value="{{ $giris_antrepo->id }}">
+                                                            {{ $giris_antrepo->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input id="submit-giris" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoVaris')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
+                                            <input name="oncekiVGBOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->oncekiVGBOnBildirimNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Ürünlerin Bulunduğu Antrepo(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control "
+                                                    id="urunlerinBulunduguAntrepo_select">
+                                                    <option selected value="{{ $evrak->urunlerinBulunduguAntrepo }}">
+                                                        {{ $evrak->urunlerinBulunduguAntrepo }}</option>
+                                                    <hr>
+                                                    <option value="Antrepo 1">Antrepo 1</option>
+                                                    <option value="Antrepo 2">Antrepo 2</option>
+                                                    <option value="Antrepo 3">Antrepo 3</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control "
+                                                    value="{{ $evrak->urunlerinBulunduguAntrepo }}"
+                                                    id="urunlerinBulunduguAntrepo_input" type="text"
+                                                    name="urunlerinBulunduguAntrepo" placeholder="Giriş Antreposu"
+                                                    required>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input id="submit-varis" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
+                                            <input name="oncekiVGBOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->oncekiVGBOnBildirimNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
+                                        </div>
+
+
+
+
+                                        <div class="form-group">
+                                            <label for="urunlerinBulunduguAntrepo_input">Ürünlerin Bulunduğu Antrepo(Seç
+                                                yada yeni bir tane
+                                                oluştur):
+                                                *</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control"
+                                                    id="urunlerinBulunduguAntrepo_select">
+
+                                                    @if (isset($giris_antrepos))
+                                                        @foreach ($giris_antrepos as $giris_antrepo)
+                                                            <option @if ($antrepo_name == $giris_antrepo->name) selected @endif
+                                                                value="{{ $giris_antrepo->name }}">
+                                                                {{ $giris_antrepo->name }}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" value="{{ $antrepo_name }}"
+                                                    type="text" name="urunlerinBulunduguAntrepo"
+                                                    id="urunlerinBulunduguAntrepo_input" placeholder="Giriş Antreposu"
+                                                    required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input id="submit-varis-dis" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoSertifika')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbNo" class="control-label">Antrepo Giriş VGB No</label>
+                                            <input id="vgbNo" name="vgbNo" class="form-control"
+                                                value="{{ $evrak->vgbNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vetSaglikSertifikasiNo" class="control-label">Sağlık Sertifikası
+                                                Numarası Ve Miktarı(KG)</label>
+                                            <button type="button" id="addBtn">➕</button>
+
+                                            <div id="inputContainer" class="inputs hidden">
+                                                <input type="text" id="input1"
+                                                    placeholder="Sağlık Sertifikası Numarası">
+                                                <input type="text" oninput="formatNumber(this)" id="input2"
+                                                    placeholder="Miktarı(KG)">
+                                                <button type="button" id="confirmBtn">✔️</button>
+                                            </div>
+
+                                            <ul id="dataList" class="list">
+                                                @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                                                    <li class="setted-sertifika" data-ssn="{{ $saglik_sertifika->ssn }}"
+                                                        data-miktar="{{ $saglik_sertifika->toplam_miktar }}">
+                                                        {{ $saglik_sertifika->ssn }} -
+                                                        {{ number_format($saglik_sertifika->toplam_miktar, 3, ',', '.') }}
+                                                        KG
+                                                        <button type="button" class="delete-btn">✖️</button>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="vetSaglikSertifikasiNo" id="jsonData"
+                                                class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün
+                                                Kategorisi</label>
+                                            <select class="form-control" data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input" class="form-control col-md-5 mr-3"
+                                                    placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control"
+                                                value="{{ $evrak->orjinUlke }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka" class="form-control"
+                                                value="{{ $evrak->aracPlaka }}" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="cikis_antrepo">Çıkış Antreposu(Seç yada yeni bir tane oluştur):
+                                                *</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_antrepo_select">
+
+                                                    @if (isset($giris_antrepos))
+                                                        @if (!in_array($evrak->cikisAntrepo, Arr::pluck($giris_antrepos, 'name')))
+                                                            <option selected value="{{ $evrak->cikisAntrepo }}">
+                                                                {{ $evrak->cikisAntrepo }}
+                                                            </option>
+                                                            @foreach ($giris_antrepos as $giris_antrepo)
+                                                                <option value="{{ $giris_antrepo->name }}">
+                                                                    {{ $giris_antrepo->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @else
+                                                            @foreach ($giris_antrepos as $giris_antrepo)
+                                                                <option @if ($evrak->cikisAntrepo == $giris_antrepo->name) selected @endif
+                                                                    value="{{ $giris_antrepo->name }}">
+                                                                    {{ $giris_antrepo->name }}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+
+                                                    @endif
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" value="{{ $evrak->cikisAntrepo }}"
+                                                    type="text" name="cikis_antrepo" id="cikis_antrepo_input"
+                                                    placeholder="Çıkış Antreposu" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input id="submit-sertifika" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakAntrepoCikis')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label name="siraNo" class="control-label">Evrak Kayıt No</label>
+                                            <input id="siraNo" name="siraNo" class="form-control"
+                                                value="{{ $evrak->evrakKayitNo }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="vgbOnBildirimNo" class="control-label">VGB Numarası</label>
+                                            <input name="vgbOnBildirimNo" type="text" class="form-control"
+                                                value="{{ $evrak->vgbOnBildirimNo }}" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="usks_no">USKS Sertifika Referans Numarası ve
+                                                Miktarı:*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $usks->usks_no }}" name="usks_no" id="usks_no"
+                                                    placeholder="USKS Numarası" required>
+
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ number_format($usks->miktar, 3, ',', '.') }}"
+                                                    name="usks_miktar" oninput="formatNumber(this)" id="usks_miktar"
+                                                    placeholder="Miktarı" required>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="vekaletFirmaKisiId" class="control-label">Vekalet Sahibi Firma /
+                                                Kişi
+                                                İsmi</label>
+                                            <input type="text" name="vekaletFirmaKisiAdi" class="form-control"
+                                                value="{{ $evrak->vekaletFirmaKisiAdi }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunAdi" class="control-label">Ürünün Adı</label>
+                                            <input name="urunAdi" class="form-control" value="{{ $evrak->urunAdi }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urun_kategori_id" class="control-label">Ürünün
+                                                Kategorisi</label>
+                                            <select class="form-control"
+                                                data-id="{{ $evrak->urun->first()->id ?? -1 }}"
+                                                name="urun_kategori_id" id="urun_kategori_id" required>
+                                                @if (isset($uruns))
+                                                    @if (isset($evrak->urun->first()->id))
+                                                        <option selected value="{{ $evrak->urun->first()->id }}">
+                                                            {{ $evrak->urun->first()->name }}</option>
+                                                    @else
+                                                        <option selected value="">Seçiniz</option>
+                                                    @endif
+                                                    <hr>
+                                                    @foreach ($uruns as $urun)
+                                                        <option value="{{ $urun->id }}">{{ $urun->name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gtipNo" class="control-label">G.T.İ.P. No İlk 4 Rakamı</label>
+
+                                            <div style="display:flex; justify-content=start;">
+                                                <input type="number" id="gtip_input"
+                                                    class="form-control col-md-5 mr-3" placeholder="Ör: 1234" />
+                                                <button type="button" id="gtipBtn">✔️</button>
+                                            </div>
+                                            <ul id="gtip_list" class="list">
+                                                @foreach ($evrak->gtipNo as $gtip)
+                                                    <div class="gtip-list-item"
+                                                        style="display: flex; justify-content: start;">
+                                                        <li class="gtip-value" data-gtip="{{ $gtip }}"
+                                                            style="list-style-position: inside;">
+                                                            {{ $gtip }}</li>
+                                                        <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                                                    </div>
+                                                @endforeach
+                                            </ul>
+
+                                            <input type="hidden" name="gtipNo" id="gtip_json_data"
+                                                class="form-control" value="{{ json_encode($evrak->gtipNo, true) }}"
+                                                required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="urunKG" class="control-label">Ürünün Kg Cinsinden Net
+                                                Miktarı</label>
+                                            <input name="urunKG" id="net_miktar" class="form-control"
+                                                value="{{ number_format($evrak->urunKG, 3, ',', '.') }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="sevkUlke" class="control-label">Sevk Eden Ülke</label>
+                                            <input name="sevkUlke" class="form-control"
+                                                value="{{ $evrak->sevkUlke }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="orjinUlke" class="control-label">Orjin Ükle</label>
+                                            <input name="orjinUlke" class="form-control"
+                                                value="{{ $evrak->orjinUlke }}" required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="aracPlaka" class="control-label">Araç Plakası veya Konteyner
+                                                No</label>
+                                            <input name="aracPlaka" class="form-control"
+                                                value="{{ $evrak->aracPlaka }}" required />
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="cikis_g_input">Çıkış Gümrüğü(Seç yada yeni bir tane
+                                                oluştur):*</label>
+                                            <div class="row" style="display: flex; align-items: center;">
+                                                <select class="col-sm-6 form-control" id="cikis_g_select">
+                                                    <option selected value="{{ $evrak->cikisGumruk }}">
+                                                        {{ $evrak->cikisGumruk }}</option>
+                                                    <hr>
+                                                    <option value="Habur">Habur</option>
+                                                    <option value="Cilvegözü">Cilvegözü</option>
+
+                                                </select>
+                                                <div class="col-sm-1"></div>
+                                                <input class="col-sm-5 form-control" type="text"
+                                                    value="{{ $evrak->cikisGumruk }}" name="cikisGumruk"
+                                                    id="cikis_g_input" placeholder="Çıkış Gümrüğü Yaz" required>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input id="submit-cikis" type="submit" value="KAYDET"
+                                                class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @elseif ($evrak_type == 'EvrakCanliHayvanGemi')
+                                    <form method="post" action="{{ route('memur.evrak.edited') }}">
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $evrak->id }}">
+                                        <input type="hidden" name="type" value="{{ $evrak_type }}">
+
+
+                                        <div class="form-group">
+                                            <label for="hayvan_sayisi" class="control-label">Hayvan
+                                                Sayısı:*</label>
+                                            <input id="hayvan_sayisi" value="{{ $evrak->hayvan_sayisi }}"
+                                                oninput="formatNumber(this)" name="hayvan_sayisi" class="form-control"
+                                                required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label>Başlangıç Tarihi:*</label>
+                                            <div class="input-group date" id="reservationdate"
+                                                data-target-input="nearest">
+                                                <input value="{{ $start_date }}" name="start_date" type="text"
+                                                    class="form-control datetimepicker-input"
+                                                    data-target="#reservationdate" />
+                                                <div class="input-group-append" data-target="#reservationdate"
+                                                    data-toggle="datetimepicker">
+                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="day_count" class="control-label">Kaç Günlük:*(Tam Sayı
+                                                Giriniz!)</label>
+                                            <input id="day_count" name="day_count" value="{{ $evrak->day_count }}"
+                                                type="number" class="form-control" required />
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <input type="submit" value="KAYDET" class="btn btn-primary" />
+                                        </div>
+                                    </form>
+                                @endif
+
+
+
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+
+@endsection
+
+
+@section('memur.customJS')
+    <script src="{{ asset('admin_Lte/') }}/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('admin_Lte/') }}/plugins/moment/moment.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/select2/js/select2.full.min.js"></script>
+    <script src="{{ asset('admin_Lte/') }}/plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+
+    <script src="{{ asset('admin_Lte/') }}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js">
+    </script>
+
+    <script>
+        $(function() {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+        });
+    </script>
+
+
+
+
+    @if ($evrak_type == 'EvrakIthalat')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-ithalat");
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+
+            let inputBox_g = document.querySelector(`#giris_g_input`);
+            let selectBox_g = document.querySelector(`#giris_g_select`);
+            selectBox_g.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_g.value = this.value;
+                }
+            });
+
+            let ss_miktar_input = document.querySelector(`#ss_miktar`);
+            let net_miktar_input = document.querySelector(`#net_miktar`);
+            ss_miktar_input.addEventListener('blur', function() {
+                net_miktar_input.value = ss_miktar_input.value;
+            });
+
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+
+                if (typeof ss_miktar_input.value != "number") {
+                    ss_miktar_input.value = getNumericValue(ss_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakTransit')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById('submit-transit');
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let inputBox_c = document.querySelector(`#cikis_g_input`);
+            let selectBox_c = document.querySelector(`#cikis_g_select`);
+            selectBox_c.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_c.value = this.value;
+                }
+            });
+
+            let inputBox_g = document.querySelector(`#giris_g_input`);
+            let selectBox_g = document.querySelector(`#giris_g_select`);
+            selectBox_g.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_g.value = this.value;
+                }
+            });
+
+            let ss_miktar_input = document.querySelector(`#ss_miktar`);
+            let net_miktar_input = document.querySelector(`#net_miktar`);
+            ss_miktar_input.addEventListener('blur', function() {
+                net_miktar_input.value = ss_miktar_input.value;
+            });
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof ss_miktar_input.value != "number") {
+                    ss_miktar_input.value = getNumericValue(ss_miktar_input.value);
+                }
+
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakCanliHayvan')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let inputBox_c = document.querySelector(`#cikis_g_input`);
+            let selectBox_c = document.querySelector(`#cikis_g_select`);
+            selectBox_c.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_c.value = this.value;
+                }
+            });
+
+            let inputBox_g = document.querySelector(`#giris_g_input`);
+            let selectBox_g = document.querySelector(`#giris_g_select`);
+            selectBox_g.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_g.value = this.value;
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoGiris')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-giris");
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let ss_miktar_input = document.querySelector(`#ss_miktar`);
+            let net_miktar_input = document.querySelector(`#net_miktar`);
+            ss_miktar_input.addEventListener('blur', function() {
+                net_miktar_input.value = ss_miktar_input.value;
+            });
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof ss_miktar_input.value != "number") {
+                    ss_miktar_input.value = getNumericValue(ss_miktar_input.value);
+                }
+
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoVaris')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-varis");
+            let net_miktar_input = document.getElementById("net_miktar");
+
+            let inputBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_input`);
+            let selectBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_select`);
+            selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                }
+            });
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoVarisDis')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-varis-dis");
+            let net_miktar_input = document.getElementById("net_miktar");
+
+            let inputBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_input`);
+            let selectBox_urunlerinBulunduguAntrepo = document.querySelector(`#urunlerinBulunduguAntrepo_select`);
+            selectBox_urunlerinBulunduguAntrepo.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_urunlerinBulunduguAntrepo.value = this.value;
+                }
+            });
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoSertifika')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById('submit-sertifika');
+            let net_miktar_input = document.getElementById("net_miktar");
+
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let cikis_antrepo_input = document.querySelector(`#cikis_antrepo_input`);
+            let cikis_antrepo_select = document.querySelector(`#cikis_antrepo_select`);
+            cikis_antrepo_select.addEventListener("change", function() {
+                if (this.value !== "") {
+                    cikis_antrepo_input.value = this.value;
+                }
+            });
+
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof net_miktar_input.value != "number") {
+                    net_miktar_input.value = getNumericValue(net_miktar_input.value);
+                }
+            });
+        </script>
+    @elseif ($evrak_type == 'EvrakAntrepoCikis')
+        <script>
+            // gtip eventlisteners
+            let gtip_list = document.getElementById("gtip_list");
+            let gtip_json_data = document.getElementById("gtip_json_data");
+            let gtip_input = document.getElementById("gtip_input");
+            let gtip_btn = document.getElementById("gtipBtn");
+
+            let gtips = JSON.parse(gtip_json_data.value);
+
+            // ilk eklemede gtipleri silebilmek için
+            document.querySelectorAll(".gtip-delete-btn").forEach(button => {
+                button.addEventListener('click', function(event) {
+
+                    // event.currentTarget veya 'this' butonu temsil eder.
+                    const deleteButton = event.currentTarget;
+
+                    // Silinecek Liste Öğesini (LI) Bul
+                    const listItem = deleteButton.closest('.gtip-list-item');
+                    const listItemValue = listItem.querySelector('.gtip-value').getAttribute("data-gtip");
+
+
+                    // Diziden sil
+                    gtips = gtips.filter(item => String(item) !== String(listItemValue));
+
+                    // DOM'dan sil
+                    listItem.remove();
+
+                    // Hidden Input'u güncelle
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                });
+            });
+            // yeni gtip ekleme
+            gtipBtn.addEventListener("click", function() {
+                var val = gtip_input.value;
+
+
+                if (val != "") {
+                    gtips.push(val);
+                    gtip_input.value = "";
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `<div class="gtip-list-item"
+                            style="display: flex; justify-content: start;">
+                            <li class="gtip-value" data-gtip="${ val }"
+                                style="list-style-position: inside;">
+                                ${ val }</li>
+                            <button type="button" class="gtip-delete-btn"> ✖️ </button>
+                        </div>`;
+
+                    listItem.querySelector(".gtip-delete-btn").addEventListener("click", function() {
+                        gtips = gtips.filter(item => item !== val);
+                        listItem.remove();
+                        gtip_json_data.value = JSON.stringify(gtips);
+                    });
+
+                    gtip_list.appendChild(listItem);
+                    gtip_json_data.value = JSON.stringify(gtips);
+
+                } else {
+                    alert("Lütfen GTİP alanını doldurunuz!");
+                }
+            });
+
+
+            let submit_btn = document.getElementById("submit-cikis");
+
+
+            const urun_kategori_id = document.querySelector('#urun_kategori_id');
+            var data_id2 = urun_kategori_id.getAttribute('data-id');
+            var options2 = urun_kategori_id.childNodes;
+            options2.forEach(element => {
+                if (element.value == data_id2) {
+                    element.setAttribute('selected', 'selected');
+                }
+            });
+
+            let usks_miktari = document.querySelector(`#usks_miktar`);
+            let netMiktarInput = document.querySelector(`#net_miktar`);
+            usks_miktari.addEventListener("blur", function() {
+                netMiktarInput.value = usks_miktari.value;
+            });
+
+            let inputBox_c = document.querySelector(`#cikis_g_input`);
+            let selectBox_c = document.querySelector(`#cikis_g_select`);
+            selectBox_c.addEventListener("change", function() {
+                if (this.value !== "") {
+                    inputBox_c.value = this.value;
+                }
+            });
+
+            submit_btn.addEventListener("click", function() {
+                if (typeof netMiktarInput.value != "number") {
+                    netMiktarInput.value = getNumericValue(netMiktarInput.value);
+                }
+
+                if (typeof usks_miktari.value != "number") {
+                    usks_miktari.value = getNumericValue(usks_miktari.value);
+                }
+            });
+        </script>
+    @endif
+
+
+
+    <script>
+        $(function() {
+            //Date picker
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
+        });
+
+        // Sağlık sertifika işlemleri
+        @if (
+            $evrak_type == 'EvrakAntrepoVarisDis' ||
+                $evrak_type == 'EvrakAntrepoVaris' ||
+                $evrak_type == 'EvrakAntrepoSertifika' ||
+                $evrak_type == 'EvrakCanliHayvan')
+
+
+            let addBtn = document.querySelector(`#addBtn`);
+            let inputContainer = document.querySelector(`#inputContainer`);
+            let input1 = document.querySelector(`#input1`);
+            let input2 = document.querySelector(`#input2`);
+            let confirmBtn = document.querySelector(`#confirmBtn`);
+            let dataList = document.querySelector(`#dataList`);
+            let jsonDataInput = document.querySelector(`#jsonData`);
+            let netMiktarInput = document.querySelector(`#net_miktar`);
+
+
+            // Sağlık Sertifikalarının Düzenlenmesi
+            let data = [];
+            let netMiktar = 0.0;
+
+            @foreach ($evrak->saglikSertifikalari as $saglik_sertifika)
+                var item_{{ $saglik_sertifika->id }} = {
+                    id: "{{ $saglik_sertifika->id }}",
+                    ssn: "{{ $saglik_sertifika->ssn }}",
+                    miktar: {{ $saglik_sertifika->toplam_miktar }}
+                }
+                data.push(item_{{ $saglik_sertifika->id }});
+                netMiktar = parseFloat((netMiktar + {{ $saglik_sertifika->toplam_miktar }}).toFixed(3)); // tam toplama
+                jsonDataInput.value = JSON.stringify(data);
+            @endforeach
+
+
+            addBtn.addEventListener("click", function() {
+                inputContainer.classList.toggle("hidden");
+                input1.value = "";
+                input2.value = "";
+            });
+
+            const list_item = document.querySelectorAll('.setted-sertifika');
+            list_item.forEach(item => {
+                item.querySelector('.delete-btn').addEventListener("click", function() {
+                    const val = parseFloat(item.getAttribute('data-miktar'));
+                    const ssn = item.getAttribute('data-ssn');
+
+                    const index = data.findIndex(item => item.ssn === ssn && item.miktar === val);
+                    if (index !== -1) {
+                        data.splice(index, 1); // Sadece ilk eşleşen öğeyi kaldırır
+                    }
+                    netMiktar = hatasızFloatCikarma(netMiktar, val);
+                    if (netMiktarInput) {
+                        netMiktarInput.value = formatNumberValue(netMiktar);
+                    }
+
+                    item.remove();
+                    jsonDataInput.value = JSON.stringify(data);
+
+                });
+            });
+
+            confirmBtn.addEventListener("click", function() {
+                let val1 = input1.value.trim();
+                let val2 = input2.value;
+                let val2_num = getNumericValue(val2);
+
+                if (val1 && val2) {
+                    let newItem = {
+                        id: "-1",
+                        ssn: val1,
+                        miktar: val2_num
+                    };
+                    data.push(newItem);
+                    netMiktar = parseFloat((netMiktar + val2_num).toFixed(3));
+                    if (netMiktarInput) {
+                        netMiktarInput.value = formatNumberValue(netMiktar);
+                    }
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                    listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                        data = data.filter(item => item.ssn !== val1 || item.miktar !== val2_num);
+                        netMiktar = hatasızFloatCikarma(netMiktar, val2_num);
+                        if (netMiktarInput) {
+                            netMiktarInput.value = formatNumberValue(netMiktar);
+                        }
+                        listItem.remove();
+                        jsonDataInput.value = JSON.stringify(data);
+
+                    });
+
+                    dataList.appendChild(listItem);
+                    jsonDataInput.value = JSON.stringify(data);
+                    if (netMiktarInput) {
+                        netMiktarInput.value = formatNumberValue(netMiktar);
+                    }
+                    inputContainer.classList.add("hidden");
+                } else {
+                    alert("Lütfen her iki alanı da doldurun!");
+                }
+            });
+        @endif
+
+        // Birden fazla plaka işlemleri
+        @if ($evrak_type == 'EvrakIthalat')
+
+            let addBtn = document.querySelector(`#addBtn`);
+            let inputContainer = document.querySelector(`#inputContainer`);
+            let input1 = document.querySelector(`#input1`);
+            let input2 = document.querySelector(`#input2`);
+            let confirmBtn = document.querySelector(`#confirmBtn`);
+            let dataList = document.querySelector(`#dataList`);
+            let jsonDataInput = document.querySelector(`#jsonData`);
+
+
+
+            // plaka objelerinin listesi
+            let data = [];
+
+            @foreach ($evrak->aracPlakaKgs as $aracPlakaKgs)
+                var item = {
+                    id: "{{ $aracPlakaKgs->id }}",
+                    plaka: "{{ $aracPlakaKgs->arac_plaka }}",
+                    miktar: {{ $aracPlakaKgs->miktar }}
+                }
+                data.push(item);
+                jsonDataInput.value = JSON.stringify(data);
+            @endforeach
+
+            addBtn.addEventListener("click", function() {
+                inputContainer.classList.toggle("hidden");
+                input1.value = "";
+                input2.value = "";
+            });
+
+            const list_item = document.querySelectorAll('.setted-plaka');
+            list_item.forEach(item => {
+                item.addEventListener("click", function() {
+                    const val = item.getAttribute('data-miktar');
+                    const plaka = item.getAttribute('data-plaka');
+
+                    data = data.filter(item => item.plaka !== plaka || item.miktar !== val);
+
+                    item.remove();
+                    jsonDataInput.value = JSON.stringify(data);
+
+                });
+            });
+
+            confirmBtn.addEventListener("click", function() {
+                let val1 = input1.value.trim();
+                let val2 = input2.value;
+                let val2_num = getNumericValue(val2);
+
+                if (val1 && val2) {
+                    let newItem = {
+                        id: "-1", // yeni oluşan plaka için -1 id sini kullan
+                        plaka: val1,
+                        miktar: val2_num
+                    };
+                    data.push(newItem);
+
+                    let listItem = document.createElement("li");
+                    listItem.innerHTML =
+                        `${val1} - ${val2} KG <button type="button" class="delete-btn">✖️</button>`;
+
+                    listItem.querySelector(".delete-btn").addEventListener("click", function() {
+                        data = data.filter(item => item.plaka !== val1 || item.miktar !== val2_num);
+                        listItem.remove();
+                        jsonDataInput.value = JSON.stringify(data);
+                    });
+
+                    dataList.appendChild(listItem);
+                    jsonDataInput.value = JSON.stringify(data);
+                    inputContainer.classList.add("hidden");
+                } else {
+                    alert("Lütfen her iki alanı da doldurun!");
+                }
+            });
+        @endif
+    </script>
+
+    <script>
+        // girilen input değerini anlaşılır virgüllü hale getirir
+        function formatNumber(input) {
+            let value = input.value;
+
+
+            // sadece , ve . kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3); // Ondalık kısmı en fazla 3 basamak
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa, boş bırak
+            if (value === "" || value === ",") {
+                input.value = "";
+                return;
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            if (integerPart === "") {
+                input.value = "";
+                return;
+            }
+
+            // Tam sayı kısmını formatla (sadece rakamları al)
+            let cleanInteger = integerPart.replace(/\D/g, '');
+
+            if (cleanInteger === "") {
+                input.value = decimalPart !== undefined ? "," + decimalPart : "";
+                return;
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                input.value = formattedInteger + ',' + decimalPart;
+            } else {
+                input.value = formattedInteger;
+            }
+        }
+
+        // sayıyı alaşılır virgüllü hale getirir
+        function formatNumberValue(inputValue) {
+            let value = String(inputValue);
+
+            // Sadece rakam, virgül ve nokta kabul et
+            value = value.replace(/[^\d.,]/g, '');
+
+            // *** YENİ: NOKTA İLE GELEN ONDALIK DEĞERLERI VİRGÜLE ÇEVİR ***
+            // Eğer değerde hem nokta hem virgül varsa, sorunlu durum
+            const hasComma = value.includes(',');
+            const hasDot = value.includes('.');
+
+            // Eğer sadece nokta var ve virgül yoksa, noktayı virgüle çevir (ondalık için)
+            if (hasDot && !hasComma) {
+                // Son noktayı bul (ondalık ayırıcısı olarak)
+                const lastDotIndex = value.lastIndexOf('.');
+                // Eğer son noktadan sonra 1-3 basamak varsa, bu ondalık ayırıcısıdır
+                const afterLastDot = value.substring(lastDotIndex + 1);
+                if (afterLastDot.length <= 3 && afterLastDot.length > 0) {
+                    // Son noktayı virgüle çevir
+                    value = value.substring(0, lastDotIndex) + ',' + afterLastDot;
+                }
+            }
+
+            // Tek bir virgül kabul et
+            const commaCount = (value.match(/,/g) || []).length;
+            if (commaCount > 1) {
+                const firstCommaIndex = value.indexOf(',');
+                value = value.substring(0, firstCommaIndex + 1) + value.substring(firstCommaIndex + 1).replace(/,/g, '');
+            }
+
+            // Virgülden sonra maksimum 3 basamak
+            const parts = value.split(',');
+            if (parts.length === 2) {
+                parts[1] = parts[1].substring(0, 3);
+                value = parts.join(',');
+            }
+
+            // Eğer boşsa veya sadece virgülse, boş döndür
+            if (value === "" || value === ",") {
+                return "";
+            }
+
+            // Virgülü ayır
+            const [integerPart, decimalPart] = value.split(',');
+
+            // Tam kısım boşsa, boş döndür
+            if (integerPart === "") {
+                return "";
+            }
+
+            // Tam sayı kısmından SADECE binlik ayracı noktalarını kaldır
+            let cleanInteger = integerPart.replace(/\./g, '');
+
+            // Temizlenmiş tam kısım boşsa
+            if (cleanInteger === "") {
+                if (decimalPart !== undefined && decimalPart.length > 0) {
+                    return "0," + decimalPart;
+                }
+                return "";
+            }
+
+            // Tam sayı kısmını üçlü gruplara ayır
+            let formattedInteger = cleanInteger
+                .split('')
+                .reverse()
+                .join('')
+                .match(/\d{1,3}/g)
+                .join('.')
+                .split('')
+                .reverse()
+                .join('');
+
+            // Son halini oluştur
+            if (decimalPart !== undefined) {
+                return formattedInteger + ',' + decimalPart;
+            } else {
+                return formattedInteger;
+            }
+        }
+
+
+        // okunaklı olan veriyi işlem türü float a çevirir
+        function getNumericValue(inputValue) {
+            let value = inputValue;
+
+            // Binlik ayracı noktalarını kaldır ve virgülü noktaya çevir
+            value = value.replace(/\./g, '').replace(',', '.');
+
+            // Sayısal değere çevir
+            return parseFloat(value) || 0;
+        }
+
+
+        function hatasızFloatToplama(a, b, decimals = 3) {
+            return parseFloat((a + b).toFixed(decimals));
+        }
+
+        function hatasızFloatCikarma(a, b, decimals = 3) {
+            return parseFloat((a - b).toFixed(decimals));
+        }
+    </script>
+@endsection

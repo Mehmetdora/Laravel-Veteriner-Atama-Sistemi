@@ -218,6 +218,10 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
         Route::get('/memur/evrak/liste', 'index')->name('memur.evrak.index');
         Route::get('/memur/evrak/detay/{type}/{id}', 'detail')->name('memur.evrak.detail');
 
+        Route::get('/memur/evrak/düzenle/{type}/{id}', 'edit')->name('memur.evrak.edit');
+        Route::post('/memur/evrak/düzenlendi', 'edited')->name('memur.evrak.edited');
+
+
         Route::get('/memur/evrak/ekle', 'create')->name('memur.evrak.create');
         Route::post('/memur/evrak/eklendi', 'created')->name('memur.evrak.created');
 

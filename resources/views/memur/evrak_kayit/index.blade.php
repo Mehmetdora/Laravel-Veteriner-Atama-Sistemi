@@ -66,10 +66,17 @@
                                                 <tr>
                                                     <td>
                                                         <a
+                                                            href="{{ route('memur.evrak.edit', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
+                                                            <button type="button" style="width: 100%"
+                                                                class="btn btn-warning">Düzenle</button>
+                                                        </a>
+                                                        <br>
+                                                        <a
                                                             href="{{ route('memur.evrak.detail', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
                                                             <button type="button" style="width: 100%"
                                                                 class="btn btn-info">Detay</button>
                                                         </a>
+
                                                     </td>
                                                     <td>{{ $evrak->created_at?->format('d-m-y') ?? 'Tarih Yok' }} <br>
                                                         {{ $evrak->created_at?->timezone('Europe/Istanbul')->format('H:i') ?? 'Saat Yok' }}
