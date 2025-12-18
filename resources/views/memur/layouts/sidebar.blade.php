@@ -38,7 +38,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{route('memur.stok_takip.index')}}" class="nav-link active">
+                    <a href="{{ route('memur.stok_takip.index') }}" class="nav-link active">
                         <i class="nav-icon fas fa-file-import"></i>
                         <p>
                             Stok Takip
@@ -52,6 +52,22 @@
                         <p>
                             İzin Günlerim
                         </p>
+                    </a>
+                </li>
+
+                <br>
+
+                <li class="nav-item">
+                    <a href="{{ route('memur.nobet.veteriner.index') }}" class="nav-link">
+                        <i class="far fa-calendar"></i>
+                        <p>Veteriner Nöbet Takvimi</p>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{{ route('memur.izin.veteriner.index') }}" class="nav-link">
+                        <i class="far fa-calendar"></i>
+                        <p>Veteriner İzin Takvimi</p>
                     </a>
                 </li>
 

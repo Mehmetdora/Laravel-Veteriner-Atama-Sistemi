@@ -22,6 +22,8 @@ use App\Http\Controllers\veteriner\VeterinerController;
 use App\Http\Controllers\admin\VeterinerController as VeterinerEController;
 use App\Http\Controllers\memur\EvrakController as MemurEvrakController;
 use App\Http\Controllers\memur\StokTakipController as MemurStokTakipController;
+use App\Http\Controllers\memur\VeterinerIzinController as MemurVeterinerIzinController;
+use App\Http\Controllers\memur\VeterinerNobetController as MemurVeterinerNobetController;
 
 // HER MİGRATE:FRESH YAPINCA SEEDER ile  BERABER ÇALIŞTIR
 
@@ -233,6 +235,25 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
     Route::controller(MemurStokTakipController::class)->group(function () {
 
         Route::get('/memur/stok-takip/liste', 'index')->name('memur.stok_takip.index');
+    });
+
+
+    // Nöbet işlemleri
+    Route::controller(MemurVeterinerNobetController::class)->group(function () {
+        Route::get('/memur/veteriner/nöbet/liste', 'index')->name('memur.nobet.veteriner.index');
+        Route::post('/memur/veteriner/nöbet/eklendi', 'nobet_created')->name('memur.nobet.veteriner.created');
+        Route::post('/memur/veteriner/nöbet/düzenlendi', 'nobet_edited')->name('memur.nobet.veteriner.edited');
+        Route::post('/memur/veteriner/nöbet/silindi', 'nobet_deleted')->name('memur.nobet.veteriner.deleted');
+    });
+
+
+
+    // İzin işlemleri
+    Route::controller(MemurVeterinerIzinController::class)->group(function () {
+        Route::get('/memur/veteriner/izin/liste', 'index')->name('memur.izin.veteriner.index');
+        Route::get('/memur/veteriner/izin/ekle', 'create')->name('memur.izin.veteriner.create');
+        Route::post('/memur/veteriner/izin/eklendi', 'created')->name('memur.izin.veteriner.created');
+        Route::post('/memur/veteriner/izin/silindi', 'delete')->name('memur.izin.veteriner.delete');
     });
 
 
