@@ -40,13 +40,16 @@
                                 <th style="width: 3%">
                                     id
                                 </th>
-                                <th style="width: 15%">
+                                <th style="width: 10%">
                                     Adı Soyadı
                                 </th>
-                                <th style="width: 7%" class="text-center">
+                                <th style="width: 10%" class="text-center">
+                                    Evrak Puanları:<br> Toplam/İşlemde
+                                </th>
+                                <th style="width: 6%" class="text-center">
                                     Toplam Evrak Sayısı
                                 </th>
-                                <th style="width: 7%" class="text-center">
+                                <th style="width: 6%" class="text-center">
                                     Onaylanan Evrak Sayısı
                                 </th>
                                 <th style="width: 7%" class="text-center">
@@ -61,7 +64,7 @@
                                 <th style="width: 10%" class="text-center">
                                     İzinli Mi?(Şu an)
                                 </th>
-                                <th style="width: 29%" class="text-center">
+                                <th style="width: 26%" class="text-center">
                                     İşlemler
                                 </th>
                             </tr>
@@ -82,22 +85,26 @@
                                                 Başlangıç Tarihi : {{ $veteriner['created_at']->format('d-m-y') }}
                                             </small>
                                         </td>
-
+                                        <td class="project-state">
+                                            <span
+                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam_evraklar_puani'] }}
+                                                / {{ $evraks_info[$loop->index]['islemde_evraklar_puani'] }}</span>
+                                        </td>
 
                                         <td class="project-state">
                                             <span
-                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam'] }}</span>
+                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam_evraklar_sayisi'] }}</span>
                                         </td>
                                         <td class="project-state">
                                             <span
                                                 class="badge badge-info">{{ $evraks_info[$loop->index]['onaylandi'] }}</span>
                                         </td>
                                         <td class="project-state">
-                                            @if ($evraks_info[$loop->index]['islemde'] == 0)
+                                            @if ($evraks_info[$loop->index]['islemde_evraklar_sayisi'] == 0)
                                                 <span class="badge badge-danger">-----</span>
                                             @else
                                                 <span
-                                                    class="badge badge-danger">{{ $evraks_info[$loop->index]['islemde'] }}</span>
+                                                    class="badge badge-danger">{{ $evraks_info[$loop->index]['islemde_evraklar_sayisi'] }}</span>
                                             @endif
                                         </td>
                                         <td class="project-state">

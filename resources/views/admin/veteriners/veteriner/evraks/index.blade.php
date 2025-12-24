@@ -21,13 +21,44 @@
         <!-- Main content -->
         <section class="content">
 
+            @include('admin.layouts.messages')
+
+            {{-- Veterinere atanmış olan evrakların istatistikleri --}}
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Evrakların İstatistikleri</h3>
+                </div>
+                <div class="card-body p-3">
+
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h5>Toplam Evrak Puanı: <b>{{ $evrak_istatistikleri['toplam'] }}</b></h5>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>İşlemde Evrakların Puanı: <b>{{ $evrak_istatistikleri['islemde'] }}</b></h6>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Beklemede Evrakların Puanı: <b>{{ $evrak_istatistikleri['beklemede'] }}</b></h6>
+                        </div>
+                        <div class="col-sm-3">
+                            <h6>Tamamlanan Evrakların Puanı: <b>{{ $evrak_istatistikleri['onaylandi'] }}</b></h6>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+
+
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Atanmış Tüm Evrakları</h3>
+                    <h3 class="card-title">Atanan Evraklar</h3>
 
                 </div>
-                @include('admin.layouts.messages')
                 <div class="card-body p-0">
                     <table class="table table-striped projects">
                         <thead>

@@ -83,42 +83,32 @@ class VeterinerController extends Controller
 
         // EVRAK BİTİRME YÜZDESİ HESAPLAMA
         $evrak_istatistikleri = [];
-        foreach ($veterinerler as $user) {
-            if ($user->evraks()->exists()) {
-                $islemde = 0;
-                $onaylandi = 0;
 
-                foreach ($user->evraks as $kayit) {
-                    $durum = $kayit->evrak->evrak_durumu->evrak_durum;
-                    if (isset($durum)) {
-                        if ($durum == "İşlemde") {
-                            $islemde += 1;
-                        } else {
-                            $onaylandi += 1;
-                        }
+        foreach ($veterinerler as $veteriner) {
+            $istatistikler = $veteriner->evraks->reduce(
+                function ($carry, $kayit) {
+
+                    $evrak_durumu = $kayit->evrak?->evrak_durumu?->evrak_durum;
+                    $coefficient = (float) ($kayit->evrak?->difficulty_coefficient ?? 0);
+
+                    if ($evrak_durumu === "İşlemde") {
+                        $carry['islemde_evraklar_sayisi'] += 1;
+                        $carry['islemde_evraklar_puani'] += $coefficient;
+                    } else if ($evrak_durumu === "Beklemede") {
+                        $carry['beklemede'] += 1;
+                    } else {
+                        $carry['onaylandi'] += 1;
                     }
-                }
-                $yuzde = 0;
+                    $carry['toplam_evraklar_sayisi'] += 1;
+                    $carry['toplam_evraklar_puani'] += $coefficient;
 
-                if ($onaylandi != 0) {
-                    $yuzde = round($onaylandi / ($islemde + $onaylandi), 2) * 100;
-                }
-
-                $evrak_istatistikleri[] = [
-                    'toplam' => ($islemde + $onaylandi),
-                    'onaylandi' => $onaylandi,
-                    'islemde' => $islemde,
-                    'yuzde' => $yuzde
-                ];
-            } else {
-                $evrak_istatistikleri[] = [
-                    'toplam' => 0,
-                    'onaylandi' => 0,
-                    'islemde' => 0,
-                    'yuzde' => 0
-                ];
-            }
+                    return $carry;
+                },
+                ['toplam_evraklar_sayisi' => 0, 'toplam_evraklar_puani' => 0, 'islemde_evraklar_sayisi' => 0, 'islemde_evraklar_puani' => 0, 'beklemede' => 0, 'onaylandi' => 0]
+            );
+            $evrak_istatistikleri[] = $istatistikler;
         }
+
         $data['evraks_info'] = $evrak_istatistikleri;
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
@@ -246,15 +236,36 @@ class VeterinerController extends Controller
 
     public function evraks_list($id)
     {
-        $data['veteriner'] = User::with([
-            'evraks' => function ($query) {
-                $query->orderBy('created_at', 'desc');
-            },
-            'evraks.evrak.evrak_durumu'
-        ])->find($id);
+        $user = User::with([
+            'evraks' => fn($q) => $q->latest(),
+            'evraks.evrak.evrak_durumu',
+        ])->findOrFail($id);
+
+        $totals = $user->evraks->reduce(function ($carry, $kayit) {
+            $durum = $kayit->evrak?->evrak_durumu?->evrak_durum;
+            $coefficient  = (float) ($kayit->evrak?->difficulty_coefficient ?? 0);
+
+            if ($durum === 'İşlemde') {
+                $carry['islemde'] += $coefficient;
+            } elseif ($durum === 'Beklemede') {
+                $carry['beklemede'] += $coefficient;
+            } elseif ($durum !== null) {
+                $carry['onaylandi'] += $coefficient;
+            }
+
+            return $carry;
+        }, ['islemde' => 0, 'beklemede' => 0, 'onaylandi' => 0]);
+
+        $data['evrak_istatistikleri'] = [
+            'toplam'    => $totals['islemde'] + $totals['beklemede'] + $totals['onaylandi'],
+            'onaylandi' => $totals['onaylandi'],
+            'islemde'   => $totals['islemde'],
+            'beklemede' => $totals['beklemede'],
+        ];
 
         return view('admin.veteriners.veteriner.evraks.index', $data);
     }
+
 
     public function edit($id)
     {
