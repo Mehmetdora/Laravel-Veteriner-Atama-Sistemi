@@ -158,4 +158,20 @@ class User extends Authenticatable
 
         return $workload;
     }
+
+
+    public function veterinerinBuYilkiWorkloadValue()
+    {
+        $workload = $this->veterinerinBuYilkiWorkloadi();
+        if (!$workload) {
+            throw new \Exception("Veterinerler arasından yıllık evrak puanları getirilirken beklenmedik bir hata oluştu: Hata Kodu - 003");
+        }
+
+        $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
+        $today = $todayWithHour->format('Y-m-d');
+
+        $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
+
+        return $has_telafi ? $workload->temp_workload : $workload->year_workload;
+    }
 }

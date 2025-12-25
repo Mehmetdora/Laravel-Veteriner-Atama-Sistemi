@@ -1751,9 +1751,8 @@ class EvrakController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
-                if ($request->is_numuneli) {
-                    $evrak->difficulty_coefficient = 40;
-                }
+                $evrak->difficulty_coefficient = $request->is_numuneli ? 40 : 20;
+
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -1772,55 +1771,24 @@ class EvrakController extends Controller
                 // numunesizden -> numuneliye
                 if ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == true) {  // Evrak türü değişmiş ise
 
-                    // Veteriner değişmişse worklaod güncelleme
-                    if ($user_evrak->user_id != (int)$request->veterinerId) {
-                        $this->evrak_vet_degisirse_worklaods_updater
-                            ->veterinerlerin_worklaods_guncelleme(
-                                $user_evrak->user_id,
-                                (int)$request->veterinerId,
-                                'ithalat',
-                                'numuneli_ithalat'
-                            );
-                    } else {  // veteriner değişmemişse
-                        $this->evrak_vet_degisirse_worklaods_updater
-                            ->veterinerlerin_worklaods_guncelleme(
-                                $user_evrak->user_id,
-                                $user_evrak->user_id,
-                                'ithalat',
-                                'numuneli_ithalat'
-                            );
-                    }
-
-                    // numuneliden -> numunesize
-                } elseif ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == false) {
-                    // Veteriner değişmişse worklaod güncelleme
-                    if ($user_evrak->user_id != (int)$request->veterinerId) {
-                        $this->evrak_vet_degisirse_worklaods_updater
-                            ->veterinerlerin_worklaods_guncelleme(
-                                $user_evrak->user_id,
-                                (int)$request->veterinerId,
-                                'numuneli_ithalat',
-                                'ithalat'
-                            );
-                    } else {  // veteriner değişmemişse
-                        $this->evrak_vet_degisirse_worklaods_updater
-                            ->veterinerlerin_worklaods_guncelleme(
-                                $user_evrak->user_id,
-                                $user_evrak->user_id,
-                                'numuneli_ithalat',
-                                'ithalat'
-                            );
-                    }
-
-                    // sadece veteriner değişmişse
-                } else {
-                    $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
                     $this->evrak_vet_degisirse_worklaods_updater
                         ->veterinerlerin_worklaods_guncelleme(
                             $user_evrak->user_id,
-                            (int)$request->veterinerId,
-                            $evrak_type,
-                            $evrak_type
+                            $user_evrak->user_id,
+                            'ithalat',
+                            'numuneli_ithalat'
+                        );
+
+
+                    // numuneliden -> numunesize
+                } elseif ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == false) {
+
+                    $this->evrak_vet_degisirse_worklaods_updater
+                        ->veterinerlerin_worklaods_guncelleme(
+                            $user_evrak->user_id,
+                            $user_evrak->user_id,
+                            'numuneli_ithalat',
+                            'ithalat'
                         );
                 }
 

@@ -68,13 +68,14 @@ class AtamaServisi
         /**
          * Aktif Veterinerleri Getirir
          * - İzinli olmayanlar(gemi ve normal izin),
-         * - Saat 15.30'den sonra ise sadece nöbetçiler, önce nöbetçi olmayanlar,
-         * - Elinde "işlemde" durumunda evrağı olmayanları,
+         * - Saat 15.30'den sonra ise sadece nöbetçiler, önce gün içi,
+         *
+         * - Hepsinin elinde evrak varsa işlemde olanlar arasından en az olan vets gelir
          *
          */
         $veterinerler = $this->veteriner_durum_kontrol->aktifVeterinerleriGetir($now);
         if ($veterinerler->isEmpty()) {
-            throw new \Exception("001 - Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen nöbetçi veteriner hekim olduğundan ve müsait olduklarından emin olduktan sonra tekrar deneyiniz!");
+            throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen veterinerlerin izin ve nöbet bilgilerini kontrol ediniz. - 001");
         }
 
 
@@ -99,6 +100,25 @@ class AtamaServisi
             }
         }
 
+
+        // ------------------------------------------------------------------------------
+        /*
+        Burada kadar veterinerler arasıdan ya;
+         - elinde hiç evrağı olmayanlar + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
+         - elinde evrağı olanlar(işlemde) + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
+
+         getirilir. Yani her türlü veteriner listesi boş olmayacak.
+
+         Bundan sonraki önceliklendirme telafisi olup olmamasına göre yapılacak.
+        */
+
+
+
+
+
+
+
+
         $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
         $today = $todayWithHour->format('Y-m-d');
 
@@ -107,71 +127,30 @@ class AtamaServisi
         $telafisi_olan_vets = [];   // o gün için telafisi olan veterinerler(telafisini bitirmiş de olabilir bitirmemişde)
 
 
-        // İLK KONTROL
-        // Bu kontrol ile istenen özel durumlar için veterinerler kontrol edilir. Veya saate göre kontrol edilir.
-        $isi_olmayan_vets = $veterinerler;
-        /* foreach ($veterinerler as $vet) {
 
-            // Veteriner canli hayvan gemide mi kontrolü - aslında bu kotrol zaten yapılmıştı , gerek yok gibi
-            if ($this->vet_gemi_izin_kontrolu->izin_var_mi($vet->id)) {
-                continue;   // izinli ise geç
-            }
 
-            // Veterinerin üzerinde çalışmaya devam ettiği evrak var mı kontrolü
-            if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
-                continue;
-            }
-
-            // gemi işine gitmemiş ve elinde işi olmayan veterinerleri listeye ekle
-            $isi_olmayan_vets[] = $vet;
-        } */
 
         /*
-            İlk amaç telifisi olan veterinerleri bulup onların telafilerini kapatmak,
-            sonrasında normal düzene devam edilecek.
+
+        İlk seviyede seçilen veterinerlerin listesi üzerinden ikinci kontrol yapılır.
+        Bu kontrol ile telafi olan veterinerlerin öncelikli olması sebebi ile içlerinden
+        telafisi olanlar tekrar seçilir.
         */
 
-        // İKİNCİ KONTROL
-        if (!empty($isi_olmayan_vets)) {    // EĞER MÜSAİT OLAN VETERİNER VAR İSE BUNLAR ARASINDAN SEÇ
-            foreach ($isi_olmayan_vets as $vet) {
-                $workload = $vet->veterinerinBuYilkiWorkloadi();
-                $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
-                if ($has_telafi) {
+        foreach ($veterinerler as $vet) {
+            $workload = $vet->veterinerinBuYilkiWorkloadi();
+            $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
+            if ($has_telafi) {
 
-                    $telafisi_olan_vets[] = $vet;
+                $telafisi_olan_vets[] = $vet;
+                $telafiler = $workload->telafis()->where('tarih', $today)->get();
 
-                    /*
-                    o gün için veterinerin birden fazla telafisi olabilir,
-                    her birinin kalan telafi değeri 0dan büyükse bitmemis_telafiler listesinde topla
-                    */
-                    $telafiler = $workload->telafis()->where('tarih', $today)->get();
-
-                    foreach ($telafiler as $telafi) {
-                        if ($telafi->remaining_telafi_workload > 0) {
-                            $bitmemis_telafiler[] = [
-                                'telafi' => $telafi,
-                                'vet_id' => $vet->id
-                            ];
-                        }
-                    }
-                }
-            }
-        } else {  // EĞER TÜM VETERİNELER DOLU İSE TÜM VETERİNERLER ARASINDA RANDOM SEÇ
-            foreach ($veterinerler as $vet) {
-                $workload = $vet->veterinerinBuYilkiWorkloadi();
-                $has_telafi = $workload->telafis()->where('tarih', $today)->exists();
-                if ($has_telafi) {
-
-                    $telafisi_olan_vets[] = $vet;
-                    $telafiler = $workload->telafis()->where('tarih', $today)->get();
-
-                    foreach ($telafiler as $telafi) {
-                        if ($telafi->remaining_telafi_workload > 0) {
-                            $bitmemis_telafiler[] = [
-                                'telafi' => $telafi,
-                                'vet_id' => $vet->id
-                            ];
-                        }
+                foreach ($telafiler as $telafi) {
+                    if ($telafi->remaining_telafi_workload > 0) {
+                        $bitmemis_telafiler[] = [
+                            'telafi' => $telafi,
+                            'vet_id' => $vet->id
+                        ];
                     }
                 }
             }
@@ -181,19 +160,12 @@ class AtamaServisi
 
 
 
-        // Eğer bugün için izinli olmayan veterinerler arasından telafisi olanlar varsa
-        // bu veterinerlerin telafileri bitene kadar öncelik bunlara verilecek ,
-        // kimsenin telafisi yoksa yada telafilerini bitirmişler ise sistem normal atama işlemini yapar
 
-        // Tüm veterinerlerin telafiisi yokken normal şekilde random bir veterinerin seçilmesi
-
+        /*
+        Hiçbirinin telafisi yoksa direkt bu veterinerler arasından random bir tanesine evrak atanır.
+        */
         if (empty($bitmemis_telafiler)) {
 
-
-            // 2. Her Veteriner İçin Telafi Hesapla
-            /* foreach ($veterinerler as $veteriner) {
-            $this->telafiHesapla($veteriner, $now);
-            } */
 
             // 2. En düşük iş yüklü veteriner(ler)i bul
             $min_workload_degeri = PHP_INT_MAX;
@@ -202,12 +174,6 @@ class AtamaServisi
 
             // Her veterinerin bu yıl için aldığı işler karşılaştırılarak en düşük olan(lar) adayVeterinerler arasında eklenir
             foreach ($veterinerler as $vet) {
-
-                // Veterinerler arasından seçerken elinde daha bitmemiş bir evrak olanları geç
-                /* if ($this->veteriner_evrak_durumu_kontrolu->vet_evrak_durum_kontrol($vet->id)) {
-                    continue;
-                } */
-
 
                 $currentWorkload_degeri = 0; // telafisi olması durumuna göre hangi değerin alınacağına karar verilecek
 
@@ -237,7 +203,7 @@ class AtamaServisi
 
             // 3. Rastgele bir veterineri seç
             if ($adayVeterinerler->isEmpty()) {
-                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
+                throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz! - 009");
             }
             $seciliVeteriner = $adayVeterinerler->random();
 
@@ -262,6 +228,8 @@ class AtamaServisi
                 );
             }
 
+
+            // izindeki veterinerlerin temp_workload değerlerinin güncel tutulması için
             $this->temp_workloads_updater->all_temp_workloads_update();
 
 
@@ -281,6 +249,7 @@ class AtamaServisi
             }
 
 
+            // telafisi olduğu için direkt temp_workload değeri güncellenir.
             $this->updateWorkload(
                 $seciliVeteriner,
                 $this->workloadCoefficients[$documentType],

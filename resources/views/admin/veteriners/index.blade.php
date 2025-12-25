@@ -87,7 +87,7 @@
                                         </td>
                                         <td class="project-state">
                                             <span
-                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam_evraklar_puani'] }}
+                                                class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam_isyuku_puani'] }}
                                                 / {{ $evraks_info[$loop->index]['islemde_evraklar_puani'] }}</span>
                                         </td>
 

@@ -85,21 +85,21 @@ class EvrakVeterineriDegisirseWorkloadGuncelleme
             // Eski veterineri workload ını evrağın coefficieni kadar azaltma
             // yeni veterinerin worklaod değerini de bu kadar arttırma
 
+
             $old_vet_worklaod->year_workload -= $old_coefficient;
             $old_vet_worklaod->total_workload -= $old_coefficient;
-            if ($old_vet_worklaod->temp_workload != 0) {
+            if ($old_vet_worklaod->temp_workload > 0) {
                 $old_vet_worklaod->temp_workload -= $old_coefficient;
             }
             $old_vet_worklaod->save();
 
+
             $new_vet_worklaod->year_workload += $old_coefficient;
             $new_vet_worklaod->total_workload += $old_coefficient;
-            if ($new_vet_worklaod->temp_workload != 0) {
+            if ($new_vet_worklaod->temp_workload > 0) {
                 $new_vet_worklaod->temp_workload += $old_coefficient;
             }
             $new_vet_worklaod->save();
         }
-
-
     }
 }

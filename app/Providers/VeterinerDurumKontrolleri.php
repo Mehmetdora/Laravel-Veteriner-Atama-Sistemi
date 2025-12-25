@@ -16,6 +16,17 @@ class VeterinerDurumKontrolleri
      * - Saat 15.30'den sonra ise sadece nöbetçiler, önce nöbetçi olmayanlar,
      *
      */
+
+    /*
+
+    Anlık olarak zamana göre 15.30 dan önce sadece gün için veterinerleri, 15.30 dan sonra nöbetçi veterinerleri
+    bir liste olarak seçilir
+
+    Elinde işlemde evrak olmayan veteriner(ler) varsa onları döner
+
+    Hepsinde evrak varsa içlerinden en az işlemde evrak puanına sahip olanları döner. 
+
+    */
     public function aktifVeterinerleriGetir(Carbon $simdikiZaman)
     {
 
@@ -23,39 +34,22 @@ class VeterinerDurumKontrolleri
 
         try {
             $kontrol_zamani = $simdikiZaman->copy()->setTime(15, 30, 0);
-            $veterinerler_query = User::role('veteriner')->where('status', 1);
+            $veterinerler = null;
 
-            // İzin (normal ve gemi) kontrolü için temel sorgu parçası
-            $izin_kontrol_closure = function ($query) use ($simdikiZaman) {
-                $query->where('startDate', '<=', $simdikiZaman)
-                    ->where('endDate', '>=', $simdikiZaman);
-            };
-            $gemi_izin_kontrol_closure = function ($query) use ($simdikiZaman) {
-                $query->where('start_date', '<=', $simdikiZaman)
-                    ->where('end_date', '>=', $simdikiZaman);
-            };
-
-            // 8. Nöbet Kontrolü (15.30 sonrasında sadece nöbetçi olanlar evrak alacak)
+            // Saat 15.30 dan sonra ise nöbetçi veterinerleri al, değilse normal veterinerleri al
             if ($simdikiZaman->greaterThan($kontrol_zamani)) {
 
-                $veterinerler = $veterinerler_query
-                    ->whereDoesntHave('izins', $izin_kontrol_closure)
-                    ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
-                    ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
-                        $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
-                    })->get();
+                // Sadece nöbetçi veterinerleri
+                $veterinerler = $this->izinsiz_nobetci_vets($simdikiZaman);
             } else {
-                // 9. Normal Çalışma Saatleri (Tüm aktif ve izinli olmayanlar evrak alacak)
-                // ek olarak artık akşam nöbetçi olanlar gün içinde evrak alamayacak.
 
-                $veterinerler = $veterinerler_query
-                    ->whereDoesntHave('izins', $izin_kontrol_closure)
-                    ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
-                    ->whereDoesntHave('nobets', function ($sorgu) use ($simdikiZaman) {
-                        $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
-                    })
-                    ->get();
+                // Sadece gün içi veterinerleri
+                $veterinerler = $this->izinsiz_gunici_vets($simdikiZaman);
             }
+
+
+
+
             // Yeni Özellik
             /**
              * Bundan sonra veterinerler seçilirken önce normla kontroller yapılacak,
@@ -69,6 +63,8 @@ class VeterinerDurumKontrolleri
             $veterinerler->load(['evraks.evrak.evrak_durumu']);
 
             $islenmis_veri = $veterinerler->map(function ($veteriner) {
+
+                // veterinerin elinde işlemde evrak var mı -> (True/False)
                 $islemde_mi = $veteriner->evraks->contains(
                     fn($data) =>
                     $data->evrak &&
@@ -76,6 +72,7 @@ class VeterinerDurumKontrolleri
                         $data->evrak->evrak_durumu->evrak_durum === 'İşlemde'
                 );
 
+                // işlemde olan evrakların puanlarını topla
                 $evrak_workload = $veteriner->evraks
                     ->filter(fn($d) => $d->evrak?->evrak_durumu?->evrak_durum === 'İşlemde')
                     ->sum(fn($data) => $data->evrak->difficulty_coefficient ?? 0);
@@ -87,13 +84,14 @@ class VeterinerDurumKontrolleri
                 ];
             });
 
+            // veteriner ve evrak puanları listesi
             $veteriner_islemde_workload = $islenmis_veri->map(fn($item) => [
                 'vet' => $item['veteriner'],
                 'islemde_workload' => $item['evrak_workload']
             ]);
 
 
-            // toplanan veteriner bilgileri içinden normal şekilde veterinerlerin filtrelenmesi
+            // elinde işlemde evrak olmayan veterinerler listesi
             $atanabilir_veterinerler = $islenmis_veri
                 ->where('musait_mi', true)
                 ->pluck('veteriner');
@@ -101,9 +99,8 @@ class VeterinerDurumKontrolleri
             // Hata vermek yerine , elinde iş de olsa veterinerin birine bu evrak atanacak
             // bu nedenle elinde işlemde evrağı olanlar arasından seçerek , veteriner listesini dön
 
-
+            // İşlemde evrağı olmayan veterinerler listesi boş ise(hepsinde evrak var ise)
             if ($atanabilir_veterinerler->isEmpty()) {
-                //throw new \Exception($hata_mesaji);
 
                 $min_value = PHP_INT_MAX;   // başlangıç değeri olarak başlat
                 $adayVeterinerler = collect();
@@ -275,5 +272,63 @@ class VeterinerDurumKontrolleri
         } catch (\Exception $e) {
             throw new \Exception($hata_mesaji . " - " . $e);
         }
+    }
+
+
+
+
+    // İzinde olmayan ve sadece güniçi(nöbeti olmayan) veterinerleri getirir
+    public function izinsiz_gunici_vets(Carbon $simdikiZaman)
+    {
+        $veterinerler_query = User::role('veteriner')->where('status', 1);
+
+        // İzin (normal ve gemi) kontrolü için temel sorgu parçası
+        $izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+            $query->where('startDate', '<=', $simdikiZaman)
+                ->where('endDate', '>=', $simdikiZaman);
+        };
+        $gemi_izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+            $query->where('start_date', '<=', $simdikiZaman)
+                ->where('end_date', '>=', $simdikiZaman);
+        };
+
+        // Sadece gün içi veterinerler
+        $veterinerler = $veterinerler_query
+            ->whereDoesntHave('izins', $izin_kontrol_closure)
+            ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
+            ->whereDoesntHave('nobets', function ($sorgu) use ($simdikiZaman) {
+                $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+            })
+            ->get();
+
+        return $veterinerler;
+    }
+
+
+    // İzinde olmayan ve sadece nöbetçi olan veterinerleri getirir
+    public function izinsiz_nobetci_vets(Carbon $simdikiZaman)
+    {
+        $veterinerler_query = User::role('veteriner')->where('status', 1);
+
+        // İzin (normal ve gemi) kontrolü için temel sorgu parçası
+        $izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+            $query->where('startDate', '<=', $simdikiZaman)
+                ->where('endDate', '>=', $simdikiZaman);
+        };
+        $gemi_izin_kontrol_closure = function ($query) use ($simdikiZaman) {
+            $query->where('start_date', '<=', $simdikiZaman)
+                ->where('end_date', '>=', $simdikiZaman);
+        };
+
+        // Sadece nöbetçi veterinerler
+        $veterinerler = $veterinerler_query
+            ->whereDoesntHave('izins', $izin_kontrol_closure)
+            ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
+            ->whereHas('nobets', function ($sorgu) use ($simdikiZaman) {
+                $sorgu->where('date', $simdikiZaman->format('Y-m-d'));
+            })
+            ->get();
+
+        return $veterinerler;
     }
 }

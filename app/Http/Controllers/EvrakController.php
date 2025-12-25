@@ -21,7 +21,6 @@ use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
-use App\Models\DailyTotalWorkload;
 use Illuminate\Support\Facades\DB;
 use App\Models\EvrakAntrepoSertifika;
 use App\Models\EvrakCanliHayvanGemi;
@@ -1777,9 +1776,8 @@ class EvrakController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
-                if ($request->is_numuneli) {
-                    $evrak->difficulty_coefficient = 40;
-                }
+                $evrak->difficulty_coefficient = $request->is_numuneli ? 40 : 20;
+
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -1840,14 +1838,17 @@ class EvrakController extends Controller
 
                     // sadece veteriner değişmişse
                 } else {
-                    $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
-                    $this->evrak_vet_degisirse_worklaods_updater
-                        ->veterinerlerin_worklaods_guncelleme(
-                            $user_evrak->user_id,
-                            (int)$request->veterinerId,
-                            $evrak_type,
-                            $evrak_type
-                        );
+
+                    if ($user_evrak->user_id != (int)$request->veterinerId) {
+                        $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                (int)$request->veterinerId,
+                                $evrak_type,
+                                $evrak_type
+                            );
+                    }
                 }
 
                 $user_evrak->user_id = (int)$request->veterinerId;

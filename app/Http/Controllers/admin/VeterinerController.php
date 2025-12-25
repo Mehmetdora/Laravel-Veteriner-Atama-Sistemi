@@ -85,8 +85,12 @@ class VeterinerController extends Controller
         $evrak_istatistikleri = [];
 
         foreach ($veterinerler as $veteriner) {
+
+            // Telafi durumuna göre temp_workload veya year_workload değeri getirilir.
+            $vet_workload_value = $veteriner->veterinerinBuYilkiWorkloadValue();
+
             $istatistikler = $veteriner->evraks->reduce(
-                function ($carry, $kayit) {
+                function ($carry, $kayit) use ($vet_workload_value) {
 
                     $evrak_durumu = $kayit->evrak?->evrak_durumu?->evrak_durum;
                     $coefficient = (float) ($kayit->evrak?->difficulty_coefficient ?? 0);
@@ -100,11 +104,18 @@ class VeterinerController extends Controller
                         $carry['onaylandi'] += 1;
                     }
                     $carry['toplam_evraklar_sayisi'] += 1;
-                    $carry['toplam_evraklar_puani'] += $coefficient;
+                    $carry['toplam_isyuku_puani'] = $vet_workload_value;
 
                     return $carry;
                 },
-                ['toplam_evraklar_sayisi' => 0, 'toplam_evraklar_puani' => 0, 'islemde_evraklar_sayisi' => 0, 'islemde_evraklar_puani' => 0, 'beklemede' => 0, 'onaylandi' => 0]
+                [
+                    'toplam_evraklar_sayisi' => 0,
+                    'toplam_isyuku_puani' => 0,
+                    'islemde_evraklar_sayisi' => 0,
+                    'islemde_evraklar_puani' => 0,
+                    'beklemede' => 0,
+                    'onaylandi' => 0
+                ]
             );
             $evrak_istatistikleri[] = $istatistikler;
         }
@@ -262,6 +273,8 @@ class VeterinerController extends Controller
             'islemde'   => $totals['islemde'],
             'beklemede' => $totals['beklemede'],
         ];
+
+        $data['veteriner'] = $user;
 
         return view('admin.veteriners.veteriner.evraks.index', $data);
     }
@@ -714,9 +727,7 @@ class VeterinerController extends Controller
                 $evrak->orjinUlke = $request->orjinUlke;
                 $evrak->girisGumruk = $request->girisGumruk;
                 $evrak->is_numuneli = $request->is_numuneli;
-                if ($request->is_numuneli) {
-                    $evrak->difficulty_coefficient = 40;
-                }
+                $evrak->difficulty_coefficient = $request->is_numuneli ? 40 : 20;
                 $evrak->save();
 
                 // İlişkili modelleri bağlama
@@ -733,6 +744,7 @@ class VeterinerController extends Controller
 
                 // numunesizden -> numuneliye
                 if ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == true) {  // Evrak türü değişmiş ise
+
 
                     // Veteriner değişmişse worklaod güncelleme
                     if ($user_evrak->user_id != (int)$request->veterinerId) {
@@ -755,6 +767,8 @@ class VeterinerController extends Controller
 
                     // numuneliden -> numunesize
                 } elseif ($request->is_numuneli != $old_is_numuneli && $request->is_numuneli == false) {
+
+
                     // Veteriner değişmişse worklaod güncelleme
                     if ($user_evrak->user_id != (int)$request->veterinerId) {
                         $this->evrak_vet_degisirse_worklaods_updater
@@ -773,17 +787,18 @@ class VeterinerController extends Controller
                                 'ithalat'
                             );
                     }
+                } else { // sadece veteriner değişmişse
 
-                    // sadece veteriner değişmişse
-                } else {
-                    $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
-                    $this->evrak_vet_degisirse_worklaods_updater
-                        ->veterinerlerin_worklaods_guncelleme(
-                            $user_evrak->user_id,
-                            (int)$request->veterinerId,
-                            $evrak_type,
-                            $evrak_type
-                        );
+                    if ($user_evrak->user_id != (int)$request->veterinerId) {
+                        $evrak_type = $evrak->is_numuneli ? 'numuneli_ithalat' : 'ithalat';
+                        $this->evrak_vet_degisirse_worklaods_updater
+                            ->veterinerlerin_worklaods_guncelleme(
+                                $user_evrak->user_id,
+                                (int)$request->veterinerId,
+                                $evrak_type,
+                                $evrak_type
+                            );
+                    }
                 }
                 $user_evrak->user_id = (int)$request->veterinerId;
                 $user_evrak->evrak()->associate($evrak);
