@@ -14,9 +14,19 @@
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
-                            <li class="breadcrumb-item"><a href="#"><button class="btn btn-primary"
-                                        onclick="exportCalendarToPDF()">Takvimi PDF
-                                        Olarak İndir</button></a>
+                            <li class="mr-3">
+                                <a href="{{ route('admin.nobet.multiple.veteriner.create') }}">
+                                    <button class="btn btn-primary">
+                                        Toplu Nöbet Ekle
+                                    </button>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#">
+                                    <button class="btn btn-primary" onclick="exportCalendarToPDF()">
+                                        Takvimi PDF Olarak İndir
+                                    </button>
+                                </a>
                             </li>
                         </ol>
                     </div>

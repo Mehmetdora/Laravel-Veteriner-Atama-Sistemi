@@ -163,6 +163,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('/admin/veteriner/nöbet/eklendi', 'nobet_created')->name('admin.nobet.veteriner.created');
         Route::post('/admin/veteriner/nöbet/düzenlendi', 'nobet_edited')->name('admin.nobet.veteriner.edited');
         Route::post('/admin/veteriner/nöbet/silindi', 'nobet_deleted')->name('admin.nobet.veteriner.deleted');
+
+        Route::get('/admin/veteriner/nobet/toplu-ekle', 'create_multiple')->name('admin.nobet.multiple.veteriner.create');
+        Route::post('/admin/veteriner/nobet/toplu-eklendi', 'created_multiple')->name('admin.nobet.multiple.veteriner.created');
+        Route::get("/admin/veteriner/nobet/toplu-uygula", 'apply_multiple')->name("admin.nobet.multiple.veteriner.apply");
     });
 
 
@@ -244,6 +248,11 @@ Route::middleware(['auth', 'role:memur'])->group(function () {
         Route::post('/memur/veteriner/nöbet/eklendi', 'nobet_created')->name('memur.nobet.veteriner.created');
         Route::post('/memur/veteriner/nöbet/düzenlendi', 'nobet_edited')->name('memur.nobet.veteriner.edited');
         Route::post('/memur/veteriner/nöbet/silindi', 'nobet_deleted')->name('memur.nobet.veteriner.deleted');
+
+
+        Route::get('/memur/veteriner/nobet/toplu-ekle', 'create_multiple')->name('memur.nobet.multiple.veteriner.create');
+        Route::post('/memur/veteriner/nobet/toplu-eklendi', 'created_multiple')->name('memur.nobet.multiple.veteriner.created');
+        Route::get("/memur/veteriner/nobet/toplu-uygula", 'apply_multiple')->name("memur.nobet.multiple.veteriner.apply");
     });
 
 
