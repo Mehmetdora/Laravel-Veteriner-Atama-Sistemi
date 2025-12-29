@@ -68,14 +68,91 @@
 
                 @csrf
                 <div class="container-fluid">
-
-
                     <div class="row">
 
 
                         @if (count($day_1) == 0)
-                            <div class="alert alert-info">
+                            <div class="alert alert-info d-flex justify-content-center col-12">
                                 Henüz oluşturulmuş bir nöbet listesi yok. Lütfen seçim yapıp kaydedin.
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <h4><b>Hafta 1</b></h4>
+
+                                @for ($i = 0; $i < 7; $i++)
+                                    <div class="form-group">
+                                        <label>Gün {{ $i + 1 }}</label>
+                                        <select class="select2bs4" name="day_1{{ $i + 1 }}[]" multiple="multiple"
+                                            data-placeholder="Select a State" style="width: 100%;" required>
+                                            @foreach ($vets as $vet)
+                                                <option value="{{ $vet->id }}">
+                                                    {{ $vet->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endfor
+
+
+
+                                <br>
+                                <br>
+                                <hr>
+                                <h4><b>Hafta 2</b></h4>
+
+                                @for ($i = 0; $i < 7; $i++)
+                                    <div class="form-group">
+                                        <label>Gün {{ $i + 7 }}</label>
+                                        <select class="select2bs4" name="day_2{{ $i + 1 }}[]" multiple="multiple"
+                                            data-placeholder="Select a State" style="width: 100%;" required>
+                                            @foreach ($vets as $vet)
+                                                <option value="{{ $vet->id }}">
+                                                    {{ $vet->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endfor
+
+                                <br>
+                                <br>
+                                <hr>
+                                <h4><b>Hafta 3</b></h4>
+
+                                @for ($i = 0; $i < 7; $i++)
+                                    <div class="form-group">
+                                        <label>Gün {{ $i + 14 }}</label>
+                                        <select class="select2bs4" name="day_3{{ $i + 1 }}[]" multiple="multiple"
+                                            data-placeholder="Select a State" style="width: 100%;" required>
+                                            @foreach ($vets as $vet)
+                                                <option value="{{ $vet->id }}">
+                                                    {{ $vet->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endfor
+
+                                <br>
+                                <br>
+                                <hr>
+                                <h4><b>Hafta 4</b></h4>
+
+                                @for ($i = 0; $i < 7; $i++)
+                                    <div class="form-group">
+                                        <label>Gün {{ $i + 21 }}</label>
+                                        <select class="select2bs4" name="day_4{{ $i + 1 }}[]" multiple="multiple"
+                                            data-placeholder="Select a State" style="width: 100%;" required>
+                                            @foreach ($vets as $vet)
+                                                <option value="{{ $vet->id }}">
+                                                    {{ $vet->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endfor
+
                             </div>
                         @else
                             <div class="col-md-6">
@@ -105,8 +182,9 @@
                                     @if ($i < 7)
                                         <div class="form-group">
                                             <label>Gün {{ $i + 1 }}</label>
-                                            <select class="select2bs4" name="day_1{{ $i + 1 }}[]" multiple="multiple"
-                                                data-placeholder="Select a State" style="width: 100%;" required>
+                                            <select class="select2bs4" name="day_1{{ $i + 1 }}[]"
+                                                multiple="multiple" data-placeholder="Select a State" style="width: 100%;"
+                                                required>
                                                 @foreach ($vets as $vet)
                                                     <option value="{{ $vet->id }}"
                                                         {{ in_array($vet->id, $values[$i]) ? 'selected' : '' }}>

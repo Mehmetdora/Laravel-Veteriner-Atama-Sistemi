@@ -68,10 +68,9 @@ class VeterinerNobetController extends Controller
 
 
         $plan = NobetList::latest('id')->first();
-        $list = $plan?->list ?? [];
+        $list = $plan?->list ?? [[]];
         $day_1 = array_values($list)[0];
 
-        //dd($list);
 
         $vets = User::role('veteriner')->where('status', 1)->get();
 
