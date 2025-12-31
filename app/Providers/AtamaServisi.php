@@ -243,7 +243,22 @@ class AtamaServisi
             $vet_id = $bitmemis_telafiler[$secilenTelafi]['vet_id'];
             $telafi = $bitmemis_telafiler[$secilenTelafi]['telafi'];
 
-            $seciliVeteriner = User::find($vet_id);
+
+            $izin_kontrol_closure = function ($query) use ($now) {
+                $query->where('startDate', '<=', $now)
+                    ->where('endDate', '>=', $now);
+            };
+            $gemi_izin_kontrol_closure = function ($query) use ($now) {
+                $query->where('start_date', '<=', $now)
+                    ->where('end_date', '>=', $now);
+            };
+            $seciliVeteriner = User::role('veteriner')->where('status', 1)
+                ->where('id', $vet_id)
+                ->whereDoesntHave('izins', $izin_kontrol_closure)
+                ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)
+                ->first();
+
+
             if (!$seciliVeteriner) {
                 throw new \Exception("Boşta veteriner bulunamadığı için evrak kaydı yapılamamıştır, Lütfen müsait veteriner olduğundan emin olduktan sonra tekrar deneyiniz!");
             }
@@ -278,7 +293,7 @@ class AtamaServisi
 
         // Yapılan evrak sayısına göre workload değerleri çarpılarak güncellenir.
 
-        $today = Carbon::now();
+        $today = now()->setTimezone('Europe/Istanbul');
 
         // Bu fonksiyona gelmeden önce assignVet fonksiyonunda tüm veterinerlere bu yıl için kesin bir tane workload atanmış oluyor.
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();

@@ -9,11 +9,12 @@ use App\Models\User;
 use App\Models\Telafi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use App\Http\Controllers\Controller;
 use App\Providers\BetaDegeriBulma;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\YearWorklaodOrtalamasınıBulma;
+use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 
 class VeterinerIzinController extends Controller
 {
@@ -167,18 +168,67 @@ class VeterinerIzinController extends Controller
 
     public function delete(Request $request)
     {
+        DB::beginTransaction();
 
         try {
-
             $vet = User::find($request->user_id);
+            if (!$vet) {
+                DB::rollBack();
+                return response()->json([
+                    'step' => 'user_find',
+                    'error' => 'Veteriner bulunamadı'
+                ], 404);
+            }
 
-            $vet->izins()->wherePivot('startDate', $request->start_date)
+
+            $izin = $vet->izins()
+                ->wherePivot('startDate', $request->start_date)
+                ->wherePivot('endDate', $request->end_date)
+                ->wherePivot('izin_id', $request->izin_id)
+                ->first();
+
+
+            if (!$izin) {
+                DB::rollBack();
+                return response()->json([
+                    'step' => 'pivot_lookup',
+                    'error' => 'Pivot izin kaydı bulunamadı'
+                ], 404);
+            }
+
+            $windowStart = Carbon::parse($izin->pivot->created_at)->subMinutes(5);
+            $windowEnd   = Carbon::parse($izin->pivot->updated_at)->addMinutes(5);
+
+
+            $workloadIds = $vet->workloads()->pluck('id');
+
+
+            $telafilerQuery = Telafi::query()
+                ->where('izin_id', $request->izin_id)
+                ->whereIn('workload_id', $workloadIds)
+                ->whereBetween('created_at', [$windowStart, $windowEnd])
+                ->delete();
+
+
+
+            $vet->izins()
+                ->wherePivot('startDate', $request->start_date)
                 ->wherePivot('endDate', $request->end_date)
                 ->detach($request->izin_id);
 
-            return response()->json(['success' => true, 'message' => 'Veteriner izini başarıyla silinmiştir!']);
-        } catch (Exception $exception) {
-            return response()->json(['success' => false, 'message' => $exception->getMessage()], 500);
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'step' => 'completed',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'step' => 'exception',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

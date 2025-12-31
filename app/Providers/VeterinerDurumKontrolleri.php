@@ -24,7 +24,7 @@ class VeterinerDurumKontrolleri
 
     Elinde işlemde evrak olmayan veteriner(ler) varsa onları döner
 
-    Hepsinde evrak varsa içlerinden en az işlemde evrak puanına sahip olanları döner. 
+    Hepsinde evrak varsa içlerinden en az işlemde evrak puanına sahip olanları döner.
 
     */
     public function aktifVeterinerleriGetir(Carbon $simdikiZaman)
@@ -52,7 +52,7 @@ class VeterinerDurumKontrolleri
 
             // Yeni Özellik
             /**
-             * Bundan sonra veterinerler seçilirken önce normla kontroller yapılacak,
+             * Bundan sonra veterinerler seçilirken önce normal kontroller yapılacak,
              * eğer veterinerlerin elinde "işlemde" evrağı yoksa bu şekilde normal akışta seçilecekler,
              * ama eğer hiçbir veteriner boşta değilse;
              * - tüm veterinerlerin elindeki "işlemde" türündeki evraklarının toplam workload değerleri karşılaştırılır,
@@ -292,7 +292,7 @@ class VeterinerDurumKontrolleri
                 ->where('end_date', '>=', $simdikiZaman);
         };
 
-        // Sadece gün içi veterinerler
+        // Sadece gün içi veterinerler, nöbeti olanları almadan
         $veterinerler = $veterinerler_query
             ->whereDoesntHave('izins', $izin_kontrol_closure)
             ->whereDoesntHave('gemi_izins', $gemi_izin_kontrol_closure)

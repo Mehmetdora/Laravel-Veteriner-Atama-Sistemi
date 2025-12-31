@@ -260,7 +260,7 @@
                     if (response.success) {
                         window.location.reload();
                     } else {
-                        alert("Hata:",response);
+                        alert("Hata:", response);
                     }
                 },
                 error: function(xhr) {
