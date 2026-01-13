@@ -23,7 +23,6 @@ class StokTakipController extends Controller
             ['evraks_ithalat', 'evraks_transit', 'evraks_giris', 'evraks_varis', 'evraks_varis_dis', 'evraks_sertifika', 'evraks_canli_hayvan']
         )->orderBy('created_at', 'desc')->get(); // Veritabanında sıralama yapılmadı, map ile sıralanacak
 
-
         // Sağlık sertifikalarının bağlı olduğu tek evrağı bulma ve sıralama işlemi
         $saglik_s = $saglik_s->map(function ($sertifika) {
             $evrak = null;
@@ -51,6 +50,10 @@ class StokTakipController extends Controller
             } elseif ($sertifika->evraks_canli_hayvan->isNotEmpty()) {
                 $evrak = $sertifika->evraks_canli_hayvan->first();
                 $evrak_type = 'Canlı Hayvan';
+            } else {
+
+                // eğer bu sağlık sertifikası hiçbiri ile ilişkilendirilmemişse gösterme
+                return null;
             }
 
             // Her sertifikaya ait evrak türü ile birlikte döndürülen veri
@@ -60,13 +63,10 @@ class StokTakipController extends Controller
                 'evrak_type' => $evrak_type,
                 'evrak_morph_class' => $evrak->getMorphClass(),
             ];
-        });
+        })->filter()->values();
 
         // Sağlık sertifikalarını `created_at` alanına göre azalan sırayla sıralama
         $data['saglik_s'] = $saglik_s;
-
-
-        //dd($data['saglik_s']);
 
 
 

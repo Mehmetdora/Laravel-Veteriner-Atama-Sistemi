@@ -5,12 +5,8 @@ namespace App\Http\Controllers\admin;
 use Exception;
 use App\Models\Urun;
 use App\Models\User;
-use App\Models\Evrak;
 use App\Models\UsksNo;
-use App\Models\EvrakTur;
 use App\Models\GemiIzni;
-use App\Models\EvrakDurum;
-use App\Models\NobetHafta;
 use App\Models\AracPlakaKg;
 use App\Models\EvrakIthalat;
 
@@ -19,7 +15,6 @@ use App\Models\GirisAntrepo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Models\SaglikSertifika;
-use function PHPSTORM_META\map;
 use Illuminate\Validation\Rule;
 use App\Models\EvrakCanliHayvan;
 use App\Models\EvrakAntrepoCikis;
@@ -30,10 +25,7 @@ use App\Http\Controllers\Controller;
 
 use App\Models\EvrakAntrepoVarisDis;
 use App\Models\EvrakCanliHayvanGemi;
-use Illuminate\Support\Facades\Hash;
 use App\Models\EvrakAntrepoSertifika;
-
-use function PHPUnit\Framework\isEmpty;
 use Illuminate\Support\Facades\Validator;
 use App\Providers\CanliHGemiIzinDuzenleme;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
@@ -81,28 +73,45 @@ class VeterinerController extends Controller
         }
 
 
-        // EVRAK BİTİRME YÜZDESİ HESAPLAMA
+        // Veteriner-evrak istatistiksel tablo için bilgilerin toplanması
         $evrak_istatistikleri = [];
 
         foreach ($veterinerler as $veteriner) {
 
-            // Telafi durumuna göre temp_workload veya year_workload değeri getirilir.
+            // Telafi durumuna göre temp_workload veya year_workload değeri getirilir.(bu yılın workload i)
             $vet_workload_value = $veteriner->veterinerinBuYilkiWorkloadValue();
 
-            $istatistikler = $veteriner->evraks->reduce(
-                function ($carry, $kayit) use ($vet_workload_value) {
+
+            $todayWithHour = now()->setTimezone('Europe/Istanbul'); // tam saat
+            $bu_yilin_evraklari = $veteriner->evraks()->whereYear('created_at', $todayWithHour->year)->get();
+
+
+            $vet_toplam_islemde_evrak_sayisi = $veteriner->evraks()
+                ->whereHas('evrak', function ($q) {
+                    $q->whereHas('evrak_durumu', function ($q2) {
+                        $q2->where('evrak_durum', 'İşlemde');
+                    });
+                })
+                ->count();
+
+
+
+
+            $istatistikler = $bu_yilin_evraklari->reduce(
+                function ($carry, $kayit) use ($vet_workload_value, $vet_toplam_islemde_evrak_sayisi) {
 
                     $evrak_durumu = $kayit->evrak?->evrak_durumu?->evrak_durum;
                     $coefficient = (float) ($kayit->evrak?->difficulty_coefficient ?? 0);
 
-                    if ($evrak_durumu === "İşlemde") {
-                        $carry['islemde_evraklar_sayisi'] += 1;
-                        $carry['islemde_evraklar_puani'] += $coefficient;
+                    if ($evrak_durumu === "Onaylandı") {
+                        $carry['onayli_evraklar_sayisi'] += 1;
+                        $carry['onayli_evraklar_puani'] += $coefficient;
                     } else if ($evrak_durumu === "Beklemede") {
                         $carry['beklemede'] += 1;
-                    } else {
-                        $carry['onaylandi'] += 1;
                     }
+
+
+                    $carry['islemde'] = $vet_toplam_islemde_evrak_sayisi;
                     $carry['toplam_evraklar_sayisi'] += 1;
                     $carry['toplam_isyuku_puani'] = $vet_workload_value;
 
@@ -111,16 +120,18 @@ class VeterinerController extends Controller
                 [
                     'toplam_evraklar_sayisi' => 0,
                     'toplam_isyuku_puani' => 0,
-                    'islemde_evraklar_sayisi' => 0,
-                    'islemde_evraklar_puani' => 0,
+                    'onayli_evraklar_sayisi' => 0,
+                    'onayli_evraklar_puani' => 0,
                     'beklemede' => 0,
-                    'onaylandi' => 0
+                    'islemde' => $vet_toplam_islemde_evrak_sayisi // eğer bu sene için hiç evrağı yoksa bile geçmişin işlemde evrak sayılarını göster
                 ]
             );
             $evrak_istatistikleri[] = $istatistikler;
         }
 
+
         $data['evraks_info'] = $evrak_istatistikleri;
+
 
         // VETERİNER BİLGİLERİNİN TEKRAR PAKETLENMESİ
         $veterinerler = collect($veterinerler)->map(function ($vet) use ($nobetliler, $izinliler) {

@@ -1446,8 +1446,9 @@
                                             <label for="veterinerId" class="control-label">Evrak Durumu</label>
                                             <select class="form-control" name="evrak_durum" id="evrak_durum" required>
                                                 @if (isset($evrak))
-                                                    <option value="{{ $evrak->evrak_durumu->evrak_durum }}">
-                                                        {{ $evrak->evrak_durumu->evrak_durum }}</option>
+                                                    <option selected
+                                                        value="{{ $evrak->evrak_durumu?->evrak_durum ?? 'İşlemde' }}">
+                                                        {{ $evrak->evrak_durumu?->evrak_durum ?? 'İşlemde' }}</option>
                                                     <hr>
                                                     <option value="İşlemde">İşlemde</option>
                                                     <option value="Beklemede">Beklemede</option>
@@ -1458,21 +1459,22 @@
 
                                         <div class="form-group">
                                             <label for="veterinerId" class="control-label">Veteriner</label>
-                                            <select class="form-control" data-id="{{ $evrak->veteriner->user->id }}"
-                                                name="veterinerId" id="veterinerId" required>
+                                            <select class="form-control"
+                                                data-id="{{ $evrak->veteriner?->user->id ?? '' }}" name="veterinerId"
+                                                id="veterinerId" required>
                                                 @if (isset($veteriners))
-                                                    <option value="{{ $evrak->veteriner->user->id }}">
-                                                        {{ $evrak->veteriner->user->name }}
+                                                    <option selected value="{{ $evrak->veteriner?->user->id ?? '' }}">
+                                                        {{ $evrak->veteriner?->user->name ?? '' }}
                                                     </option>
                                                     <hr>
                                                     @foreach ($veteriners as $veteriner)
-                                                        <option value="{{ $veteriner->id }}">{{ $veteriner->name }}
+                                                        <option value="{{ $veteriner->id }}">
+                                                            {{ $veteriner->name }}
                                                         </option>
                                                     @endforeach
                                                 @endif
                                             </select>
                                         </div>
-
 
                                         <div class="form-group">
                                             <input id="submit-sertifika" type="submit" value="KAYDET"

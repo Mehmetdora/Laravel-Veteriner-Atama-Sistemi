@@ -49,8 +49,10 @@
                         <div class="p-3">
                             Bu sayfada 4 hafta ve 28 gün bulunur. Aylık olarak bu nöbet
                             listesinin uygulanabilmesi için için tüm günlere en az bir veteriner hekim seçilmelidir.
-                            Listeyi Uygula butonu ile bu sayfada günler ve nöbetçiler bu günden
-                            itibaren 28 günlük takvime eklenmiş olur. Bu işlem geri alınamaz. Lütfen emin olduktan sonra
+                            Listeyi Uygula butonu ile bu sayfada listelenen günler ve nöbetçiler
+                            <b>bugünden({{ $today }})
+                                itibaren 28 günlük takvime</b> eklenmiş olur. Bu işlem geri alınamaz. Lütfen emin olduktan
+                            sonra
                             kullanım yapınız.
                         </div>
                     </div>

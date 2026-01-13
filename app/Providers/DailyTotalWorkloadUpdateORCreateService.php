@@ -38,21 +38,43 @@ class DailyTotalWorkloadUpdateORCreateService
         //DailyTotalWorkload oluşturma - güncelleme
         $daily_total_workload = DailyTotalWorkload::where('day', $today)->first();
 
-        $kontrol_zamani = $todayWithHour->copy()->setTime(15, 30, 0);
-        if ($todayWithHour->lessThan($kontrol_zamani)) {  // Gün içinde gelen bir evrak
-            if (!$daily_total_workload) {
-                $daily_total_workload = new DailyTotalWorkload;
-                $daily_total_workload->day = $today;
-                $daily_total_workload->total_workload = $workload;
-                $daily_total_workload->nobet_time = 0;
-                $daily_total_workload->day_time = $workload;
-                $daily_total_workload->save();
-            } else {
-                $daily_total_workload->total_workload += $workload;
-                $daily_total_workload->day_time += $workload;
-                $daily_total_workload->save();
+
+        if ($todayWithHour->isWeekday()) {
+
+
+            $kontrol_zamani = $todayWithHour->copy()->setTime(15, 30, 0);
+            if ($todayWithHour->lessThan($kontrol_zamani)) {  // Gün içinde gelen bir evrak
+                if (!$daily_total_workload) {
+                    $daily_total_workload = new DailyTotalWorkload;
+                    $daily_total_workload->day = $today;
+                    $daily_total_workload->total_workload = $workload;
+                    $daily_total_workload->nobet_time = 0;
+                    $daily_total_workload->day_time = $workload;
+                    $daily_total_workload->save();
+                } else {
+                    $daily_total_workload->total_workload += $workload;
+                    $daily_total_workload->day_time += $workload;
+                    $daily_total_workload->save();
+                }
+            } else {  // Nöbet zamanı gelen bir evrak
+                if (!$daily_total_workload) {
+                    $daily_total_workload = new DailyTotalWorkload;
+                    $daily_total_workload->day = $today;
+                    $daily_total_workload->total_workload = $workload;
+                    $daily_total_workload->nobet_time = $workload;
+                    $daily_total_workload->day_time = 0;
+                    $daily_total_workload->save();
+                } else {
+                    $daily_total_workload->total_workload += $workload;
+                    $daily_total_workload->nobet_time += $workload;
+                    $daily_total_workload->save();
+                }
             }
-        } else {  // Nöbet zamanı gelen bir evrak
+
+
+        } else {
+
+
             if (!$daily_total_workload) {
                 $daily_total_workload = new DailyTotalWorkload;
                 $daily_total_workload->day = $today;

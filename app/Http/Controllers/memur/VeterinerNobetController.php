@@ -69,10 +69,12 @@ class VeterinerNobetController extends Controller
         $day_1 = array_values($list)[0];
 
         $vets = User::role('veteriner')->where('status', 1)->get();
+        $today = now()->setTimezone('Europe/Istanbul')->toDateString();
 
         $data['vets'] = $vets;
         $data['list'] = $list;
         $data['day_1'] = $day_1;
+        $data['today'] = $today;
 
 
         return view("memur.nobets.create", $data);

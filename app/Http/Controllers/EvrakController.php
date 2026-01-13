@@ -35,8 +35,8 @@ use App\Providers\TelafiBoyuncaTempWorkloadGuncelleme;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
+use App\Providers\VeterinerDurumKontrolleri;
 use App\Providers\WorkloadsService;
-use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Support\Facades\Auth;
 
 class EvrakController extends Controller
@@ -54,11 +54,13 @@ class EvrakController extends Controller
     protected $atanacak_veteriner;
     protected $evrak_vet_degisirse_worklaods_updater;
     protected $workloads_service;
+    protected $veteriner_durum_kontrol_servisi;
 
 
-    function __construct(WorkloadsService $workloadsService, CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(VeterinerDurumKontrolleri $veterinerDurumKontrolleri, WorkloadsService $workloadsService, CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, TelafiBoyuncaTempWorkloadGuncelleme $telafiBoyuncaTempWorkloadGuncelleme, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
         $this->workloads_service = $workloadsService;
+        $this->veteriner_durum_kontrol_servisi = $veterinerDurumKontrolleri;
         $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
         $this->gemi_izni_duzenleme = $canliHGemiIzniDuzenleme;
         $this->evrak_vet_degisirse_worklaods_updater = $evrak_veterineri_degisirse_workload_guncelleme;
@@ -191,9 +193,7 @@ class EvrakController extends Controller
         //Evrak Kaydından önce yeni yıl kontrolü yapılarak workloadları duruma göre güncelleme
         $this->yeni_yil_workloads_guncelleme->YeniYilWorkloadsGuncelleme();
 
-
         $today = now()->setTimezone('Europe/Istanbul'); // tam saat
-
         $formData = json_decode($request->formData, true); // JSON stringi diziye çeviriyoruz
 
 
@@ -587,10 +587,14 @@ class EvrakController extends Controller
 
 
 
+        DB::beginTransaction();
+
 
         try {
             $saved_count = 0; // Başarıyla kaydedilen evrak sayısı
             $today = Carbon::now();
+            $now = now()->setTimezone('Europe/Istanbul'); // tam saat
+
 
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
@@ -1003,6 +1007,16 @@ class EvrakController extends Controller
                         }
                     }
 
+
+                    // eğer seçilen veteriner sistem tarafından seçilmemişse izin ve nöbet bilgilerini kontrol et!!!
+                    if ($this->atanacak_veteriner->id != $veterinerId) {
+
+                        $veteriner_uygun_mu = $this->veteriner_durum_kontrol_servisi->veterinerEvrakAlabilirMi($veterinerId, $now);
+                        if (!$veteriner_uygun_mu) {
+                            $veterinerId = $this->atanacak_veteriner->id;
+                        }
+                    }
+
                     $veteriner = User::find($veterinerId);
 
                     if (!$veteriner) {
@@ -1046,9 +1060,17 @@ class EvrakController extends Controller
                     $son_kayitli_usks = UsksNo::latest("id")?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
-                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1); // sondaki numarayı 1 arttırma
-                    // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
 
+                    // eğer yeni yıla başlanmışsa sondaki numara sıfırlanacak
+                    $dotParts = explode('.', $parcalar[0]);
+                    $usks_yil = (int) end($dotParts);
+
+                    if ($usks_yil == 2026 && $numara > 150) {
+                        $numara = 7;    // BU DEĞERİ NET ÖĞRENDİKTEN SONRA GİR
+                    }
+                    $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1); // sondaki numarayı 1 arttırma
+
+                    // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;
                     $usks->miktar = $yeni_evrak->urunKG;
@@ -2545,7 +2567,6 @@ class EvrakController extends Controller
     public function delete($type, $evrak_id)
     {
         $evrak = null;
-        $usks = null;
         $coefficient = 0;
 
         if ($type == "EvrakIthalat") {
@@ -2576,7 +2597,6 @@ class EvrakController extends Controller
             $evrak = EvrakAntrepoCikis::with(['urun', 'veteriner.user', 'evrak_durumu'])
                 ->find($evrak_id);
             $coefficient = 5;
-            $usks = UsksNo::find($evrak->usks_id);
         } else if ($type == "EvrakCanliHayvan") {
             $evrak = EvrakCanliHayvan::with(['urun', 'veteriner.user', 'evrak_durumu', 'saglikSertifikalari'])
                 ->find($evrak_id);
@@ -2597,7 +2617,7 @@ class EvrakController extends Controller
 
         // Önce evrağın ilişkili olduğu verileri sil veya eski haline getir, sonra evrağı sil
 
-        $vet = $evrak->veteriner->user;
+        $vet = $evrak->veteriner?->user ?? null;
         DB::beginTransaction();
 
         try {
@@ -2608,6 +2628,8 @@ class EvrakController extends Controller
             if (method_exists($evrak, 'aracPlakaKgs')) {
                 $evrak->aracPlakaKgs()->delete();   // Evrağa ait araç plaka modellerini silme
             }
+
+            // bir veteriner ile ilişkili ise bu ilişki kaydını sil
             if (method_exists($evrak, 'veteriner')) {
                 $evrak->veteriner()->delete();  // Evrak-veteriner pivot tablosunu silme
             }
@@ -2626,13 +2648,17 @@ class EvrakController extends Controller
 
 
             // workload güncelleme
-            $workload = $vet->veterinerinBuYilkiWorkloadi();
-            $workload->year_workload = max(0, $workload->year_workload - $coefficient);
-            $workload->total_workload = max(0, $workload->total_workload - $coefficient);
-            if ($workload->temp_workload != 0) {
-                $workload->temp_workload -= $coefficient;
+
+            if ($vet) {
+                $workload = $vet->veterinerinBuYilkiWorkloadi();
+                $workload->year_workload = max(0, $workload->year_workload - $coefficient);
+                $workload->total_workload = max(0, $workload->total_workload - $coefficient);
+                if ($workload->temp_workload != 0) {
+                    $workload->temp_workload -= $coefficient;
+                }
+                $workload->save();
             }
-            $workload->save();
+
 
             $evrak->delete();
 

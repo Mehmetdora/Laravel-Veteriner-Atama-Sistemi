@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -139,8 +140,9 @@ class User extends Authenticatable
             ->where('year', $year)
             ->first();
 
-        // Yoksa YENİ OLUŞTUR ve refresh et
+        // Yoksa YENİ OLUŞTUR(yeni kayıtlı veteriner için) ve refresh et
         if (!$workload) {
+
             $workload = $this->workloads()->create([
                 'year' => $year,
                 'year_workload' => 0,
@@ -152,6 +154,7 @@ class User extends Authenticatable
             $this->load('workloads');
             $workload->refresh();
         }
+
 
 
         $workload->refresh();

@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Nobet;
 use App\Models\NobetList;
-use Dom\NodeList;
 use Illuminate\Support\Facades\Validator;
+
 
 class VeterinerNobetController extends Controller
 {
@@ -71,12 +71,16 @@ class VeterinerNobetController extends Controller
         $list = $plan?->list ?? [[]];
         $day_1 = array_values($list)[0];
 
+        $today = now()->setTimezone('Europe/Istanbul')->toDateString();
+
+
 
         $vets = User::role('veteriner')->where('status', 1)->get();
 
         $data['vets'] = $vets;
         $data['list'] = $list;
         $data['day_1'] = $day_1;
+        $data['today'] = $today;
 
 
         return view("admin.nobets.create", $data);

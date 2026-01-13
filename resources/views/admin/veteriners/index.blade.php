@@ -44,7 +44,7 @@
                                     Adı Soyadı
                                 </th>
                                 <th style="width: 10%" class="text-center">
-                                    Evrak Puanları:<br> Toplam/İşlemde
+                                    Evrak Puanları:<br> Toplam/Onaylandı
                                 </th>
                                 <th style="width: 6%" class="text-center">
                                     Toplam Evrak Sayısı
@@ -88,7 +88,7 @@
                                         <td class="project-state">
                                             <span
                                                 class="badge badge-secondary">{{ $evraks_info[$loop->index]['toplam_isyuku_puani'] }}
-                                                / {{ $evraks_info[$loop->index]['islemde_evraklar_puani'] }}</span>
+                                                / {{ $evraks_info[$loop->index]['onayli_evraklar_puani'] }}</span>
                                         </td>
 
                                         <td class="project-state">
@@ -97,14 +97,14 @@
                                         </td>
                                         <td class="project-state">
                                             <span
-                                                class="badge badge-info">{{ $evraks_info[$loop->index]['onaylandi'] }}</span>
+                                                class="badge badge-info">{{ $evraks_info[$loop->index]['onayli_evraklar_sayisi'] }}</span>
                                         </td>
                                         <td class="project-state">
-                                            @if ($evraks_info[$loop->index]['islemde_evraklar_sayisi'] == 0)
+                                            @if ($evraks_info[$loop->index]['islemde'] == 0)
                                                 <span class="badge badge-danger">-----</span>
                                             @else
                                                 <span
-                                                    class="badge badge-danger">{{ $evraks_info[$loop->index]['islemde_evraklar_sayisi'] }}</span>
+                                                    class="badge badge-danger">{{ $evraks_info[$loop->index]['islemde'] }}</span>
                                             @endif
                                         </td>
                                         <td class="project-state">

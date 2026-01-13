@@ -17,7 +17,6 @@ use Illuminate\Http\Request;
 use App\Models\SaglikSertifika;
 use App\Providers\AtamaServisi;
 use App\Models\EvrakCanliHayvan;
-use function PHPSTORM_META\type;
 use App\Models\EvrakAntrepoCikis;
 use App\Models\EvrakAntrepoGiris;
 use App\Models\EvrakAntrepoVaris;
@@ -38,6 +37,7 @@ use App\Providers\OrtalamaGunlukWorkloadDegeriBulma;
 use App\Providers\DailyTotalWorkloadUpdateORCreateService;
 use App\Providers\SsnKullanarakAntrepo_GVeterineriniBulma;
 use App\Providers\EvrakVeterineriDegisirseWorkloadGuncelleme;
+use App\Providers\VeterinerDurumKontrolleri;
 
 class EvrakController extends Controller
 {
@@ -53,12 +53,14 @@ class EvrakController extends Controller
     protected $workloads_service;
     protected $evrak_vet_degisirse_worklaods_updater;
     protected $gemi_izni_duzenleme;
+    protected $veteriner_durum_kontrol_servisi;
 
 
 
-    function __construct(CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, WorkloadsService $workloadsService, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
+    function __construct(VeterinerDurumKontrolleri $veterinerDurumKontrolleri, CanliHGemiIzinDuzenleme $canliHGemiIzniDuzenleme, EvrakVeterineriDegisirseWorkloadGuncelleme $evrak_veterineri_degisirse_workload_guncelleme, WorkloadsService $workloadsService, CanliHGemiIzniOlusturma $canliHGemiIzniOlusturma, YeniYilWorkloadsGuncelleme $yeni_yil_workloads_guncelleme, AtamaServisi $atamaServisi, OrtalamaGunlukWorkloadDegeriBulma $ortalama_gunluk_workload_degeri_bulma, DailyTotalWorkloadUpdateORCreateService $daily_total_workload_update_orcreate_service, VeterinerEvrakDurumularıKontrolu $veterinerEvrakDurumularıKontrolu, SsnKullanarakAntrepo_GVeterineriniBulma $ssn_kullanarak_antrepo_gveterinerini_bulma)
     {
         $this->workloads_service = $workloadsService;
+        $this->veteriner_durum_kontrol_servisi = $veterinerDurumKontrolleri;
         $this->gemi_izni_olusturma = $canliHGemiIzniOlusturma;
         $this->gemi_izni_duzenleme = $canliHGemiIzniDuzenleme;
 
@@ -583,6 +585,7 @@ class EvrakController extends Controller
         try {
             $saved_count = 0; // Başarıyla kaydedilen evrak sayısı
             $today = Carbon::now();
+            $now = now()->setTimezone('Europe/Istanbul'); // tam saat
 
             if ($formData[0]['evrak_turu'] == 0) {
                 for ($i = 1; $i < count($formData); $i++) {
@@ -875,7 +878,6 @@ class EvrakController extends Controller
             } elseif ($formData[0]['evrak_turu'] == 4) {
                 for ($i = 1; $i < count($formData); $i++) {
 
-                    $antrepo_giris_saglik_sertifikalari = [];
                     $saglik_sertifikalari = $formData[$i]['vetSaglikSertifikasiNo'];
 
                     $veterinerSayilari = [];
@@ -1000,6 +1002,16 @@ class EvrakController extends Controller
                         }
                     }
 
+
+                    // eğer seçilen veteriner sistem tarafından seçilmemişse izin ve nöbet bilgilerini kontrol et!!!
+                    if ($this->atanacak_veteriner->id != $veterinerId) {
+
+                        $veteriner_uygun_mu = $this->veteriner_durum_kontrol_servisi->veterinerEvrakAlabilirMi($veterinerId, $now);
+                        if (!$veteriner_uygun_mu) {
+                            $veterinerId = $this->atanacak_veteriner->id;
+                        }
+                    }
+
                     $veteriner = User::find($veterinerId);
 
                     if (!$veteriner) {
@@ -1039,11 +1051,20 @@ class EvrakController extends Controller
 
                     // Antrepo sertifika oluşturulduğunda en son kayıtlı usks numarasın güncelleyerek(yıl ve sondakil sayıyı) bu sertifika ile ilişkilendir.
                     $yil = $today->year; // Değişecek kısım
-                    // hiç yoksa oluştur
+                    // hiç yoksa oluştur, 0 dan başlat
                     $son_kayitli_usks = UsksNo::latest("id")?->first()?->usks_no ?? sprintf('33VSKN01.USKS.%d-%04d', $yil, 0); //"33VSKN01.USKS.2025-0475"
                     $parcalar = explode('-', $son_kayitli_usks);
                     $numara = (int)end($parcalar); // Son parçayı al
+
+                    // eğer yeni yıla başlanmışsa sondaki numara sıfırlanacak
+                    $dotParts = explode('.', $parcalar[0]);
+                    $usks_yil = (int) end($dotParts);
+
+                    if ($usks_yil == 2026 && $numara > 150) {
+                        $numara = 7;    // BU DEĞERİ NET ÖĞRENDİKTEN SONRA GİR
+                    }
                     $sonuc = sprintf('33VSKN01.USKS.%d-%04d', $yil, $numara + 1); // sondaki numarayı 1 arttırma
+
                     // USKS NUMARASI OLUŞTURMA-İLİŞKİLENDİRME
                     $usks = new UsksNo;
                     $usks->usks_no =  $sonuc;

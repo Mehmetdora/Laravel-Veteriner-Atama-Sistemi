@@ -208,15 +208,60 @@
                             ];
                         }
                     },
+
                     {
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                                12, 13
-                            ] // Tüm kolonları dahil et
+                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                        },
+                        customizeData: function(
+                            data) { // tarih kolonunu tarih ve saat olarak ayrı kolonlara ayrıldı
+                            const dateColIndex = 0; // export'ta ilk kolon: Tarih
+
+                            // Header
+                            if (Array.isArray(data.header)) {
+                                data.header.splice(dateColIndex + 1, 0, 'Saat');
+                            }
+
+                            // Body
+                            if (Array.isArray(data.body)) {
+                                for (let i = 0; i < data.body.length; i++) {
+                                    const cell = data.body[i][dateColIndex] ?? '';
+
+                                    const raw = String(cell)
+                                        .replace(/<br\s*\/?>/gi, '\n')
+                                        .replace(/\u00a0/g, ' ')
+                                        .trim();
+
+                                    const parts = raw.split(/\s*[\r\n]+\s*/);
+
+                                    let tarih = parts[0] || '';
+                                    let saat = parts[1] || '';
+
+                                    // newline yoksa: "tarih saat" formatını yakala
+                                    if (!saat) {
+                                        const m = raw.match(/^(.+?)\s+(\d{1,2}:\d{2})(?::\d{2})?$/);
+                                        if (m) {
+                                            tarih = m[1].trim();
+                                            saat = m[2].trim();
+                                        }
+                                    }
+
+                                    data.body[i][dateColIndex] = tarih;
+                                    data.body[i].splice(dateColIndex + 1, 0, saat);
+                                }
+                            }
+
+                            // Footer
+                            if (Array.isArray(data.footer)) {
+                                data.footer.splice(dateColIndex + 1, 0, '');
+                            } else {
+                                data.footer = [];
+                            }
                         }
                     }
+
                 ]
 
             }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');

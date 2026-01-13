@@ -60,56 +60,85 @@ class AtamaServisi
 
         */
 
+
+
         $now = now()->setTimezone('Europe/Istanbul'); // tam saat
         $total_worklaod = $this->workloadCoefficients[$documentType] * $evraks_count;
+        $veterinerler = null;
 
 
-        // 1. Aktif Veterinerleri Alma - Atanabilecek Veterinerlerin Seçilmesi
-        /**
-         * Aktif Veterinerleri Getirir
-         * - İzinli olmayanlar(gemi ve normal izin),
-         * - Saat 15.30'den sonra ise sadece nöbetçiler, önce gün içi,
-         *
-         * - Hepsinin elinde evrak varsa işlemde olanlar arasından en az olan vets gelir
-         *
-         */
-        $veterinerler = $this->veteriner_durum_kontrol->aktifVeterinerleriGetir($now);
-        if ($veterinerler->isEmpty()) {
-            throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen veterinerlerin izin ve nöbet bilgilerini kontrol ediniz. - 001");
-        }
 
 
-        // Nöbetçi olan veterinerleri getirme
-        /**
-         * Aktif Veterinerleri Getirir
-         * - İzinli olmayan(gemi ve normal izin),
-         * - Nöbetçi olan,
-         * - Elinde "işlemde" durumunda evrağı olmayanları
-         */
-        $nobetci_vets = $this->veteriner_durum_kontrol->aktifNobetciVeterinerleriGetir($now);
+        /*
+        Eğer hafta içi ise sistem normal işçiler + nöbetçiler olarak seçim yapacak,
+        eğer hafta sonu ise sadece nöbetçi veterinerler arasından seçim yapılacak.
+        */
+        if ($now->isWeekday()) {
 
-        // Nöbetçilerin de gün içinde evrak alabilmesi için saat kontrolü(12:00)
-        // $nobetci_vets değişkeni başka yerde kullanılmıyor.
-        $kontrol_zamani = $now->copy()->setTime(12, 00, 0);
-        if ($now->lessThan($kontrol_zamani)) {
-
-            // eğer gelen toplam evrak workload değeri 10'dan az ise nöbetçi veterinerler de bu evrağı alabilecek,
-            // tabiki kesin olarak bir nöbetçiye atanamayacak. Sadece havuza eklenecekler.
-            if ($total_worklaod <= 10) {
-                $veterinerler = $veterinerler->merge($nobetci_vets)->unique('id');
+            // 1. Aktif Veterinerleri Alma - Atanabilecek Veterinerlerin Seçilmesi
+            /**
+             * Aktif Veterinerleri Getirir - hafta içi kullanım içidir.
+             * - İzinli olmayanlar(gemi ve normal izin),
+             * - Saat 15.30'den sonra ise sadece nöbetçiler, önce gün içi,
+             *
+             * - Hepsinin elinde evrak varsa işlemde olanlar arasından en az olan vets gelir
+             *
+             */
+            $veterinerler = $this->veteriner_durum_kontrol->aktifVeterinerleriGetir($now);
+            if ($veterinerler->isEmpty()) {
+                throw new \Exception("Boşta veteriner hekim bulunamadığı için evrak kaydı yapılamamıştır, Lütfen veterinerlerin izin ve nöbet bilgilerini kontrol ediniz. - 001");
             }
+
+
+            // Nöbetçi olan veterinerleri getirme
+            /**
+             * Aktif Veterinerleri Getirir
+             * - İzinli olmayan(gemi ve normal izin),
+             * - Nöbetçi olan,
+             * - Elinde "işlemde" durumunda evrağı olmayanları
+             */
+            $nobetci_vets = $this->veteriner_durum_kontrol->aktifNobetciVeterinerleriGetir($now);
+
+            // Nöbetçilerin de gün içinde evrak alabilmesi için saat kontrolü(12:00)
+            // $nobetci_vets değişkeni başka yerde kullanılmıyor.
+            $kontrol_zamani = $now->copy()->setTime(12, 00, 0);
+            if ($now->lessThan($kontrol_zamani)) {
+
+                // eğer gelen toplam evrak workload değeri 10'dan az ise nöbetçi veterinerler de bu evrağı alabilecek,
+                // tabiki kesin olarak bir nöbetçiye atanamayacak. Sadece havuza eklenecekler.
+                if ($total_worklaod <= 10) {
+                    $veterinerler = $veterinerler->merge($nobetci_vets)->unique('id');
+                }
+            }
+        } else {
+
+            /*
+            Sadece nöbetçi veterinerleri al;
+
+            ya elinde hiç işlemde evrağı olmayanlar gelecek eğer işlemde evrağı olamyan varsa yada
+            hepsinde işlemde evrak varsa puanı en az olanlar getiriliyor.
+            */
+
+            $veterinerler = $this->veteriner_durum_kontrol->haftasonuNobetcileriGetir($now);
         }
+
+
+
 
 
         // ------------------------------------------------------------------------------
         /*
-        Burada kadar veterinerler arasıdan ya;
-         - elinde hiç evrağı olmayanlar + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
-         - elinde evrağı olanlar(işlemde) + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
+            Burada kadar veterinerler arasıdan ya;
 
-         getirilir. Yani her türlü veteriner listesi boş olmayacak.
+            Eğer hafta içi ise ;
 
-         Bundan sonraki önceliklendirme telafisi olup olmamasına göre yapılacak.
+                - elinde hiç evrağı olmayanlar + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
+                - elinde evrağı olanlar(işlemde) + evrak puanına bağlı olarak saat 12den öncesi için nöbetçi olanlar
+            eğer hafta sonu ise ;
+                - Sadece nöbetçi olan veterinerler,
+
+            getirilir. Yani her türlü veteriner listesi boş olmayacak.
+            Bundan sonraki önceliklendirme telafisi olup olmamasına göre yapılacak.
         */
 
 
@@ -252,6 +281,10 @@ class AtamaServisi
                 $query->where('start_date', '<=', $now)
                     ->where('end_date', '>=', $now);
             };
+
+
+            // seçilen veterinerlerin izinde olmadığından emin olmal için kontrol
+            // eğer bulunamadıysa veteriner izindedir.
             $seciliVeteriner = User::role('veteriner')->where('status', 1)
                 ->where('id', $vet_id)
                 ->whereDoesntHave('izins', $izin_kontrol_closure)
@@ -299,13 +332,13 @@ class AtamaServisi
         $veteriner_bu_yilki_workloadi = $vet->workloads->where('year', $today->year)->first();
 
         if ($has_telafi) {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient * $evraks_count;
-            $veteriner_bu_yilki_workloadi->temp_workload += $coefficient * $evraks_count;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient * $evraks_count;
+            $veteriner_bu_yilki_workloadi->year_workload += ($coefficient * $evraks_count);
+            $veteriner_bu_yilki_workloadi->temp_workload += ($coefficient * $evraks_count);
+            $veteriner_bu_yilki_workloadi->total_workload += ($coefficient * $evraks_count);
             $veteriner_bu_yilki_workloadi->save();
         } else {
-            $veteriner_bu_yilki_workloadi->year_workload += $coefficient * $evraks_count;
-            $veteriner_bu_yilki_workloadi->total_workload += $coefficient * $evraks_count;
+            $veteriner_bu_yilki_workloadi->year_workload += ($coefficient * $evraks_count);
+            $veteriner_bu_yilki_workloadi->total_workload += ($coefficient * $evraks_count);
             $veteriner_bu_yilki_workloadi->save();
         }
     }
