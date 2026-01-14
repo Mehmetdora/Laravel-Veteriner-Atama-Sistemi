@@ -78,13 +78,13 @@ class EvrakController extends Controller
     {
 
         $evraks_all = collect()
-            ->merge(EvrakIthalat::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakTransit::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakCanliHayvan::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoVarisDis::with(['veteriner.user',  'evrak_durumu'])->get())
-            ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu'])->get())
+            ->merge(EvrakIthalat::with(['veteriner.user', 'urun', 'evrak_durumu', 'aracPlakaKgs', 'saglikSertifikalari'])->get())
+            ->merge(EvrakTransit::with(['veteriner.user', 'urun', 'evrak_durumu', 'saglikSertifikalari'])->get())
+            ->merge(EvrakCanliHayvan::with(['veteriner.user', 'urun', 'evrak_durumu', 'saglikSertifikalari'])->get())
+            ->merge(EvrakAntrepoGiris::with(['veteriner.user', 'urun', 'evrak_durumu', 'saglikSertifikalari'])->get())
+            ->merge(EvrakAntrepoVaris::with(['veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])->get())
+            ->merge(EvrakAntrepoVarisDis::with(['veteriner.user',  'evrak_durumu', 'saglikSertifikalari'])->get())
+            ->merge(EvrakAntrepoSertifika::with(['veteriner.user', 'usks', 'urun', 'evrak_durumu', 'saglikSertifikalari'])->get())
             ->merge(EvrakAntrepoCikis::with(['veteriner.user', 'urun', 'evrak_durumu'])->get())
             ->merge(EvrakCanliHayvanGemi::with(['veteriner.user', 'evrak_durumu'])->get());
 

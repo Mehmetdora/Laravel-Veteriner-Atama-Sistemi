@@ -63,7 +63,50 @@
                                     <tbody>
                                         @if (isset($evraks_all))
                                             @foreach ($evraks_all as $evrak)
-                                                <tr>
+                                                @php
+                                                    $aracPlakaPayload = ($evrak->aracPlakaKgs ?? collect())
+                                                        ->map(function ($x) {
+                                                            return [
+                                                                'plaka' => $x->arac_plaka ?? null,
+                                                                'miktar' =>
+                                                                    $x->miktar !== null
+                                                                        ? number_format((float) $x->miktar, 3, ',', '.')
+                                                                        : null,
+                                                            ];
+                                                        })
+                                                        ->values()
+                                                        ->all();
+
+                                                    $saglikPayload = ($evrak->saglikSertifikalari ?? collect())
+                                                        ->map(function ($s) {
+                                                            return [
+                                                                'ssn' => $s->ssn ?? null,
+                                                                'toplam' =>
+                                                                    $s->toplam_miktar !== null
+                                                                        ? number_format(
+                                                                            (float) $s->toplam_miktar,
+                                                                            3,
+                                                                            ',',
+                                                                            '.',
+                                                                        )
+                                                                        : null,
+                                                                'kalan' =>
+                                                                    $s->kalan_miktar !== null
+                                                                        ? number_format(
+                                                                            (float) $s->kalan_miktar,
+                                                                            3,
+                                                                            ',',
+                                                                            '.',
+                                                                        )
+                                                                        : null,
+                                                            ];
+                                                        })
+                                                        ->values()
+                                                        ->all();
+                                                @endphp
+
+                                                <tr data-arac-plaka='@json($aracPlakaPayload)'
+                                                    data-saglik-sertifika='@json($saglikPayload)'>
                                                     <td>
                                                         <a
                                                             href="{{ route('admin.evrak.edit', ['type' => $evrak->getMorphClass(), 'id' => $evrak->id]) }}">
@@ -213,18 +256,30 @@
                         extend: 'excelHtml5',
                         text: 'Excel',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+                            modifier: {
+                                search: 'applied',
+                                order: 'applied',
+                                page: 'all'
+                            }
                         },
-                        customizeData: function(
-                            data) { // tarih kolonunu tarih ve saat olarak ayrı kolonlara ayrıldı
+                        customizeData: function(data) {
+                            const dt = $('#example1').DataTable();
+
+                            if (!Array.isArray(data.footer)) data.footer = [];
+
+
                             const dateColIndex = 0; // export'ta ilk kolon: Tarih
 
-                            // Header
+                            // Header'a "Saat" ekle
                             if (Array.isArray(data.header)) {
                                 data.header.splice(dateColIndex + 1, 0, 'Saat');
                             }
 
-                            // Body
+                            // Footer'a da aynı yere boş ekle
+                            data.footer.splice(dateColIndex + 1, 0, '');
+
+                            // Body split
                             if (Array.isArray(data.body)) {
                                 for (let i = 0; i < data.body.length; i++) {
                                     const cell = data.body[i][dateColIndex] ?? '';
@@ -253,11 +308,82 @@
                                 }
                             }
 
-                            // Footer
-                            if (Array.isArray(data.footer)) {
-                                data.footer.splice(dateColIndex + 1, 0, '');
-                            } else {
-                                data.footer = [];
+                            // Header'a ekle
+                            data.header.push('Plaka/Miktar');
+                            data.header.push('Sağlık Sertifikaları');
+
+                            // Footer'a ekle
+                            data.footer.push('', '');
+
+                            // Export edilen satırların <tr> node'larını al (aynı sıralama ile)
+                            const rowNodes = dt.rows({
+                                search: 'applied',
+                                order: 'applied',
+                                page: 'all'
+                            }).nodes().toArray();
+
+                            // Body'ye doldur
+                            for (let i = 0; i < data.body.length; i++) {
+                                const tr = rowNodes[i];
+
+                                let plakaKgOzet = '';
+                                let ssnOzet = '';
+
+                                if (tr) {
+                                    const aracJson = $(tr).attr('data-arac-plaka') || '[]';
+                                    const sertJson = $(tr).attr('data-saglik-sertifika') || '[]';
+
+                                    let aracArr = [];
+                                    let sertArr = [];
+
+                                    try {
+                                        aracArr = JSON.parse(aracJson);
+                                    } catch (e) {
+                                        aracArr = [];
+                                    }
+                                    try {
+                                        sertArr = JSON.parse(sertJson);
+                                    } catch (e) {
+                                        sertArr = [];
+                                    }
+
+                                    // Plaka/Miktar
+                                    if (Array.isArray(aracArr) && aracArr.length > 0) {
+                                        plakaKgOzet = aracArr
+                                            .map(x => {
+                                                const p = x.plaka ?? '';
+                                                const miktar = (x.miktar ?? '') === '' ? '' :
+                                                    `${x.miktar}kg`;
+                                                return (p && miktar) ? `${p} - (${miktar})` : (
+                                                    p || miktar || '');
+                                            })
+                                            .filter(Boolean)
+                                            .join(' | ');
+                                    }
+
+                                    // Sağlık Sertifikaları
+                                    if (Array.isArray(sertArr) && sertArr.length > 0) {
+                                        ssnOzet = sertArr
+                                            .map(x => {
+                                                const ssn = x.ssn ?? '';
+                                                const toplam = (x.toplam ?? '') === '' ?
+                                                    '' :
+                                                    `${x.toplam}kg`;
+                                                const kalan = (x.kalan ?? '') === '' ?
+                                                    '' :
+                                                    `${x.kalan}kg`;
+                                                return (ssn && toplam) ?
+                                                    `Sağlık Sertifika Numarası:${ssn} & Toplam Miktar:(${toplam}) & Kalan Miktar:(${kalan})` :
+                                                    (
+                                                        ssn || toplam || '');
+                                            })
+                                            .filter(Boolean)
+                                            .join(' | ');
+                                    }
+                                }
+
+                                data.body[i].push(plakaKgOzet);
+                                data.body[i].push(ssnOzet);
                             }
                         }
                     }
