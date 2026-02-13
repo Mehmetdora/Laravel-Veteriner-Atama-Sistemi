@@ -2,7 +2,6 @@
 # Evrak Atama - Veteriner İş Yükü Takip Sistemi
 
 
-- **CANLI ORTAMDA TEST EDİLMEKTE-KULLANIMDADIR.** 🚀
 - Bu projemde Tarım Ve Hayvancılık Bakanlığı'nın Mersin il müdürlüğündeki çalışanları için tüm süreçlerini kendimin geliştirdiği bir **evrak atama ve veteriner iş yükü takibi sistemidir**.
 - **Bu projenin amacı kurumdaki veterinerlerin farklı katsayılardaki iş yükü olan evrakların veterinerlere random bir şekilde , aynı zamanda yıl sonunda aralarındaki toplam aldıkları evrakların iş yükleri toplamlarının aralarındaki farkları en aza indirmesi amacıyla geliştirilmiştir.** 
 - Bu özelliğe ek olarak veterinerlerin aldıkları izin boyunca iş yapamamaları nedeniyle diğer veterinerlerden iş yükü bakımından geride kalmaları ve her veterinerin yıl boyunca aynı gün sayısında izin kullanmaması nedeniyle veterinerlerin izinlerinden sonraki bir süre boyunca fazladan telafi işleri atanarak(Diğer veterinerler de gözetilerek dengeli bir dağılımla) aralarındaki farkın kapatılması sağlandı.
